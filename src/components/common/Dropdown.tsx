@@ -19,7 +19,7 @@ const OPTIONS = [
   '기타(직접입력)',
 ]
 
-function TestDropdown() {
+function Dropdown() {
   const [isOpen, setIsOpen] = useState(false)
   const [selectedItem, setSelectedItem] = useState('')
   const [text, setText] = useState('')
@@ -84,4 +84,4 @@ function TestDropdown() {
   )
 }
 
-export default TestDropdown
+export default Dropdown
