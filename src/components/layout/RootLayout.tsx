@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router-dom'
+import { Toaster } from '../ui/sonner'
 
 function RootLayout() {
   return (
@@ -8,6 +9,7 @@ function RootLayout() {
         <Outlet />
       </main>
       <footer>푸터</footer>
+      <Toaster position="top-center" />
     </>
   )
 }
