@@ -4,7 +4,7 @@ import ChevronDownIcon from '@/assets/icons/chevron-down.svg?react'
 
 import { cn } from '@/lib/utils'
 
-//커스텀 드롭다운 버튼
+// 커스텀 드롭다운 버튼
 type DropdownButtonProps = {
   placeholder?: string
   className?: string
@@ -23,10 +23,10 @@ function DropdownButton({
       className={cn(
         'mb-1 flex w-72 items-center justify-between rounded-md border px-4 py-3 text-sm',
         value
-          ? 'border-[#707070] bg-white text-[#121212]'
-          : 'border-[#D9D9D9] bg-white text-left text-[#BDBDBD]',
-        'hover:border-[#BDBDBD] hover:bg-[#FAFAFA] hover:text-black',
-        isOpen && 'border-[#707070] bg-[#FAFAFA] text-[#121212]',
+          ? 'text-gray-primary border-gray-500 bg-white'
+          : 'border-gray-250 text-gray-disabled bg-white text-left',
+        'hover:border-gray-disabled hover:text-gray-primary hover:bg-gray-100',
+        isOpen && 'text-gray-primary border-gray-500 bg-gray-100',
         className
       )}
     >
@@ -64,13 +64,19 @@ function DropdownMenuContent({
         data-slot="dropdown-menu-content"
         sideOffset={sideOffset}
         className={cn(
-          'text-popover-foreground data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 z-50 max-h-(--radix-dropdown-menu-content-available-height) w-72 min-w-[8rem] origin-(--radix-dropdown-menu-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border border-[#707070] bg-white p-1 shadow-md',
+          'text-gray-primary data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 z-50 max-h-(--radix-dropdown-menu-content-available-height) w-72 min-w-[8rem] origin-(--radix-dropdown-menu-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border border-gray-500 bg-white p-1 shadow-md',
           className
         )}
         {...props}
       />
     </DropdownMenuPrimitive.Portal>
   )
+}
+
+function DropdownMenuGroup({
+  ...props
+}: React.ComponentProps<typeof DropdownMenuPrimitive.Group>) {
+  return <DropdownMenuPrimitive.Group {...props} />
 }
 
 function DropdownMenuItem({
@@ -82,7 +88,7 @@ function DropdownMenuItem({
       data-slot="dropdown-menu-item"
       className={cn(
         'relative flex h-12 w-full cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-hidden select-none',
-        'data-[highlighted]:bg-[#EFE6FC] data-[highlighted]:text-black',
+        'data-[highlighted]:bg-primary-100 data-[highlighted]:text-gray-primary',
         'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
         className
       )}
@@ -92,9 +98,10 @@ function DropdownMenuItem({
 }
 
 export {
-  DropdownButton, // 커스텀
+  DropdownButton,
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
 }
