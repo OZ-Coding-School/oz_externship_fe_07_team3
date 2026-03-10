@@ -69,10 +69,10 @@
   --color-btn-fill-hover: var(--btn-fill-hover);
   --color-btn-fill-active: var(--btn-fill-active);
   --color-btn-outline-enabled-bg: var(--btn-outline-enabled-bg);
+  --color-other-red: var(--other-red);
 
   --color-other-green: var(--other-green);
   --color-other-light-green: var(--other-light-green);
-  --color-other-red: var(--other-red);
   --color-other-pale-pink: var(--other-pale-pink);
   --color-other-yellow: var(--other-yellow);
   --color-other-pale-yellow: var(--other-pale-yellow);
@@ -140,11 +140,11 @@
   --btn-fill-hover: #4e01b3;
   --btn-fill-active: #3b0186;
   --btn-outline-enabled-bg: #efe6fc;
+  --other-red: #ec0037;
 
   /** Other */
   --other-green: #5eb669;
   --other-light-green: #e7f429;
-  --other-red: #cc0a0a;
   --other-pale-pink: #f9e2e2;
   --other-yellow: #f6a818;
   --other-pale-yellow: #fdeece;
