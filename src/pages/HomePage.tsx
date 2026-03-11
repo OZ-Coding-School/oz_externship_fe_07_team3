@@ -1,15 +1,107 @@
-import { Link } from 'react-router'
+import { useState } from 'react'
+import MainExam from '@/assets/images/main-exam.png'
+import MainQna from '@/assets/images/main-qna.png'
+import MainCommunity from '@/assets/images/main-community.png'
+import MainBanner from '@/assets/images/main-banner.png'
+
+type TabType = '쪽지시험' | '질의응답' | '커뮤니티'
+
+const TAB_LIST: TabType[] = ['쪽지시험', '질의응답', '커뮤니티']
+
+type TabContent = {
+  title: [string, string]
+  image: string
+  alt: string
+}
+
+type TabContents = {
+  쪽지시험: TabContent
+  질의응답: TabContent
+  커뮤니티: TabContent
+}
+
+const TAB_CONTENTS: TabContents = {
+  쪽지시험: {
+    title: ['쪽지시험으로', '실력을 차곡차곡 쌓아보세요'],
+    image: MainExam,
+    alt: '쪽지시험 서비스 화면 예시',
+  },
+  질의응답: {
+    title: ['질문하고 배우고', '동료 수강생과 함께 성장해요'],
+    image: MainQna,
+    alt: '질의응답 서비스 화면 예시',
+  },
+  커뮤니티: {
+    title: ['정보 공유부터 팀원 모집까지', '커뮤니티에서 함께 해결해요'],
+    image: MainCommunity,
+    alt: '커뮤니티 서비스 화면 예시',
+  },
+}
 
 function HomePage() {
+  const [tab, setTab] = useState<TabType>('쪽지시험')
+  const currentContent = TAB_CONTENTS[tab]
+
   return (
-    <div>
-      HomePage
-      <Link to="/test">
-        <div className="bg-accent w-50 border border-gray-200 p-5 shadow-md">
-          TestPage 이동
+    <main>
+      <section
+        aria-labelledby="hero-title"
+        className="flex flex-col items-center bg-[#FAFAFB] pt-42 pb-41"
+      >
+        <h1
+          id="hero-title"
+          className="text-ui-gray-primary text-center text-[48px] leading-[150%] font-bold tracking-[-0.03em]"
+        >
+          {currentContent.title[0]}
+          <br />
+          {currentContent.title[1]}
+        </h1>
+
+        <nav
+          aria-label="서비스 카테고리"
+          className="border-grey-7 bg-grey-1 mt-14 mb-[34px] flex h-[78px] w-[469px] items-center justify-center rounded-[99px] border"
+        >
+          <ul className="text-grey-9 flex w-full justify-center gap-2 p-3 text-center text-[20px] font-bold">
+            {TAB_LIST.map((item) => (
+              <li key={item}>
+                <button
+                  type="button"
+                  onClick={() => setTab(item)}
+                  className={`flex h-[54px] w-[143px] items-center justify-center rounded-[40px] ${
+                    tab === item
+                      ? 'bg-btn-fill-default text-grey-1'
+                      : 'text-grey-9'
+                  }`}
+                >
+                  {item}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div>
+          <img
+            src={currentContent.image}
+            alt={currentContent.alt}
+            className="w-300"
+          />
         </div>
-      </Link>
-    </div>
+      </section>
+
+      <section aria-labelledby="feedback-title" className="px-90 py-35">
+        <h2 id="feedback-title" className="sr-only">
+          서비스 소개 배너
+        </h2>
+        <div className="flex items-center justify-center">
+          <img
+            src={MainBanner}
+            alt="질문과 답변을 통해 성장하는 서비스 소개 배너"
+            className="w-300"
+          />
+        </div>
+      </section>
+    </main>
   )
 }
 
