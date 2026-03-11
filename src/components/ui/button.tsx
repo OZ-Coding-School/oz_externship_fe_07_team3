@@ -40,6 +40,8 @@ const buttonVariants = cva(
           'hover:bg-btn-outline-enabled-bg hover:text-btn-fill-default',
           'disabled:bg-grey-7 disabled:text-grey-9'
         ),
+
+        notFound: cn('bg-grey-2 text-grey-5', 'hover:bg-grey-3'),
       },
 
       size: {
