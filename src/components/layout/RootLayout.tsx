@@ -1,14 +1,16 @@
 import { Outlet } from 'react-router-dom'
 import { Toaster } from '../ui/sonner'
+import Header from './Header'
+import Footer from './Footer'
 
 function RootLayout() {
   return (
     <>
-      <header>헤더</header>
+      <Header />
       <main>
         <Outlet />
       </main>
-      <footer>푸터</footer>
+      <Footer />
       <Toaster position="top-center" />
     </>
   )
