@@ -24,10 +24,30 @@ export function FieldLabel({
     <label
       className={cn(
         'text-grey-6 text-[14px] font-bold transition-colors',
-        'group-data-[invalid=true]:text-other-red', // 에러 시 라벨도 빨간색으로!
+        'group-data-[invalid=true]:text-other-red',
         className
       )}
       {...props}
     />
+  )
+}
+
+type FieldHelperTextProps = {
+  status?: 'default' | 'danger' | 'success' | 'disabled'
+  children: React.ReactNode
+}
+
+export function FieldHelperText({ status, children }: FieldHelperTextProps) {
+  return (
+    <p
+      className={cn(
+        'text-[12px] leading-[140%] tracking-[-0.03em]',
+        status === 'danger' && 'text-other-red',
+        status === 'success' && 'text-other-green',
+        (status === 'default' || status === 'disabled') && 'text-grey-9'
+      )}
+    >
+      {status === 'danger' ? `* ${children}` : children}
+    </p>
   )
 }
