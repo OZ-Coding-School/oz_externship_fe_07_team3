@@ -109,14 +109,14 @@
   --color-primary-default: var(--primary-default);
 
   /** gray */
-  --color-gray-primary: var(--gray-primary);
-  --color-gray-100: var(--gray-100);
-  --color-gray-200: var(--gray-200);
-  --color-gray-250: var(--gray-250);
-  --color-gray-400: var(--gray-400);
-  --color-gray-500: var(--gray-500);
-  --color-gray-600: var(--gray-600);
-  --color-gray-700: var(--gray-700);
-  --color-gray-800: var(--gray-800);
-  --color-gray-disabled: var(--gray-disabled);
+  --color-ui-gray-primary: var(--gray-primary);
+  --color-ui-gray-100: var(--gray-100);
+  --color-ui-gray-200: var(--gray-200);
+  --color-ui-gray-250: var(--gray-250);
+  --color-ui-gray-400: var(--gray-400);
+  --color-ui-gray-500: var(--gray-500);
+  --color-ui-gray-600: var(--gray-600);
+  --color-ui-gray-700: var(--gray-700);
+  --color-ui-gray-800: var(--gray-800);
+  --color-ui-gray-disabled: var(--gray-disabled);
 }
