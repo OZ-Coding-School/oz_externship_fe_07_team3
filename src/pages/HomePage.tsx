@@ -90,15 +90,8 @@ function HomePage() {
       </section>
 
       <section aria-labelledby="feedback-title" className="px-90 py-35">
-        <h2 id="feedback-title" className="sr-only">
-          서비스 소개 배너
-        </h2>
         <div className="flex items-center justify-center">
-          <img
-            src={MainBanner}
-            alt="질문과 답변을 통해 성장하는 서비스 소개 배너"
-            className="w-300"
-          />
+          <img src={MainBanner} alt="서비스 소개 배너" className="w-300" />
         </div>
       </section>
     </main>
