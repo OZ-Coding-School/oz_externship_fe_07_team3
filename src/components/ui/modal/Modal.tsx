@@ -1,159 +1,94 @@
-import { useEffect, type ReactNode } from 'react'
+// src/components/ui/modal/Modal.tsx
+import { type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import Button from '@/components/ui/button'
+import { useModalScroll } from '@/hooks/useModalScroll'
 
-// 1. 컨벤션에 따라 interface 대신 type 선언 사용
-export type ModalType = 'recover' | 'delete' | 'question'
+/**
+ * X버튼이 있는 모달 컴포넌트 (배경 클릭으로 닫히지 않음)
+ * @param isOpen - 모달 열림 여부
+ * @param onClose - 닫기 핸들러
+ * @param children - 모달 내부 콘텐츠
+ * @param width - 모달 너비 (Tailwind 클래스)
+ * @param shadow - 그림자 여부 (기본값: true)
+ * @example
+ * <Modal isOpen={isOpen} onClose={handleClose} width="w-[396px]">
+ *   <div>내용</div>
+ * </Modal>
+ */
 
 type ModalProps = {
-  isOpen: boolean
-  onClose: () => void
-  onConfirm: () => void // 확인 버튼 액션
-  title: string // 밖에서 주입받는 제목 (기존 ModalLayout의 h2/p 텍스트)
-  description?: string // 밖에서 주입받는 본문 (recover 타입 전용)
-  type: ModalType // 분기 처리를 위한 타입
-  icon?: ReactNode // 아이콘 (recover 타입 등)
-  confirmText?: string // 확인 버튼 문구 커스텀 (삭제/확인 등)
-  width?: string
+  isOpen: boolean // 모달 열림/닫힘 상태
+  onClose: () => void // 닫기 핸들러
+  children: ReactNode // 모달 내부 콘텐츠 (자유롭게 주입)
+  width?: string // 모달 너비 (Tailwind 클래스)
+  shadow?: boolean // 그림자 여부
 }
 
-export const Modal = ({
+export default function Modal({
   isOpen,
   onClose,
-  onConfirm,
-  title,
-  description,
-  type,
-  icon,
-  confirmText = '확인',
-  width = 'w-[428px]',
-}: ModalProps) => {
-  // 2. 스크롤 방지 로직
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden'
-    }
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [isOpen])
+  children,
+  width,
+  shadow = true, // 그림자 기본값 true
+}: ModalProps) {
+  useModalScroll(isOpen) // 스크롤 제어 훅 (열릴 때 막기, 닫힐 때 복구)
 
-  if (!isOpen) return null
+  if (!isOpen) return null // 닫혀있으면 아무것도 렌더링 안 함
 
+  // CSR(Vite + React) 환경이므로 document 참조 안전
+  // modal-root 없으면 body에 렌더링
   const modalRoot = document.getElementById('modal-root') ?? document.body
 
-  // 3. 텍스트 베이스 스타일
-  const textBase = "font-['Pretendard'] leading-[140%] tracking-[-0.03em]"
-  const isRecover = type === 'recover'
-  const isDelete = type === 'delete'
-  const isQuestion = type === 'question'
-
   return createPortal(
+    // 전체 화면을 덮는 배경 (딤처리)
+    // onClick 없음 → 배경 클릭해도 닫히지 않음
     <div
-      role="dialog"
-      aria-modal="true"
-      // 4. 배경 스타일(선명한 bg-black/50, blur 없음)
+      role="dialog" // 스크린리더에게 다이얼로그임을 알림
+      aria-modal="true" // 모달 뒤 콘텐츠 접근 차단
       className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50"
-      onClick={onClose}
+      // fixed: 스크롤과 무관하게 화면에 고정
+      // inset-0: top/right/bottom/left 전부 0 → 전체 화면 덮기
+      // z-[1000]: 일반 요소들 위에 표시
+      // flex items-center justify-center: 모달 가운데 정렬
+      // bg-black/50: 배경 딤처리 50%
     >
       <div
-        // 5. 컨테이너 스타일(rounded, shadow)
-        className={`relative h-auto overflow-hidden rounded-[16px] bg-white shadow-[0px_4px_16px_rgba(160,160,160,0.25)] ${width}`}
-        onClick={(e) => e.stopPropagation()}
+        className={`relative overflow-hidden rounded-[12px] bg-white ${shadow ? 'shadow-[0_4px_16px_rgba(160,160,160,0.25)]' : ''} ${width}`}
+        // relative: 자식 요소 절대 위치 기준점
+        // overflow-hidden: 모달 밖으로 콘텐츠 넘치지 않게
+        // rounded-[12px]: 모서리 둥글게 (피그마 스펙)
+        // bg-white: 모달 배경 흰색
+        // shadow: 그림자 on/off (prop으로 제어)
+        // width: 밖에서 자유롭게 지정
+        onClick={(e) => e.stopPropagation()} // 모달 안쪽 클릭 시 이벤트 전파 막기
       >
-        <div className="relative flex w-full flex-col font-['Pretendard']">
-          {/* 6. X 버튼 로직 (recover 타입만) */}
-          {isRecover && (
-            <div className="absolute top-[20px] right-[24px] z-10">
-              <button
-                onClick={onClose}
-                className="cursor-pointer text-gray-400 hover:text-gray-600"
-              >
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
-            </div>
-          )}
-          {/* 7. [계정 복구 레이아웃] 수치 및 스타일 (whitespace-pre-wrap으로 줄바꿈 허용) */}
-          {isRecover && (
-            <div className="flex flex-col items-center p-[32px_28px_24px] text-center">
-              <div className="mb-[40px] flex w-full flex-col items-center gap-[16px]">
-                {icon && <div>{icon}</div>}
-                <h2
-                  className={`${textBase} text-gray-primary text-[20px] font-bold`}
-                >
-                  {title}
-                </h2>
-                {description && (
-                  <p
-                    className={`${textBase} text-[14px] font-normal whitespace-pre-wrap text-gray-600`}
-                  >
-                    {description}
-                  </p>
-                )}
-              </div>
-              <Button
-                className="!bg-primary-default !h-[52px] !w-full !rounded-[8px] font-bold !text-white hover:opacity-90"
-                onClick={onConfirm}
-              >
-                {confirmText}
-              </Button>
-            </div>
-          )}
-          {/* 8. [삭제 레이아웃] 수치(p-28, text-16) 및 버튼 스타일 */}
-          {isDelete && (
-            <div className="flex flex-col items-center p-[28px]">
-              <div className="mb-[40px] w-full text-left">
-                <p className={`${textBase} text-[16px] text-gray-700`}>
-                  {title}
-                </p>
-              </div>
-              <div className="flex w-full justify-end gap-[12px]">
-                <Button
-                  className="!bg-primary-100 !text-primary-600 hover:bg-primary-200 !h-[40px] !w-[76px] !rounded-full font-bold"
-                  onClick={onClose}
-                >
-                  취소
-                </Button>
-                <Button
-                  className="!bg-primary-default !h-[40px] !w-[76px] !rounded-full font-bold !text-white"
-                  onClick={onConfirm}
-                >
-                  {confirmText}
-                </Button>
-              </div>
-            </div>
-          )}
-          {/* 9. [질문 완료 레이아웃] 수치(p-28, text-16) 유지 */}
-          {isQuestion && (
-            <div className="flex flex-col items-center p-[28px]">
-              <div className="mb-[40px] w-full text-left">
-                <p className={`${textBase} text-[16px] text-gray-700`}>
-                  {title}
-                </p>
-              </div>
-              <div className="flex w-full justify-end">
-                <Button
-                  className="!bg-primary-default !h-[40px] !w-[76px] !rounded-full font-bold !text-white"
-                  onClick={onConfirm}
-                >
-                  {confirmText}
-                </Button>
-              </div>
-            </div>
-          )}
+        {/* X버튼 영역: 모달은 반드시 명시적으로 닫아야 함 */}
+        <div className="flex justify-end px-[24px] pt-[20px]">
+          {/* flex justify-end: X버튼 오른쪽 정렬 */}
+          {/* px-[24px] pt-[20px]: 피그마 스펙 패딩 */}
+          <button
+            onClick={onClose} // X버튼 클릭 시 닫기
+            className="text-ui-gray-400 hover:text-ui-gray-600 cursor-pointer"
+            // cursor-pointer: 마우스 커서 포인터
+            // text-ui-gray-400: 기본 색상
+            // hover:text-ui-gray-600: 호버 시 색상 진하게
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor" // 부모 color 상속
+              strokeWidth="2"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" /> {/* \ 방향 선 */}
+              <line x1="6" y1="6" x2="18" y2="18" /> {/* / 방향 선 → X 완성 */}
+            </svg>
+          </button>
         </div>
+        {children} {/* 팀원들이 자유롭게 채울 내용 */}
       </div>
     </div>,
-    modalRoot
+    modalRoot // modal-root div에 포탈로 렌더링 (DOM 구조 밖으로 분리)
   )
 }
