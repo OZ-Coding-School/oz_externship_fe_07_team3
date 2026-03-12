@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { useModalScroll } from '@/hooks/useModalScroll'
+import { cn } from '@/lib/utils'
 
 /**
  * X버튼이 없는 팝업 컴포넌트 (배경 클릭으로 닫힘)
@@ -44,11 +45,18 @@ export default function Popup({
     <div
       role="dialog"
       aria-modal="true"
-      className={`fixed inset-0 z-[1001] flex items-center justify-center ${isNested ? '' : 'bg-black/50'}`}
+      className={cn(
+        'fixed inset-0 z-[1001] flex items-center justify-center',
+        !isNested && 'bg-black/50'
+      )}
       onClick={onClose}
     >
       <div
-        className={`relative overflow-hidden rounded-[12px] bg-white ${shadow ? 'shadow-[0_4px_16px_rgba(160,160,160,0.25)]' : ''} ${width}`}
+        className={cn(
+          'relative overflow-hidden rounded-[12px] bg-white',
+          shadow && 'shadow-[0_4px_16px_rgba(160,160,160,0.25)]',
+          width
+        )}
         onClick={(e) => e.stopPropagation()}
       >
         {children}

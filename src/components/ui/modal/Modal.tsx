@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { useModalScroll } from '@/hooks/useModalScroll'
+import { cn } from '@/lib/utils'
 
 /**
  * X버튼이 있는 모달 컴포넌트 (배경 클릭으로 닫히지 않음)
@@ -43,7 +44,11 @@ export default function Modal({
       className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50"
     >
       <div
-        className={`relative overflow-hidden rounded-[12px] bg-white ${shadow ? 'shadow-[0_4px_16px_rgba(160,160,160,0.25)]' : ''} ${width}`}
+        className={cn(
+          'relative overflow-hidden rounded-[12px] bg-white',
+          shadow && 'shadow-[0_4px_16px_rgba(160,160,160,0.25)]',
+          width
+        )}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-end px-[24px] pt-[20px]">
