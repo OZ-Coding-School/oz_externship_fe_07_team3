@@ -6,6 +6,7 @@ import NotFound from './pages/NotFoundPage'
 import HomePage from './pages/HomePage'
 import TestPage from './pages/TestPage'
 import QuizPage from './pages/QuizPage'
+import LoginPage from './pages/LoginPage'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path={ROUTES_PATHS.HOME_PAGE} element={<HomePage />} />
         <Route path={ROUTES_PATHS.TEST_PAGE} element={<TestPage />} />
         <Route path={ROUTES_PATHS.QUIZ_PAGE} element={<QuizPage />} />
+        <Route path={ROUTES_PATHS.LOGIN_PAGE} element={<LoginPage />} />
       </Route>
       <Route path={ROUTES_PATHS.PAGE_NOT_FOUND} element={<NotFound />} />
     </Routes>
