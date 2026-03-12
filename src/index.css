@@ -120,3 +120,15 @@
   --color-ui-gray-800: var(--gray-800);
   --color-ui-gray-disabled: var(--gray-disabled);
 }
+
+@keyframes jump {
+  0%,
+  75%,
+  100% {
+    transform: translateY(0);
+  }
+
+  40% {
+    transform: translateY(-15px);
+  }
+}
