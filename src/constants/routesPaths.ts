@@ -5,4 +5,5 @@ export const ROUTES_PATHS = {
   HOME_PAGE: '/',
   TEST_PAGE: '/test',
   PAGE_NOT_FOUND: '*',
+  QUIZ_PAGE: '/quiz',
 }
