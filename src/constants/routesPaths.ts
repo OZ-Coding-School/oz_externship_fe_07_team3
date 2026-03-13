@@ -8,4 +8,5 @@ export const ROUTES_PATHS = {
   QUIZ_PAGE: '/quiz',
   LOGIN_PAGE: '/login',
   SIGNUP_PAGE: '/signup',
+  MY_PAGE: '/mypage',
 }

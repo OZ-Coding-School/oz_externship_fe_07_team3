@@ -5,6 +5,8 @@ import Input, { type InputProps } from '../ui/input'
 type InputFieldProps = InputProps & {
   label?: string
   helperText?: string
+  fieldLabelClassName?: string
+  fieldHelperTextClassName?: string
 }
 
 const InputField = ({
@@ -13,6 +15,8 @@ const InputField = ({
   status,
   id,
   disabled,
+  fieldLabelClassName,
+  fieldHelperTextClassName,
   ...props
 }: InputFieldProps) => {
   const generatedId = React.useId()
@@ -23,12 +27,21 @@ const InputField = ({
 
   return (
     <Field data-invalid={isInvalid}>
-      {label && <FieldLabel htmlFor={inputId}>{label}</FieldLabel>}
+      {label && (
+        <FieldLabel htmlFor={inputId} className={fieldLabelClassName}>
+          {label}
+        </FieldLabel>
+      )}
 
       <Input id={inputId} status={status} disabled={disabled} {...props} />
 
       {helperText && currentStatus !== 'disabled' && (
-        <FieldHelperText status={currentStatus}>{helperText}</FieldHelperText>
+        <FieldHelperText
+          status={currentStatus}
+          className={fieldHelperTextClassName}
+        >
+          {helperText}
+        </FieldHelperText>
       )}
     </Field>
   )
