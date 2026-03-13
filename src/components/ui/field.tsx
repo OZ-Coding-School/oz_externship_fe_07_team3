@@ -8,7 +8,7 @@ export function Field({
 }: React.ComponentProps<'div'>) {
   return (
     <div
-      className={cn('group flex w-full flex-col gap-[10px]', className)}
+      className={cn('group flex w-full flex-col gap-2.5', className)}
       {...props}
     >
       {children}
@@ -35,16 +35,22 @@ export function FieldLabel({
 type FieldHelperTextProps = {
   status?: 'default' | 'danger' | 'success' | 'disabled'
   children: React.ReactNode
+  className?: string
 }
 
-export function FieldHelperText({ status, children }: FieldHelperTextProps) {
+export function FieldHelperText({
+  status,
+  children,
+  className,
+}: FieldHelperTextProps) {
   return (
     <p
       className={cn(
         'text-[12px] leading-[140%] tracking-[-0.03em]',
         status === 'danger' && 'text-other-red',
         status === 'success' && 'text-other-green',
-        (status === 'default' || status === 'disabled') && 'text-grey-9'
+        (status === 'default' || status === 'disabled') && 'text-grey-9',
+        className
       )}
     >
       {status === 'danger' ? `* ${children}` : children}
