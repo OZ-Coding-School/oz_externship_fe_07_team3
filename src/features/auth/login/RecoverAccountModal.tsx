@@ -5,8 +5,9 @@ import RecoveryVerifyIconSvg from '@/assets/icons/RecoveryVerifyIcon.svg?react'
 import CheckToastIconSvg from '@/assets/icons/checkToast.svg?react'
 import Button from '@/components/ui/button'
 import Modal from '@/components/ui/modal/Modal'
+import Popup from '@/components/ui/modal/Popup'
 
-type RecoverStep = 'inactive' | 'verify' | 'complete'
+type RecoverStep = 'inactive' | 'verify'
 
 type RecoverAccountModalProps = {
   isOpen: boolean
@@ -30,6 +31,7 @@ const RecoverAccountModal = ({ isOpen, onClose }: RecoverAccountModalProps) => {
   const [isCodeVerified, setIsCodeVerified] = useState(false)
   const [codeErrorMessage, setCodeErrorMessage] = useState('')
   const [isSendMessageVisible, setIsSendMessageVisible] = useState(false)
+  const [isCompletePopupVisible, setIsCompletePopupVisible] = useState(false)
   const [timeLeft, setTimeLeft] = useState(INITIAL_TIMER)
 
   const hasCodeError = Boolean(codeErrorMessage)
@@ -43,6 +45,7 @@ const RecoverAccountModal = ({ isOpen, onClose }: RecoverAccountModalProps) => {
       setIsCodeVerified(false)
       setCodeErrorMessage('')
       setIsSendMessageVisible(false)
+      setIsCompletePopupVisible(false)
       setTimeLeft(INITIAL_TIMER)
     }
   }, [isOpen])
@@ -162,10 +165,11 @@ const RecoverAccountModal = ({ isOpen, onClose }: RecoverAccountModalProps) => {
     }
 
     setCodeErrorMessage('')
-    setStep('complete')
+    setIsCompletePopupVisible(true)
   }
 
-  const handleCompletePopupConfirmBtnClick = () => {
+  const handleCompletePopupClose = () => {
+    setIsCompletePopupVisible(false)
     onClose()
   }
 
@@ -181,6 +185,29 @@ const RecoverAccountModal = ({ isOpen, onClose }: RecoverAccountModalProps) => {
           전송 완료! 이메일을 확인해주세요.
         </span>
       </div>
+    )
+  }
+
+  const renderCompletePopup = () => {
+    return (
+      <Popup
+        isOpen={isOpen && isCompletePopupVisible}
+        onClose={handleCompletePopupClose}
+        width="w-[410px]"
+        isNested
+      >
+        <div className="flex flex-col items-center px-[32px] py-[40px] text-center">
+          <CheckToastIconSvg className="mb-[20px] h-[40px] w-[40px]" />
+
+          <h2 className="text-ui-gray-primary mb-[16px] text-[20px] leading-[140%] font-bold tracking-[-0.03em]">
+            계정 복구 완료!
+          </h2>
+
+          <p className="text-ui-gray-600 text-[14px] leading-[140%] font-normal tracking-[-0.03em]">
+            지금 바로 로그인해 보세요
+          </p>
+        </div>
+      </Popup>
     )
   }
 
@@ -314,38 +341,16 @@ const RecoverAccountModal = ({ isOpen, onClose }: RecoverAccountModalProps) => {
     )
   }
 
-  const renderCompleteContent = () => {
-    return (
-      <div className="flex flex-col items-center gap-[12px] px-[24px] pb-[24px] text-center">
-        <CheckToastIconSvg className="h-[24px] w-[24px]" />
-
-        <h2 className="text-ui-gray-primary text-[20px] leading-[140%] font-bold tracking-[-0.03em]">
-          계정 복구 완료!
-        </h2>
-
-        <p className="text-ui-gray-600 text-[14px] leading-[140%] font-normal tracking-[-0.03em]">
-          지금 바로 로그인해 보세요
-        </p>
-
-        <Button
-          variant="fill"
-          size="full"
-          onClick={handleCompletePopupConfirmBtnClick}
-        >
-          확인
-        </Button>
-      </div>
-    )
-  }
-
   return (
     <>
       {renderSendSuccessMessage()}
+      {renderCompletePopup()}
 
       <Modal isOpen={isOpen} onClose={onClose} width="w-[396px]">
-        {step === 'inactive' && renderInactiveContent()}
-        {step === 'verify' && renderVerifyContent()}
-        {step === 'complete' && renderCompleteContent()}
+        {step === 'inactive' &&
+          !isCompletePopupVisible &&
+          renderInactiveContent()}
+        {step === 'verify' && !isCompletePopupVisible && renderVerifyContent()}
       </Modal>
     </>
   )
