@@ -50,4 +50,59 @@ export const mypageHandlers = [
   http.get('/api/v1/accounts/me/enrolled-courses', async () => {
     return HttpResponse.json(enrolledCoursesMock, { status: 200 })
   }),
+
+  /**
+   * 회원 탈퇴
+   */
+  http.delete('/api/v1/accounts/me', async ({ request }) => {
+    /**
+     * TODO: authHeader 수정 예정
+     */
+    // const authHeader = request.headers.get('Authorization')
+
+    // if (!authHeader) {
+    //   return HttpResponse.json(
+    //     {
+    //       error_detail: '자격 인증 데이터가 제공되지 않았습니다.',
+    //     },
+    //     { status: 401 }
+    //   )
+    // }
+
+    const body = (await request.json()) as {
+      reason?: string
+      reason_detail?: string
+    }
+
+    const validReasons = [
+      'GRADUATION',
+      'TRANSFER',
+      'NO_LONGER_NEEDED',
+      'SERVICE_DISSATISFACTION',
+      'PRIVACY_CONCERN',
+      'OTHER',
+    ]
+
+    if (!body?.reason) {
+      return HttpResponse.json(
+        {
+          error_detail: 'reason은 필수입니다.',
+        },
+        { status: 400 }
+      )
+    }
+
+    if (!validReasons.includes(body.reason)) {
+      return HttpResponse.json(
+        {
+          error_detail: '유효하지 않은 탈퇴 사유입니다.',
+        },
+        { status: 400 }
+      )
+    }
+
+    return new HttpResponse(null, {
+      status: 204,
+    })
+  }),
 ]

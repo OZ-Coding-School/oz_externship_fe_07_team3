@@ -1,4 +1,5 @@
 import type {
+  DeleteMyAccountRequest,
   EnrolledCourseResponse,
   MyInfoResponse,
   UpdateMyInfoRequest,
@@ -13,7 +14,7 @@ export const getMyInfo = async () => {
 
 export const patchMyInfo = async (payload: UpdateMyInfoRequest) => {
   const { data } = await api.patch<MyInfoResponse>(
-    APIS_PATHS.PATCH_MY_Info,
+    APIS_PATHS.PATCH_MY_INFO,
     payload
   )
   return data
@@ -24,4 +25,12 @@ export const getMyEnrolledCourses = async () => {
     APIS_PATHS.GET_MY_ENROLLED_COURSES
   )
   return data
+}
+
+export const deleteMyAccount = async (payload: DeleteMyAccountRequest) => {
+  const response = await api.delete(APIS_PATHS.DELETE_MY_ACCOUNT, {
+    data: payload,
+  })
+
+  return response.data
 }
