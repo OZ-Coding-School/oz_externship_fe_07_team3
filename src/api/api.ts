@@ -9,4 +9,5 @@ export const API_BASE = '/api/v1'
 
 export const api = axios.create({
   baseURL: '/api/v1',
+  withCredentials: true,
 })
