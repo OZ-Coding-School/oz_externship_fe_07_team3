@@ -3,12 +3,11 @@ import { Link } from 'react-router-dom'
 
 import logoImg from '@/assets/images/logo.png'
 import { ROUTES_PATHS } from '@/constants/routesPaths'
-import FindIdModal, {
-  type FindIdHandlers,
-} from '@/features/auth/login/FindIdModal'
+import FindIdModal from '@/features/auth/find-id/FindIdModal'
+import type { FindIdHandlers } from '@/features/auth/find-id/useFindId'
 import LoginForm from '@/features/auth/login/LoginForm'
-import RecoverAccountModal from '@/features/auth/login/RecoverAccountModal'
 import SocialLoginButton from '@/features/auth/login/SocialLoginButton'
+import RecoverAccountModal from '@/features/auth/recover-account/RecoverAccountModal'
 
 type SubmitLoginParams = {
   email: string
@@ -19,24 +18,18 @@ type Provider = 'kakao' | 'naver'
 
 // TODO: API 연동 시 실제 서버 호출로 교체
 const findIdHandlers: FindIdHandlers = {
-  onSendCode: ({ setFindErrorMessage, setIsCodeSent }) => {
-    setIsCodeSent(false)
-    setFindErrorMessage(
+  onSendCode: async () => {
+    throw new Error(
       '입력한 이름과 휴대폰 번호로 등록된\n이메일이 존재하지 않습니다.'
     )
   },
 
-  onVerifyCode: ({ setCodeErrorMessage, setIsCodeVerified }) => {
-    // LoginPage에서는 onSendCode 단계에서 에러를 반환하므로
-    // 정상적인 인증 성공 플로우는 진행되지 않음
-    setCodeErrorMessage('인증번호 확인에 실패했습니다.')
-    setIsCodeVerified(false)
+  onVerifyCode: async () => {
+    throw new Error('인증번호 확인에 실패했습니다.')
   },
 
-  onFindId: ({ setFindErrorMessage }) => {
-    // LoginPage에서는 onSendCode 단계에서 에러를 반환하므로
-    // 정상적인 아이디 찾기 성공 플로우는 진행되지 않음
-    setFindErrorMessage(
+  onFindId: async () => {
+    throw new Error(
       '입력한 이름과 휴대폰 번호로 등록된\n이메일이 존재하지 않습니다.'
     )
   },

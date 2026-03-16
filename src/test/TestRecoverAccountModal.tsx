@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import RecoverAccountModal from '@/features/auth/login/RecoverAccountModal'
+import RecoverAccountModal from '@/features/auth/recover-account/RecoverAccountModal'
 
 const TestRecoverAccountModal = () => {
   const [isRecoverAccountModalOpen, setIsRecoverAccountModalOpen] =

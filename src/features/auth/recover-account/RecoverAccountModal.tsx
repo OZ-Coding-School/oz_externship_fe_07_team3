@@ -8,7 +8,7 @@ import CodeVerification from '@/components/common/CodeVerification'
 import Button from '@/components/ui/button'
 import Modal from '@/components/ui/modal/Modal'
 import Popup from '@/components/ui/modal/Popup'
-import { useRecoverAccountVerification } from '@/hooks/useRecoverAccountVerification'
+import { useRecoverAccountVerification } from '@/features/auth/recover-account/useRecoverAccountVerification'
 
 type RecoverStep = 'inactive' | 'verify'
 
