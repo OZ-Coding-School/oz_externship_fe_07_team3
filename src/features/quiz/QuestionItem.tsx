@@ -1,17 +1,10 @@
 import type { QuizQuestion } from '@/types/quizpage-type/question'
 import QuestionRenderer from './QuestionRenderer'
+import { QUESTION_TYPE_LABEL } from '@/constants/quiz'
 
 type QuestionItemProps = {
   question: QuizQuestion
 }
-const QUESTION_TYPE_LABEL = {
-  single_choice: '단일선택',
-  multiple_choice: '다중선택',
-  ox: 'OX선택',
-  short_answer: '단답형',
-  ordering: '순서배열',
-  fill_blank: '빈칸식',
-} as const
 
 function QuestionItem({ question }: QuestionItemProps) {
   return (

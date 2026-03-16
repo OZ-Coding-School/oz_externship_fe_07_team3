@@ -1,25 +1,11 @@
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
-import IconO from '@/assets/icons/quiz/icon-o-gray.svg?react'
-import IconX from '@/assets/icons/quiz/icon-x-gray.svg?react'
 import Check from '@/assets/icons/quiz/check-gray.svg?react'
+import { OPTION_META } from '@/constants/quiz'
 
 type OXQuestionProps = {
   options: string[]
 }
-
-const OPTION_META = {
-  O: {
-    Icon: IconO,
-    activeColor: 'text-other-green',
-    label: '맞아요',
-  },
-  X: {
-    Icon: IconX,
-    activeColor: 'text-other-red',
-    label: '아니에요',
-  },
-} as const
 
 function OXQuestion({ options }: OXQuestionProps) {
   const [selectedOption, setSelectedOption] = useState<string>('')
@@ -32,7 +18,9 @@ function OXQuestion({ options }: OXQuestionProps) {
         {options.map((option) => {
           const meta = OPTION_META[option as keyof typeof OPTION_META]
 
-          if (!meta) return null
+          if (!meta) {
+            return null
+          }
 
           const isSelected = selectedOption === option
           const Icon = meta.Icon
