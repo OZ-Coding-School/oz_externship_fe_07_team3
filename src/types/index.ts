@@ -8,4 +8,8 @@ export type {
   EnrolledCourseStatus,
   EnrolledCourseResponse,
 } from './api-response/myPageResponse'
-export type { UpdateMyInfoRequest } from './api-request/myPageRequest'
+export type {
+  UpdateMyInfoRequest,
+  DeleteMyAccountRequest,
+  DeleteUserReason,
+} from './api-request/myPageRequest'
