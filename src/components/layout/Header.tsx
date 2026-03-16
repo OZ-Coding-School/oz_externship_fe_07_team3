@@ -1,5 +1,6 @@
 import { Link } from 'react-router'
 import Logo from '@/assets/images/logo.png'
+import UserMenu from '@/features/mypage/UserMenu'
 
 function Header() {
   return (
@@ -32,6 +33,8 @@ function Header() {
 
         <nav aria-label="사용자 메뉴">
           <ul className="flex items-center gap-2">
+            {/* TODO: 로그인 여부에 따른 분기처리 예정 */}
+            <UserMenu />
             <li className="py-4">
               <Link to="/login">로그인</Link>
             </li>
