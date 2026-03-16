@@ -10,7 +10,7 @@ export default function QuizHeader({
   onBack,
 }: QuizHeaderProps) {
   return (
-    <header className="border-grey-9 flex h-32 items-center justify-between border-b bg-gray-100 px-90">
+    <header className="border-grey-9 fixed z-50 flex h-32 w-full items-center justify-between border-b bg-gray-100 px-90">
       <div className="flex items-start">
         <button
           className="mr-3"

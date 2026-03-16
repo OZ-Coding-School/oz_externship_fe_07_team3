@@ -1,15 +1,40 @@
 import AlertIcon from '@/assets/icons/quiz/alert-circle.png'
 import CloseIcon from '@/assets/icons/quiz/icon-x-gray.svg?react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
+import { useNavigate } from 'react-router'
 import { getExamQuestions } from '@/api/exam'
 import type { QuizData } from '@/types/quizpage-type/question'
 import QuizHeader from '@/components/layout/quiz/QuizHeader'
 import { QuestionItem } from '@/features/quiz'
 import Button from '@/components/ui/button'
+import { useQuizTimer } from '@/hooks/useQuizTimer'
 
 function QuizPage() {
   const [quizData, setQuizData] = useState<QuizData | null>(null)
   const [isWarningVisible, setIsWarningVisible] = useState(true)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const navigate = useNavigate()
+
+  const handleSubmit = useCallback(async () => {
+    if (isSubmitting) {
+      return
+    }
+    setIsSubmitting(true)
+    try {
+      // TODO: 저장된 풀이 데이터 제출 API 연결
+      console.log('제출 실행')
+      navigate('/quiz/result')
+    } catch (error) {
+      console.error(error)
+      setIsSubmitting(false)
+    }
+  }, [isSubmitting, navigate])
+
+  const { formattedTime } = useQuizTimer({
+    initialSeconds: 30 * 60,
+    onTimeEnd: handleSubmit,
+  })
 
   useEffect(() => {
     const fetchQuizData = async () => {
@@ -24,20 +49,20 @@ function QuizPage() {
     fetchQuizData()
   }, [])
 
-  if (!quizData) return <div>로딩중...</div>
+  if (!quizData) {
+    return <div>로딩중...</div>
+  }
 
   return (
     <>
-      {/* 헤더 */}
       <QuizHeader
         variant="inProgress"
         title="TypeScript 쪽지시험"
         subText="집중해서 천천히, 끝까지 응시해 주세요. 응원할게요💪"
-        timeText="29:17 뒤에 끝나요"
+        timeText={`${formattedTime} 뒤에 끝나요`}
         misconductCount={0}
       />
-      {/* 경고 */}
-      <section className="px-90">
+      <section className="px-90 pt-32">
         {isWarningVisible && (
           <div className="bg-primary-100 mt-8 flex w-full items-start justify-between rounded-[8px] px-5 py-6">
             <div className="flex gap-3">
@@ -63,16 +88,21 @@ function QuizPage() {
             </button>
           </div>
         )}
-        {/* 문제리스트 */}
+
         <div className="mt-15">
           {quizData.questions.map((question) => (
             <QuestionItem key={question.question_id} question={question} />
           ))}
         </div>
       </section>
-      {/* 제출버튼 */}
-      <div className="mt-10 mb-25 flex justify-center">
-        <Button className="text-primary-100 border-primary-600 w-auto rounded-[4px] bg-[#721AE3] px-7 py-6.25">
+
+      <div className="mt-50 mb-25 flex justify-center">
+        <Button
+          type="button"
+          onClick={handleSubmit}
+          disabled={isSubmitting}
+          className="text-primary-100 border-primary-600 w-auto rounded-[4px] bg-[#721AE3] px-7 py-6.25"
+        >
           제출하기
         </Button>
       </div>
