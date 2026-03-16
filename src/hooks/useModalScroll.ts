@@ -6,11 +6,25 @@ import { useEffect } from 'react'
  */
 export const useModalScroll = (isOpen: boolean) => {
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden'
+    if (!isOpen) {
+      return
     }
+
+    const scrollBarWidth =
+      window.innerWidth - document.documentElement.clientWidth
+
+    const originalOverflow = document.body.style.overflow
+    const originalPaddingRight = document.body.style.paddingRight
+
+    document.body.style.overflow = 'hidden'
+
+    if (scrollBarWidth > 0) {
+      document.body.style.paddingRight = `${scrollBarWidth}px`
+    }
+
     return () => {
-      document.body.style.overflow = ''
+      document.body.style.overflow = originalOverflow
+      document.body.style.paddingRight = originalPaddingRight
     }
   }, [isOpen])
 }
