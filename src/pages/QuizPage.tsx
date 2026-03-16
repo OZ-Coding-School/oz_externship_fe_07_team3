@@ -8,6 +8,7 @@ import QuizHeader from '@/components/layout/quiz/QuizHeader'
 import { QuestionItem } from '@/features/quiz'
 import Button from '@/components/ui/button'
 import { useQuizTimer } from '@/hooks/useQuizTimer'
+import { ROUTES_PATHS } from '@/constants/routesPaths'
 
 function QuizPage() {
   const [quizData, setQuizData] = useState<QuizData | null>(null)
@@ -23,8 +24,7 @@ function QuizPage() {
     setIsSubmitting(true)
     try {
       // TODO: 저장된 풀이 데이터 제출 API 연결
-      console.log('제출 실행')
-      navigate('/quiz/result')
+      navigate(ROUTES_PATHS.QUIZ_RESULT_PAGE)
     } catch (error) {
       console.error(error)
       setIsSubmitting(false)
@@ -55,6 +55,7 @@ function QuizPage() {
 
   return (
     <>
+      {/* 헤더 */}
       <QuizHeader
         variant="inProgress"
         title="TypeScript 쪽지시험"
@@ -62,6 +63,7 @@ function QuizPage() {
         timeText={`${formattedTime} 뒤에 끝나요`}
         misconductCount={0}
       />
+      {/* 경고창 */}
       <section className="px-90 pt-32">
         {isWarningVisible && (
           <div className="bg-primary-100 mt-8 flex w-full items-start justify-between rounded-[8px] px-5 py-6">
@@ -77,7 +79,6 @@ function QuizPage() {
                 </p>
               </div>
             </div>
-
             <button
               type="button"
               aria-label="경고 닫기"
@@ -88,14 +89,14 @@ function QuizPage() {
             </button>
           </div>
         )}
-
+        {/* 문제리스트 */}
         <div className="mt-15">
           {quizData.questions.map((question) => (
             <QuestionItem key={question.question_id} question={question} />
           ))}
         </div>
       </section>
-
+      {/* 제출버튼 */}
       <div className="mt-50 mb-25 flex justify-center">
         <Button
           type="button"
