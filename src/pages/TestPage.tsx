@@ -6,6 +6,7 @@ import TestButton from '@/test/TestButton'
 import TestInput from '@/test/TestInput'
 import TestModal from '@/test/TestModal'
 import TestRecoverAccountModal from '@/test/TestRecoverAccountModal'
+import TestFindIdModal from '@/test/TestFindIdModal'
 
 function TestPage() {
   return (
@@ -22,6 +23,7 @@ function TestPage() {
       <TestInput />
       <TestModal />
       <TestRecoverAccountModal />
+      <TestFindIdModal />
 
       <div className="flex min-h-90 items-center justify-center">
         <ExamEmptyState />
