@@ -52,15 +52,15 @@ export default function UserMenu() {
         {showUserMenu && (
           <div className="absolute left-0 mt-6 flex -translate-x-3/4 flex-col rounded-2xl border border-gray-200 bg-white px-4 py-6 shadow-lg">
             <div className="mb-5">
-              <span className="text-ui-gray-primary block text-base font-semibold">
+              <span className="text-ui-gray-primary block text-xl font-bold">
                 {/* TODO: 유저 닉네임 */}
                 {/* {userData?.nickname} */}
                 오조오조
               </span>
-              <span className="text-ui-gray-400 block text-sm font-medium">
+              <span className="text-ui-gray-400 block text-sm font-normal">
                 {/* TODO: 유저 이메일 */}
                 {/* {userData?.email} */}
-                ozschool123@gmail.com
+                ozschool1234567@gmail.com
               </span>
             </div>
 
@@ -70,7 +70,7 @@ export default function UserMenu() {
               type="button"
               variant="sidebarTab"
               size="sidebarTab"
-              className="px-2 py-2.5 text-sm"
+              className="w-full rounded-none px-2 py-2.5 text-sm font-normal"
               onClick={handleOpenRegisterModal}
             >
               수강생 등록
@@ -81,7 +81,7 @@ export default function UserMenu() {
                 variant="sidebarTab"
                 size="sidebarTab"
                 onClick={() => '/test'}
-                className="px-2 py-2.5 text-sm"
+                className="w-full rounded-none px-2 py-2.5 text-sm font-normal"
               >
                 마이페이지
               </Button>
@@ -93,7 +93,7 @@ export default function UserMenu() {
               type="button"
               variant="sidebarTab"
               size="sidebarTab"
-              className="px-2 py-2.5 text-sm"
+              className="w-full rounded-none px-2 py-2.5 text-sm font-normal"
             >
               로그아웃
             </Button>
