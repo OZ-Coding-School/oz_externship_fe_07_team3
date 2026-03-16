@@ -1,8 +1,8 @@
 import Logo from '@/assets/images/logo-white.png'
-import KakaoIcon from '@/assets/icons/kakao.png'
-import BlogIcon from '@/assets/icons/blog.png'
-import YoutubeIcon from '@/assets/icons/youtube.png'
-import InstagramIcon from '@/assets/icons/instagram.png'
+import KakaoIcon from '@/assets/icons/footer/kakao.png'
+import BlogIcon from '@/assets/icons/footer/blog.png'
+import YoutubeIcon from '@/assets/icons/footer/youtube.png'
+import InstagramIcon from '@/assets/icons/footer/instagram.png'
 
 function Footer() {
   return (

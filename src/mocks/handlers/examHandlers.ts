@@ -1,9 +1,5 @@
 import { http, HttpResponse } from 'msw'
-import {
-  examDeployments,
-  examQuestions,
-  submissionResult,
-} from '@/mocks/data/examData'
+import { examQuestions } from '@/mocks/data/examData'
 import {
   badRequest,
   conflict,
@@ -14,29 +10,30 @@ import {
   notFound,
   unauthorized,
 } from '@/mocks/utils/response'
-
-const API_BASE = '/api/v1'
+import { API_BASE } from '@/api/api'
 
 export const examHandlers = [
+  /**
+   * GET /exams/deployments
+   * 쪽지시험 배포 목록 조회
+   */
   http.get(`${API_BASE}/exams/deployments`, ({ request }) => {
     if (!hasAuth(request)) return unauthorized()
 
     const url = new URL(request.url)
     const page = Number(url.searchParams.get('page') ?? 1)
-    const status = url.searchParams.get('status') ?? 'all'
-
-    const filtered =
-      status === 'all'
-        ? examDeployments
-        : examDeployments.filter((item) => item.exam_info.status === status)
 
     return HttpResponse.json({
       page,
       has_next: false,
-      results: filtered,
+      results: [],
     })
   }),
 
+  /**
+   * POST /exams/deployments/:deploymentId/check-code
+   * 쪽지시험 응시 코드 검증
+   */
   http.post(
     `${API_BASE}/exams/deployments/:deploymentId/check-code`,
     async ({ request, params }) => {
@@ -67,6 +64,10 @@ export const examHandlers = [
     }
   ),
 
+  /**
+   * GET /exams/deployments/:deploymentId
+   * 쪽지시험 상세 조회 (문제 목록 포함)
+   */
   http.get(
     `${API_BASE}/exams/deployments/:deploymentId`,
     ({ request, params }) => {
@@ -81,7 +82,7 @@ export const examHandlers = [
       }
 
       return HttpResponse.json({
-        exam_id: 1,
+        exam_id: 2,
         exam_name: 'TypeScript 기본 문법 테스트',
         duration_time: 30,
         elapsed_time: 0,
@@ -91,6 +92,10 @@ export const examHandlers = [
     }
   ),
 
+  /**
+   * GET /exams/deployments/:deploymentId/status
+   * 쪽지시험 응시 상태 조회
+   */
   http.get(
     `${API_BASE}/exams/deployments/:deploymentId/status`,
     ({ request, params }) => {
@@ -113,6 +118,10 @@ export const examHandlers = [
     }
   ),
 
+  /**
+   * POST /exams/submissions
+   * 쪽지시험 제출
+   */
   http.post(`${API_BASE}/exams/submissions`, async ({ request }) => {
     if (!hasAuth(request)) return unauthorized()
 
@@ -146,27 +155,8 @@ export const examHandlers = [
     return HttpResponse.json(
       {
         submission_id: 350,
-        score: 85,
-        correct_answer_count: 17,
-        redirect_url: '/exam/result/350',
       },
       { status: 201 }
     )
   }),
-
-  http.get(
-    `${API_BASE}/exams/submissions/:submissionId`,
-    ({ request, params }) => {
-      if (!hasAuth(request)) return unauthorized()
-
-      if (params.submissionId === '400') {
-        return badRequest('유효하지 않은 시험 응시 세션입니다.')
-      }
-      if (params.submissionId === '404') {
-        return notFound('해당 시험 정보를 찾을 수 없습니다.')
-      }
-
-      return HttpResponse.json(submissionResult)
-    }
-  ),
 ]
