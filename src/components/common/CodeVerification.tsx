@@ -1,5 +1,3 @@
-import { type ChangeEvent } from 'react'
-
 import Button from '@/components/ui/button'
 import Input from '@/components/ui/input'
 
@@ -8,13 +6,13 @@ type CodeVerificationProps = {
   required?: boolean
   targetInputId: string
   targetValue: string
-  onTargetChange: (e: ChangeEvent<HTMLInputElement>) => void
+  onTargetChange: (value: string) => void
   targetPlaceholder: string
   targetInputType?: 'text' | 'email'
   targetInputMode?: 'text' | 'numeric'
   verificationCodeInputId: string
   verificationCode: string
-  onVerificationCodeChange: (e: ChangeEvent<HTMLInputElement>) => void
+  onVerificationCodeChange: (value: string) => void
   verificationCodePlaceholder: string
   onSendCode: () => void
   onVerifyCode: () => void
@@ -22,16 +20,9 @@ type CodeVerificationProps = {
   isCodeVerified: boolean
   errorMessage: string
   successMessage?: string
-  timeLeft: number
+  formattedTime: string
   sendButtonText?: string
   verifyButtonText?: string
-}
-
-const formatTime = (seconds: number) => {
-  const minute = Math.floor(seconds / 60)
-  const second = seconds % 60
-
-  return `${String(minute).padStart(2, '0')}:${String(second).padStart(2, '0')}`
 }
 
 const verificationBtnClassName =
@@ -56,15 +47,14 @@ const CodeVerification = ({
   isCodeVerified,
   errorMessage,
   successMessage = '인증코드가 일치합니다.',
-  timeLeft,
+  formattedTime,
   sendButtonText = '인증코드전송',
   verifyButtonText = '인증코드확인',
 }: CodeVerificationProps) => {
   const hasError = Boolean(errorMessage)
-  const isTimerExpired = isCodeSent && timeLeft <= 0
 
   const codeBorderClass = (() => {
-    if (hasError || isTimerExpired) return 'border-other-red'
+    if (hasError) return 'border-other-red'
     if (isCodeVerified) return 'border-other-green'
     return 'border-grey-9 focus:border-btn-fill-default'
   })()
@@ -86,7 +76,7 @@ const CodeVerification = ({
             type={targetInputType}
             inputMode={targetInputMode}
             value={targetValue}
-            onChange={onTargetChange}
+            onChange={(e) => onTargetChange(e.target.value)}
             placeholder={targetPlaceholder}
             className="flex-1"
           />
@@ -110,14 +100,14 @@ const CodeVerification = ({
                 type="text"
                 inputMode="numeric"
                 value={verificationCode}
-                onChange={onVerificationCodeChange}
+                onChange={(e) => onVerificationCodeChange(e.target.value)}
                 placeholder={verificationCodePlaceholder}
-                className={`bg-grey-1 placeholder:text-grey-9 flex h-[48px] w-full rounded-[4px] border px-[16px] py-[10px] font-['Pretendard'] text-[16px] leading-[140%] tracking-[-0.03em] transition-all focus:outline-none ${isCodeSent ? 'pr-[64px]' : ''} ${codeBorderClass}`}
+                className={`bg-grey-1 placeholder:text-grey-9 flex h-[48px] w-full rounded-[4px] border px-[16px] py-[10px] font-['Pretendard'] text-[16px] leading-[140%] tracking-[-0.03em] transition-all focus:outline-none ${isCodeSent && !isCodeVerified ? 'pr-[64px]' : ''} ${codeBorderClass}`}
               />
 
-              {isCodeSent && (
+              {isCodeSent && !isCodeVerified && (
                 <span className="text-other-red absolute top-1/2 right-[16px] -translate-y-1/2 text-[14px] leading-[17px] tracking-[-0.03em]">
-                  {formatTime(timeLeft)}
+                  {formattedTime}
                 </span>
               )}
             </div>
