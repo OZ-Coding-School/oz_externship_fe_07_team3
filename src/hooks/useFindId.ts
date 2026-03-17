@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { usePhoneVerification } from '@/features/auth/hooks/usePhoneVerification'
+import { usePhoneVerification } from '@/hooks/usePhoneVerification'
 
 export type FindIdStep = 'input' | 'result'
 

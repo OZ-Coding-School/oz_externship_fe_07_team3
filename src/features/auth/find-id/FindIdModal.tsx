@@ -3,10 +3,7 @@ import CodeVerification from '@/components/common/CodeVerification'
 import Button from '@/components/ui/button'
 import Input from '@/components/ui/input'
 import Modal from '@/components/ui/modal/Modal'
-import {
-  useFindId,
-  type FindIdHandlers,
-} from '@/features/auth/find-id/useFindId'
+import { useFindId, type FindIdHandlers } from '@/hooks/useFindId'
 
 type FindIdModalProps = {
   isOpen: boolean
