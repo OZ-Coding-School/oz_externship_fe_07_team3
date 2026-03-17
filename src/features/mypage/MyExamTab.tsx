@@ -8,6 +8,7 @@ import {
   EXAM_TABS,
 } from '@/constants/examTab'
 import { Link } from 'react-router-dom'
+import { getQuizPage, getQuizResultPage } from '@/constants/routesPaths'
 
 export default function MyExamTab() {
   const [activeTab, setActiveTab] = useState<ExamTabType>('all')
@@ -24,14 +25,12 @@ export default function MyExamTab() {
       <h1 className="text-primary mb-15 text-[32px] leading-[140%] font-bold tracking-[-0.03em]">
         쪽지시험
       </h1>
-
       {/* 상단 탭 */}
       <div className="border-grey-9 border-b">
         <nav aria-label="쪽지시험 상태 탭">
           <ul className="flex gap-[30px]">
             {EXAM_TABS.map((tab) => {
               const isActive = activeTab === tab
-
               return (
                 <li
                   key={tab}
@@ -57,7 +56,6 @@ export default function MyExamTab() {
           </ul>
         </nav>
       </div>
-
       {/* 콘텐츠(시험과목) 영역 */}
       <div className="mt-6">
         <ul className="flex flex-col gap-4">
@@ -70,8 +68,9 @@ export default function MyExamTab() {
             const isDone = item.exam_info.status === 'done'
             // 아직 api data로 이동 X
             const buttonPath = isDone
-              ? `/quiz/result/${item.id}`
-              : `/quiz/${item.id}`
+              ? getQuizResultPage(item.id)
+              : getQuizPage(item.id)
+
             return (
               <li
                 key={item.id}
