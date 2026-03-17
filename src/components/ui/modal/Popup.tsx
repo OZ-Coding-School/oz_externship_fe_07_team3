@@ -47,7 +47,7 @@ export default function Popup({
       aria-modal="true"
       className={cn(
         'fixed inset-0 z-[1001] flex items-center justify-center',
-        !isNested && 'bg-black/50'
+        !isNested && 'bg-ui-gray-primary/60'
       )}
       onClick={onClose}
     >

@@ -1,17 +1,31 @@
 import { useCallback, useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
-import { usePhoneVerification } from '@/features/auth/hooks/usePhoneVerification'
+import { usePhoneVerification } from '@/hooks/usePhoneVerification'
 
 type Step = 'input' | 'reset'
 
 const PASSWORD_REGEX =
   /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{6,15}$/
 
-type UseFindPasswordParams = {
-  isOpen: boolean
+export type FindPasswordHandlers = {
+  onSendCode: (params: { email: string }) => Promise<void> | void
+  onVerifyCode: (params: { code: string }) => Promise<void> | void
+  onResetPassword: (params: {
+    email: string
+    newPassword: string
+  }) => Promise<void> | void
 }
 
-export const useFindPassword = ({ isOpen }: UseFindPasswordParams) => {
+type UseFindPasswordParams = {
+  isOpen: boolean
+  handlers: FindPasswordHandlers
+}
+
+export const useFindPassword = ({
+  isOpen,
+  handlers,
+}: UseFindPasswordParams) => {
   const [step, setStep] = useState<Step>('input')
   const [email, setEmail] = useState('')
   const [newPassword, setNewPassword] = useState('')
@@ -46,28 +60,25 @@ export const useFindPassword = ({ isOpen }: UseFindPasswordParams) => {
     }
   }, [isOpen, resetVerification])
 
-  const handleEmailChange = (value: string) => {
-    setEmail(value)
-
+  const clearFindErrorMessage = () => {
     if (findErrorMessage) {
       setFindErrorMessage('')
     }
+  }
+
+  const handleEmailChange = (value: string) => {
+    setEmail(value)
+    clearFindErrorMessage()
   }
 
   const handleNewPasswordChange = (value: string) => {
     setNewPassword(value)
-
-    if (findErrorMessage) {
-      setFindErrorMessage('')
-    }
+    clearFindErrorMessage()
   }
 
   const handleConfirmPasswordChange = (value: string) => {
     setConfirmPassword(value)
-
-    if (findErrorMessage) {
-      setFindErrorMessage('')
-    }
+    clearFindErrorMessage()
   }
 
   const validateEmail = () => {
@@ -84,43 +95,6 @@ export const useFindPassword = ({ isOpen }: UseFindPasswordParams) => {
     }
 
     return true
-  }
-
-  const handleSendCode = async () => {
-    if (!validateEmail()) {
-      return
-    }
-
-    setFindErrorMessage('')
-
-    // TODO: 인증코드 전송 API 연동
-    markCodeSent()
-  }
-
-  const handleVerifyCode = async () => {
-    if (!validateBeforeVerify()) {
-      return
-    }
-
-    // TODO: 인증코드 확인 API 연동
-    // 실패 시:
-    // setVerificationError('인증번호가 일치하지 않습니다.')
-    // return
-
-    markCodeVerified()
-  }
-
-  const handleNextStep = () => {
-    if (!validateEmail()) {
-      return
-    }
-
-    if (!validateBeforeSubmit()) {
-      return
-    }
-
-    setFindErrorMessage('')
-    setStep('reset')
   }
 
   const validatePassword = () => {
@@ -147,14 +121,76 @@ export const useFindPassword = ({ isOpen }: UseFindPasswordParams) => {
     return true
   }
 
+  const handleSendCode = async () => {
+    if (!validateEmail()) {
+      return
+    }
+
+    setFindErrorMessage('')
+
+    try {
+      await handlers.onSendCode({ email })
+      markCodeSent()
+      toast.success('전송 완료! 이메일을 확인해주세요.')
+    } catch (error) {
+      if (error instanceof Error) {
+        setFindErrorMessage(error.message)
+        return
+      }
+
+      setFindErrorMessage('인증코드 전송에 실패했습니다.')
+    }
+  }
+
+  const handleVerifyCode = async () => {
+    if (!validateBeforeVerify()) {
+      return
+    }
+
+    try {
+      await handlers.onVerifyCode({ code })
+      markCodeVerified()
+      setFindErrorMessage('')
+    } catch (error) {
+      if (error instanceof Error) {
+        setVerificationError(error.message)
+        return
+      }
+
+      setVerificationError('인증번호 확인에 실패했습니다.')
+    }
+  }
+
+  const handleNextStep = () => {
+    if (!validateEmail()) {
+      return
+    }
+
+    if (!validateBeforeSubmit()) {
+      return
+    }
+
+    setFindErrorMessage('')
+    setStep('reset')
+  }
+
   const handleResetPassword = async () => {
     if (!validatePassword()) {
       return
     }
 
-    // TODO: 비밀번호 변경 API 연동
-    setFindErrorMessage('')
-    setIsCompletePopupOpen(true)
+    try {
+      await handlers.onResetPassword({ email, newPassword })
+      setFindErrorMessage('')
+      setIsCompletePopupOpen(true)
+    } catch (error) {
+      if (error instanceof Error) {
+        setFindErrorMessage(error.message)
+        return
+      }
+
+      setFindErrorMessage('비밀번호 변경에 실패했습니다.')
+    }
   }
 
   const handleCloseCompletePopup = useCallback(() => {
@@ -182,6 +218,5 @@ export const useFindPassword = ({ isOpen }: UseFindPasswordParams) => {
     handleNextStep,
     handleResetPassword,
     handleCloseCompletePopup,
-    setVerificationError,
   }
 }

@@ -141,11 +141,20 @@ const RecoverAccountModal = ({ isOpen, onClose }: RecoverAccountModalProps) => {
         </div>
       )}
 
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        width="w-[396px]"
+        dimmed={!isCompletePopupVisible}
+      >
+        {step === 'inactive' && renderInactiveContent()}
+        {step === 'verify' && renderVerifyContent()}
+      </Modal>
+
       <Popup
         isOpen={isOpen && isCompletePopupVisible}
         onClose={closeCompletePopup}
         width="w-[396px]"
-        isNested
       >
         <div className="flex flex-col items-center gap-[10px] p-[24px] text-center">
           <div className="flex h-[24px] w-[24px] items-center justify-center rounded-full bg-[#14C786]">
@@ -170,13 +179,6 @@ const RecoverAccountModal = ({ isOpen, onClose }: RecoverAccountModalProps) => {
           </div>
         </div>
       </Popup>
-
-      <Modal isOpen={isOpen} onClose={onClose} width="w-[396px]">
-        {!isCompletePopupVisible &&
-          step === 'inactive' &&
-          renderInactiveContent()}
-        {!isCompletePopupVisible && step === 'verify' && renderVerifyContent()}
-      </Modal>
     </>
   )
 }
