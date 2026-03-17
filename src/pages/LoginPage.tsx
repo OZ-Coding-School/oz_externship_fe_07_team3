@@ -3,9 +3,11 @@ import { Link } from 'react-router-dom'
 
 import logoImg from '@/assets/images/logo.png'
 import { ROUTES_PATHS } from '@/constants/routesPaths'
-import RecoverAccountModal from '@/features/auth/login/RecoverAccountModal'
+import FindIdModal from '@/features/auth/find-id/FindIdModal'
+import type { FindIdHandlers } from '@/hooks/useFindId'
 import LoginForm from '@/features/auth/login/LoginForm'
 import SocialLoginButton from '@/features/auth/login/SocialLoginButton'
+import RecoverAccountModal from '@/features/auth/recover-account/RecoverAccountModal'
 
 type SubmitLoginParams = {
   email: string
@@ -14,8 +16,28 @@ type SubmitLoginParams = {
 
 type Provider = 'kakao' | 'naver'
 
+// TODO: API 연동 시 실제 서버 호출로 교체
+const findIdHandlers: FindIdHandlers = {
+  onSendCode: async () => {
+    throw new Error(
+      '입력한 이름과 휴대폰 번호로 등록된\n이메일이 존재하지 않습니다.'
+    )
+  },
+
+  onVerifyCode: async () => {
+    throw new Error('인증번호 확인에 실패했습니다.')
+  },
+
+  onFindId: async () => {
+    throw new Error(
+      '입력한 이름과 휴대폰 번호로 등록된\n이메일이 존재하지 않습니다.'
+    )
+  },
+}
+
 const LoginPage = () => {
   const [isRecoverModalOpen, setIsRecoverModalOpen] = useState(false)
+  const [isFindIdModalOpen, setIsFindIdModalOpen] = useState(false)
 
   const handleSocialLoginBtnClick = ({ provider }: { provider: Provider }) => {
     void provider
@@ -27,9 +49,13 @@ const LoginPage = () => {
     // TODO: 로그인 API 연동 후 탈퇴 계정 응답일 때만 복구 모달을 오픈합니다.
   }
 
-  const handleFindIdBtnClick = () => {}
+  const handleFindIdBtnClick = () => {
+    setIsFindIdModalOpen(true)
+  }
 
-  const handleFindPasswordBtnClick = () => {}
+  const handleFindPasswordBtnClick = () => {
+    // TODO: 비밀번호 찾기 모달 구현 후 연결 예정
+  }
 
   return (
     <div className="bg-ui-gray-100 min-h-screen">
@@ -59,6 +85,7 @@ const LoginPage = () => {
                 onClick={() => handleSocialLoginBtnClick({ provider: 'naver' })}
               />
             </div>
+
             <LoginForm
               onSubmit={handleLoginBtnClick}
               onFindId={handleFindIdBtnClick}
@@ -71,6 +98,16 @@ const LoginPage = () => {
       <RecoverAccountModal
         isOpen={isRecoverModalOpen}
         onClose={() => setIsRecoverModalOpen(false)}
+      />
+
+      <FindIdModal
+        isOpen={isFindIdModalOpen}
+        onClose={() => setIsFindIdModalOpen(false)}
+        onFindPassword={() => {
+          setIsFindIdModalOpen(false)
+          // TODO: 비밀번호 찾기 모달 구현 후 연결 예정
+        }}
+        handlers={findIdHandlers}
       />
     </div>
   )

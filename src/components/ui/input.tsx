@@ -8,6 +8,7 @@ const inputVariants = cva(
     'flex h-[48px] w-full rounded-[4px] border bg-grey-1 px-[16px] py-[10px] transition-all',
     'font-["Pretendard"] text-[16px] leading-[140%] tracking-[-0.03em]',
     'placeholder:text-grey-9 focus:outline-none disabled:cursor-not-allowed',
+    '[&:-webkit-autofill]:shadow-[0_0_0_1000px_white_inset] [&:-webkit-autofill]:[-webkit-text-fill-color:#121212]',
   ].join(' '),
   {
     variants: {
