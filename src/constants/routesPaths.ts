@@ -11,3 +11,10 @@ export const ROUTES_PATHS = {
   SIGNUP_PAGE: '/signup',
   MY_PAGE: '/mypage',
 }
+
+// 상수대로 사용하면서 동적경로 분리방법
+export const getQuizPage = (id: number | string) =>
+  `${ROUTES_PATHS.QUIZ_PAGE}/${id}`
+
+export const getQuizResultPage = (id: number | string) =>
+  `${ROUTES_PATHS.QUIZ_RESULT_PAGE}/${id}`
