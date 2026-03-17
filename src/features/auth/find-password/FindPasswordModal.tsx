@@ -1,0 +1,207 @@
+import { useEffect } from 'react'
+
+import FindIdIconSvg from '@/assets/icons/FindIdIcon.svg?react'
+import CheckToastIconSvg from '@/assets/icons/checkToast.svg?react'
+import CodeVerification from '@/components/common/CodeVerification'
+import Button from '@/components/ui/button'
+import Input from '@/components/ui/input'
+import Modal from '@/components/ui/modal/Modal'
+import Popup from '@/components/ui/modal/Popup'
+import { useFindPassword } from './useFindPassword'
+
+type FindPasswordModalProps = {
+  isOpen: boolean
+  onClose: () => void
+}
+
+const FindPasswordModal = ({ isOpen, onClose }: FindPasswordModalProps) => {
+  const {
+    step,
+    email,
+    newPassword,
+    confirmPassword,
+    code,
+    isCodeSent,
+    isCodeVerified,
+    codeErrorMessage,
+    findErrorMessage,
+    formattedTime,
+    isCompletePopupOpen,
+    handleEmailChange,
+    handleNewPasswordChange,
+    handleConfirmPasswordChange,
+    handleCodeChange,
+    handleSendCode,
+    handleVerifyCode,
+    handleNextStep,
+    handleResetPassword,
+    handleCloseCompletePopup,
+  } = useFindPassword({ isOpen })
+
+  useEffect(() => {
+    if (!isCompletePopupOpen) {
+      return
+    }
+
+    const timer = window.setTimeout(() => {
+      handleCloseCompletePopup()
+      onClose()
+    }, 1500)
+
+    return () => {
+      window.clearTimeout(timer)
+    }
+  }, [handleCloseCompletePopup, isCompletePopupOpen, onClose])
+
+  const renderHeader = (title: string, description: string) => {
+    return (
+      <div className="flex flex-col items-center gap-[16px] text-center">
+        <FindIdIconSvg className="h-[28px] w-[28px]" />
+
+        <div className="flex flex-col items-center gap-[12px]">
+          <h2 className="text-ui-gray-primary text-[20px] leading-[140%] font-bold tracking-[-0.03em]">
+            {title}
+          </h2>
+
+          <p className="text-ui-gray-600 text-[14px] leading-[140%] font-normal tracking-[-0.03em]">
+            {description}
+          </p>
+
+          {findErrorMessage && step === 'input' && (
+            <p className="text-other-red text-[14px] leading-[140%] font-normal tracking-[-0.03em] whitespace-pre-line">
+              {findErrorMessage}
+            </p>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  const renderInputStep = () => {
+    return (
+      <div className="flex flex-col gap-[32px] px-[24px] pb-[24px]">
+        {renderHeader('비밀번호 찾기', '이메일로 인증번호를 보내드려요.')}
+
+        <CodeVerification
+          label="이메일"
+          required
+          targetInputId="find-password-email"
+          targetValue={email}
+          onTargetChange={handleEmailChange}
+          targetPlaceholder="가입한 이메일을 입력해 주세요."
+          targetInputType="email"
+          targetInputMode="text"
+          verificationCodeInputId="find-password-code"
+          verificationCode={code}
+          onVerificationCodeChange={handleCodeChange}
+          verificationCodePlaceholder="인증번호 6자리를 입력해주세요"
+          onSendCode={handleSendCode}
+          onVerifyCode={handleVerifyCode}
+          isCodeSent={isCodeSent}
+          isCodeVerified={isCodeVerified}
+          errorMessage={codeErrorMessage}
+          successMessage="인증번호가 일치합니다."
+          formattedTime={formattedTime}
+        />
+
+        <Button
+          variant="fill"
+          size="full"
+          className="!h-[52px] !rounded-[4px] !p-0"
+          onClick={handleNextStep}
+        >
+          비밀번호 찾기
+        </Button>
+      </div>
+    )
+  }
+
+  const renderResetStep = () => {
+    return (
+      <div className="flex flex-col gap-[32px] px-[24px] pb-[24px]">
+        {renderHeader('비밀번호 재설정', '신규 비밀번호를 입력해주세요.')}
+
+        <div className="flex flex-col gap-[32px]">
+          <div className="flex flex-col gap-[16px]">
+            <div className="flex flex-wrap items-center gap-[8px]">
+              <label
+                htmlFor="find-password-new-password"
+                className="text-ui-gray-primary text-[16px] leading-[140%] font-normal tracking-[-0.03em]"
+              >
+                새 비밀번호<span className="text-other-red">*</span>
+              </label>
+
+              <span className="text-primary text-[14px] leading-[140%] font-semibold tracking-[-0.03em]">
+                6~15자의 영문 대소문자, 숫자, 특수문자 포함
+              </span>
+            </div>
+
+            <Input
+              id="find-password-new-password"
+              type="password"
+              value={newPassword}
+              onChange={(e) => handleNewPasswordChange(e.target.value)}
+              placeholder="비밀번호를 입력해주세요"
+              className="h-[48px]"
+            />
+          </div>
+
+          <div className="flex flex-col gap-[12px]">
+            <Input
+              id="find-password-confirm-password"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => handleConfirmPasswordChange(e.target.value)}
+              placeholder="비밀번호를 다시 입력해주세요"
+              className="h-[48px]"
+            />
+
+            {findErrorMessage && (
+              <p className="text-other-red text-[14px] leading-[140%] font-normal tracking-[-0.03em]">
+                {findErrorMessage}
+              </p>
+            )}
+          </div>
+        </div>
+
+        <Button
+          variant="fill"
+          size="full"
+          className="!h-[52px] !rounded-[4px] !p-0"
+          onClick={handleResetPassword}
+        >
+          확인
+        </Button>
+      </div>
+    )
+  }
+
+  return (
+    <>
+      <Modal isOpen={isOpen} onClose={onClose} width="w-[396px]">
+        {step === 'input' && renderInputStep()}
+        {step === 'reset' && renderResetStep()}
+      </Modal>
+
+      <Popup
+        isOpen={isCompletePopupOpen}
+        onClose={handleCloseCompletePopup}
+        isNested
+      >
+        <div className="flex w-[248px] flex-col items-center gap-[12px] px-[24px] py-[20px] text-center">
+          <CheckToastIconSvg className="h-[24px] w-[24px]" />
+
+          <h3 className="text-ui-gray-primary text-[20px] leading-[140%] font-bold tracking-[-0.03em]">
+            비밀번호 변경 완료!
+          </h3>
+
+          <p className="text-ui-gray-600 text-[14px] leading-[140%] font-normal tracking-[-0.03em]">
+            잠시 후 로그인 페이지로 이동합니다.
+          </p>
+        </div>
+      </Popup>
+    </>
+  )
+}
+
+export default FindPasswordModal
