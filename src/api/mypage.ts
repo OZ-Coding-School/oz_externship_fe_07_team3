@@ -6,6 +6,8 @@ import type {
 } from '@/types'
 import { api } from './api'
 import { APIS_PATHS } from '@/constants/apisPaths'
+import type { ChangePasswordRequest } from '@/types/api-request/myPageRequest'
+import type { ChangePasswordResponse } from '@/types/api-response/myPageResponse'
 
 export const getMyInfo = async () => {
   const { data } = await api.get<MyInfoResponse>(APIS_PATHS.GET_MY_INFO)
@@ -33,4 +35,15 @@ export const deleteMyAccount = async (payload: DeleteMyAccountRequest) => {
   })
 
   return response.data
+}
+
+export const postChangePassword = async (
+  payload: ChangePasswordRequest
+): Promise<ChangePasswordResponse> => {
+  const { data } = await api.post<ChangePasswordResponse>(
+    APIS_PATHS.CHANGE_PASSWORD,
+    payload
+  )
+
+  return data
 }

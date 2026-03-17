@@ -19,3 +19,8 @@ export type DeleteMyAccountRequest = {
   reason: DeleteUserReason
   reason_detail: string
 }
+
+export type ChangePasswordRequest = {
+  old_password: string
+  new_password: string
+}

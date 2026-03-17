@@ -29,3 +29,15 @@ export type EnrolledCourseResponse = {
     thumbnail_img_url: string
   }
 }
+
+export type ChangePasswordResponse = {
+  detail: string
+}
+
+export type ErrorDetailResponse =
+  | {
+      error_detail: string
+    }
+  | {
+      error_detail: Record<string, string[]>
+    }
