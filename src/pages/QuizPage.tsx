@@ -19,6 +19,41 @@ function QuizPage() {
   const handleBack = () => {
     navigate('/mypage?tab=exam')
   }
+
+  // 페이지 첫 진입시 전체화면
+  useEffect(() => {
+    const enterFullscreen = async () => {
+      try {
+        if (!document.fullscreenElement) {
+          await document.documentElement.requestFullscreen()
+        }
+      } catch (error) {
+        console.error('전체화면 진입 실패', error)
+      }
+    }
+    enterFullscreen()
+    return () => {
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {})
+      }
+    }
+  }, [])
+
+  // 시험 데이터 호출
+  useEffect(() => {
+    const fetchQuizData = async () => {
+      try {
+        const data = await getExamQuestions(1)
+        setQuizData(data)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    fetchQuizData()
+  }, [])
+
+  // 시험 제출
   const handleSubmit = useCallback(async () => {
     if (isSubmitting) {
       return
@@ -36,19 +71,6 @@ function QuizPage() {
     initialSeconds: 30 * 60,
     onTimeEnd: handleSubmit,
   })
-
-  useEffect(() => {
-    const fetchQuizData = async () => {
-      try {
-        const data = await getExamQuestions(1)
-        setQuizData(data)
-      } catch (error) {
-        console.error(error)
-      }
-    }
-
-    fetchQuizData()
-  }, [])
 
   if (!quizData) {
     return <div>로딩중...</div>
