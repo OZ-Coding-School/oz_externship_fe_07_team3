@@ -3,7 +3,7 @@ import AlertIcon from '@/assets/icons/quiz/alert-circle.png'
 import CloseIcon from '@/assets/icons/quiz/icon-x-gray.svg?react'
 import QuizHeader from '@/components/layout/quiz/QuizHeader'
 import Button from '@/components/ui/button'
-import { getQuizResultPage } from '@/constants/routesPaths'
+import { getMyPageTab, getQuizResultPage } from '@/constants/routesPaths'
 import { QuestionItem } from '@/features/quiz'
 import { useQuizTimer } from '@/hooks/useQuizTimer'
 import type { QuizData } from '@/types/quizpage-type/question'
@@ -17,7 +17,7 @@ function QuizPage() {
 
   const navigate = useNavigate()
   const handleBack = () => {
-    navigate('/mypage?tab=exam')
+    navigate(getMyPageTab('exam'))
   }
 
   // 페이지 첫 진입시 전체화면
