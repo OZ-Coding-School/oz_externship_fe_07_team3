@@ -28,18 +28,31 @@ const inputVariants = cva(
 export type InputProps = Omit<React.ComponentProps<'input'>, 'size'> &
   VariantProps<typeof inputVariants>
 
-const Input = ({ className, status, type, disabled, ...props }: InputProps) => {
+const Input = ({
+  className,
+  status,
+  type,
+  disabled,
+  onChange,
+  ...props
+}: InputProps) => {
   const [showPassword, setShowPassword] = React.useState(false)
+  const [hasValue, setHasValue] = React.useState(false)
 
   const isPassword = type === 'password'
   const currentStatus = disabled ? 'disabled' : status
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setHasValue(e.target.value.length > 0)
+    onChange?.(e)
+  }
 
   const renderRightElement = () => {
     if (currentStatus === 'success') {
       return <Check size={20} className="text-other-green" />
     }
 
-    if (isPassword) {
+    if (isPassword && hasValue) {
       return (
         <button
           type="button"
@@ -63,6 +76,7 @@ const Input = ({ className, status, type, disabled, ...props }: InputProps) => {
         <input
           type={isPassword && showPassword ? 'text' : type}
           disabled={disabled}
+          onChange={handleChange}
           className={cn(
             inputVariants({ status: currentStatus }),
             rightElement && 'pr-[48px]',
