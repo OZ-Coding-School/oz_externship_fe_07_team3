@@ -208,7 +208,6 @@ const FindPasswordModal = ({
         isOpen={isOpen && isCompletePopupOpen}
         onClose={handleCloseCompletePopup}
         width="w-[396px]"
-        isNested
       >
         <div className="flex h-[128px] w-full items-center p-[24px]">
           <div className="flex w-full flex-col items-center gap-[16px] text-center">
