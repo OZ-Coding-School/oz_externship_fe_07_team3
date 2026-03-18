@@ -11,4 +11,6 @@ export const APIS_PATHS = {
   PHONE_VERIFICATION_SEND: '/accounts/phone-verification/send',
   PHONE_VERIFICATION_VERIFY: '/accounts/phone-verification/verify',
   CHANGE_PHONE: '/accounts/change-phone',
+  PRESIGNED_URL: '/questions/presigned-url',
+  PROFILE_IMAGE: '/accounts/me/profile-image',
 }
