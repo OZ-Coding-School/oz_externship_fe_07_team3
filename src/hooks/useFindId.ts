@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 import { usePhoneVerification } from '@/hooks/usePhoneVerification'
 
@@ -101,6 +102,7 @@ export const useFindId = ({ isOpen, handlers }: UseFindIdParams) => {
     try {
       await handlers.onSendCode({ name, phone })
       markCodeSent()
+      toast.success('전송 완료! 인증번호를 확인해주세요.')
     } catch (error) {
       if (error instanceof Error) {
         setFindErrorMessage(error.message)
@@ -119,6 +121,7 @@ export const useFindId = ({ isOpen, handlers }: UseFindIdParams) => {
     try {
       await handlers.onVerifyCode({ code })
       markCodeVerified()
+      setFindErrorMessage('')
     } catch (error) {
       if (error instanceof Error) {
         setVerificationError(error.message)

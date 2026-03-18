@@ -9,6 +9,7 @@ type ModalProps = {
   children: ReactNode
   width?: string
   shadow?: boolean
+  dimmed?: boolean
 }
 
 export default function Modal({
@@ -17,6 +18,7 @@ export default function Modal({
   children,
   width,
   shadow = true,
+  dimmed = true,
 }: ModalProps) {
   useModalScroll(isOpen)
 
@@ -26,7 +28,10 @@ export default function Modal({
     <div
       role="dialog"
       aria-modal="true"
-      className="bg-ui-gray-primary/60 fixed inset-0 z-[1000] grid place-items-center p-4"
+      className={cn(
+        'fixed inset-0 z-[1000] grid place-items-center p-4',
+        dimmed ? 'bg-ui-gray-primary/60' : 'bg-transparent'
+      )}
     >
       <div
         className={cn(

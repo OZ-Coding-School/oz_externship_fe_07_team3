@@ -4,10 +4,12 @@ import { Link } from 'react-router-dom'
 import logoImg from '@/assets/images/logo.png'
 import { ROUTES_PATHS } from '@/constants/routesPaths'
 import FindIdModal from '@/features/auth/find-id/FindIdModal'
-import type { FindIdHandlers } from '@/hooks/useFindId'
+import FindPasswordModal from '@/features/auth/find-password/FindPasswordModal'
 import LoginForm from '@/features/auth/login/LoginForm'
 import SocialLoginButton from '@/features/auth/login/SocialLoginButton'
 import RecoverAccountModal from '@/features/auth/recover-account/RecoverAccountModal'
+import type { FindIdHandlers } from '@/hooks/useFindId'
+import type { FindPasswordHandlers } from '@/hooks/useFindPassword'
 
 type SubmitLoginParams = {
   email: string
@@ -16,7 +18,8 @@ type SubmitLoginParams = {
 
 type Provider = 'kakao' | 'naver'
 
-// TODO: API 연동 시 실제 서버 호출로 교체
+type OpenModal = 'none' | 'recover' | 'findId' | 'findPassword'
+
 const findIdHandlers: FindIdHandlers = {
   onSendCode: async () => {
     throw new Error(
@@ -35,9 +38,22 @@ const findIdHandlers: FindIdHandlers = {
   },
 }
 
+const findPasswordHandlers: FindPasswordHandlers = {
+  onSendCode: async () => {
+    throw new Error('등록된 이메일이 아닙니다.')
+  },
+
+  onVerifyCode: async () => {
+    throw new Error('인증번호가 일치하지 않습니다.')
+  },
+
+  onResetPassword: async () => {
+    // TODO: 비밀번호 재설정 API 연동
+  },
+}
+
 const LoginPage = () => {
-  const [isRecoverModalOpen, setIsRecoverModalOpen] = useState(false)
-  const [isFindIdModalOpen, setIsFindIdModalOpen] = useState(false)
+  const [openModal, setOpenModal] = useState<OpenModal>('none')
 
   const handleSocialLoginBtnClick = ({ provider }: { provider: Provider }) => {
     void provider
@@ -50,11 +66,11 @@ const LoginPage = () => {
   }
 
   const handleFindIdBtnClick = () => {
-    setIsFindIdModalOpen(true)
+    setOpenModal('findId')
   }
 
   const handleFindPasswordBtnClick = () => {
-    // TODO: 비밀번호 찾기 모달 구현 후 연결 예정
+    setOpenModal('findPassword')
   }
 
   return (
@@ -96,18 +112,21 @@ const LoginPage = () => {
       </div>
 
       <RecoverAccountModal
-        isOpen={isRecoverModalOpen}
-        onClose={() => setIsRecoverModalOpen(false)}
+        isOpen={openModal === 'recover'}
+        onClose={() => setOpenModal('none')}
       />
 
       <FindIdModal
-        isOpen={isFindIdModalOpen}
-        onClose={() => setIsFindIdModalOpen(false)}
-        onFindPassword={() => {
-          setIsFindIdModalOpen(false)
-          // TODO: 비밀번호 찾기 모달 구현 후 연결 예정
-        }}
+        isOpen={openModal === 'findId'}
+        onClose={() => setOpenModal('none')}
+        onFindPassword={() => setOpenModal('findPassword')}
         handlers={findIdHandlers}
+      />
+
+      <FindPasswordModal
+        isOpen={openModal === 'findPassword'}
+        onClose={() => setOpenModal('none')}
+        handlers={findPasswordHandlers}
       />
     </div>
   )
