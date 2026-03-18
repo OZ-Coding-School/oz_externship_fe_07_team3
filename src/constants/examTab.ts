@@ -2,6 +2,12 @@ import type { ExamTabType } from '@/types/mypage-type/examDeployment'
 
 export const EXAM_TABS: ExamTabType[] = ['all', 'done', 'pending']
 
+export const EMPTY_TITLE_MAP = {
+  all: '아직 응시할 시험이 없어요.',
+  done: '아직 응시 완료한 시험이 없어요.',
+  pending: '현재 응시할 시험이 없어요.',
+} as const
+
 export const EXAM_TAB_LABEL = {
   all: '전체보기',
   done: '응시완료',
