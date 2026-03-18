@@ -1,6 +1,7 @@
 import ExamEmptyState from '@/components/exam/ExamEmptyState'
 import { EXAM_SUBJECT_ICON_MAP } from '@/constants/examSubjectIconMap'
 import {
+  EMPTY_TITLE_MAP,
   EXAM_STATUS_META,
   EXAM_TAB_LABEL,
   EXAM_TABS,
@@ -11,6 +12,12 @@ import { mockExamDeploymentList } from '@/mocks/data/mockExamDeploymentList'
 import type { ExamTabType } from '@/types/mypage-type/examDeployment'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+
+const emptyTitleMap = {
+  all: '아직 응시할 시험이 없어요.',
+  done: '아직 응시 완료한 시험이 없어요.',
+  pending: '현재 응시할 시험이 없어요.',
+} as const
 
 export default function MyExamTab() {
   const [activeTab, setActiveTab] = useState<ExamTabType>('all')
@@ -60,7 +67,7 @@ export default function MyExamTab() {
       {/* 콘텐츠(시험과목) 영역 */}
       <div className="mt-6">
         {filteredExamList.length === 0 ? (
-          <ExamEmptyState />
+          <ExamEmptyState title={EMPTY_TITLE_MAP[activeTab]} />
         ) : (
           <ul className="flex flex-col gap-4">
             {filteredExamList.map((item) => {
