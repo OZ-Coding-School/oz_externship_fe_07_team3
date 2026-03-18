@@ -9,11 +9,12 @@ import { useChangePhone } from '@/api/queries/useChangePhone'
 import { toast } from 'sonner'
 import PhoneVerifySection from './PhoneVerifySection'
 import { cn } from '@/lib/utils'
+import { useUploadProfileImage } from '@/api/queries/useProfileImage'
 
 type MyInfoEditProps = {
   myInfo: MyInfoResponse
   isPending: boolean
-  onSubmit: (payload: UpdateMyInfoRequest) => void
+  onSubmit: (payload: UpdateMyInfoRequest) => Promise<void> | void
 }
 
 export default function MyInfoEdit({
@@ -31,6 +32,7 @@ export default function MyInfoEdit({
   )
 
   const changePhoneMutation = useChangePhone()
+  const uploadProfileImageMutation = useUploadProfileImage()
 
   useEffect(() => {
     setNickname(myInfo.nickname ?? '')
@@ -74,9 +76,16 @@ export default function MyInfoEdit({
   const { fileInputRef, preview, handleOpenFilePicker, handleChangeImage } =
     useImageUpload({
       initialPreview: myInfo.profile_img_url ?? null,
-      onChange: (file, previewUrl) => {
-        if (!file || !previewUrl) {
+      onChange: async (file) => {
+        if (!file) {
           return
+        }
+
+        try {
+          await uploadProfileImageMutation.mutateAsync(file)
+          toast.success('프로필 사진이 등록되었습니다.')
+        } catch {
+          toast.error('프로필 사진 업로드에 실패했습니다.')
         }
 
         /**
@@ -91,6 +100,10 @@ export default function MyInfoEdit({
          */
       },
     })
+  const isSubmitDisabled =
+    isPending ||
+    changePhoneMutation.isPending ||
+    uploadProfileImageMutation.isPending
 
   return (
     <section className="w-186">
@@ -101,11 +114,13 @@ export default function MyInfoEdit({
           type="button"
           variant="fill"
           size="md"
-          disabled={isPending}
+          disabled={isSubmitDisabled}
           onClick={handleSubmit}
           className="h-12 w-32 rounded-lg px-9 py-5 text-base font-semibold"
         >
-          {isPending ? '저장중...' : '저장하기'}
+          {isPending || changePhoneMutation.isPending
+            ? '저장중...'
+            : '저장하기'}
         </Button>
       </div>
 
@@ -135,6 +150,7 @@ export default function MyInfoEdit({
                 type="button"
                 onClick={handleOpenFilePicker}
                 aria-label="프로필 이미지 선택"
+                disabled={uploadProfileImageMutation.isPending}
                 className="absolute right-0 bottom-0 flex h-15 w-15 cursor-pointer items-center justify-center rounded-full border border-gray-200 bg-white text-sm shadow-sm"
               >
                 <img
