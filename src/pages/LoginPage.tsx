@@ -18,6 +18,8 @@ type SubmitLoginParams = {
 
 type Provider = 'kakao' | 'naver'
 
+type OpenModal = 'none' | 'recover' | 'findId' | 'findPassword'
+
 const findIdHandlers: FindIdHandlers = {
   onSendCode: async () => {
     throw new Error(
@@ -46,14 +48,12 @@ const findPasswordHandlers: FindPasswordHandlers = {
   },
 
   onResetPassword: async () => {
-    return
+    // TODO: 비밀번호 재설정 API 연동
   },
 }
 
 const LoginPage = () => {
-  const [isRecoverModalOpen, setIsRecoverModalOpen] = useState(false)
-  const [isFindIdModalOpen, setIsFindIdModalOpen] = useState(false)
-  const [isFindPasswordModalOpen, setIsFindPasswordModalOpen] = useState(false)
+  const [openModal, setOpenModal] = useState<OpenModal>('none')
 
   const handleSocialLoginBtnClick = ({ provider }: { provider: Provider }) => {
     void provider
@@ -66,11 +66,11 @@ const LoginPage = () => {
   }
 
   const handleFindIdBtnClick = () => {
-    setIsFindIdModalOpen(true)
+    setOpenModal('findId')
   }
 
   const handleFindPasswordBtnClick = () => {
-    setIsFindPasswordModalOpen(true)
+    setOpenModal('findPassword')
   }
 
   return (
@@ -112,23 +112,20 @@ const LoginPage = () => {
       </div>
 
       <RecoverAccountModal
-        isOpen={isRecoverModalOpen}
-        onClose={() => setIsRecoverModalOpen(false)}
+        isOpen={openModal === 'recover'}
+        onClose={() => setOpenModal('none')}
       />
 
       <FindIdModal
-        isOpen={isFindIdModalOpen}
-        onClose={() => setIsFindIdModalOpen(false)}
-        onFindPassword={() => {
-          setIsFindIdModalOpen(false)
-          setIsFindPasswordModalOpen(true)
-        }}
+        isOpen={openModal === 'findId'}
+        onClose={() => setOpenModal('none')}
+        onFindPassword={() => setOpenModal('findPassword')}
         handlers={findIdHandlers}
       />
 
       <FindPasswordModal
-        isOpen={isFindPasswordModalOpen}
-        onClose={() => setIsFindPasswordModalOpen(false)}
+        isOpen={openModal === 'findPassword'}
+        onClose={() => setOpenModal('none')}
         handlers={findPasswordHandlers}
       />
     </div>
