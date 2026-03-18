@@ -13,12 +13,6 @@ import type { ExamTabType } from '@/types/mypage-type/examDeployment'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-const emptyTitleMap = {
-  all: '아직 응시할 시험이 없어요.',
-  done: '아직 응시 완료한 시험이 없어요.',
-  pending: '현재 응시할 시험이 없어요.',
-} as const
-
 export default function MyExamTab() {
   const [activeTab, setActiveTab] = useState<ExamTabType>('all')
   const filteredExamList = mockExamDeploymentList.results.filter((item) => {
