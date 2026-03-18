@@ -18,3 +18,6 @@ export const getQuizPage = (id: number | string) =>
 
 export const getQuizResultPage = (id: number | string) =>
   `${ROUTES_PATHS.QUIZ_RESULT_PAGE}/${id}`
+
+export const getMyPageTab = (tab: string) =>
+  `${ROUTES_PATHS.MY_PAGE}?tab=${tab}`

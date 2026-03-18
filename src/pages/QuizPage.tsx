@@ -3,7 +3,7 @@ import AlertIcon from '@/assets/icons/quiz/alert-circle.png'
 import CloseIcon from '@/assets/icons/quiz/icon-x-gray.svg?react'
 import QuizHeader from '@/components/layout/quiz/QuizHeader'
 import Button from '@/components/ui/button'
-import { getQuizResultPage } from '@/constants/routesPaths'
+import { getMyPageTab, getQuizResultPage } from '@/constants/routesPaths'
 import { QuestionItem } from '@/features/quiz'
 import { useQuizTimer } from '@/hooks/useQuizTimer'
 import type { QuizData } from '@/types/quizpage-type/question'
@@ -17,8 +17,43 @@ function QuizPage() {
 
   const navigate = useNavigate()
   const handleBack = () => {
-    navigate('/mypage?tab=exam')
+    navigate(getMyPageTab('exam'))
   }
+
+  // 페이지 첫 진입시 전체화면
+  useEffect(() => {
+    const enterFullscreen = async () => {
+      try {
+        if (!document.fullscreenElement) {
+          await document.documentElement.requestFullscreen()
+        }
+      } catch (error) {
+        console.error('전체화면 진입 실패', error)
+      }
+    }
+    enterFullscreen()
+    return () => {
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {})
+      }
+    }
+  }, [])
+
+  // 시험 데이터 호출
+  useEffect(() => {
+    const fetchQuizData = async () => {
+      try {
+        const data = await getExamQuestions(1)
+        setQuizData(data)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    fetchQuizData()
+  }, [])
+
+  // 시험 제출
   const handleSubmit = useCallback(async () => {
     if (isSubmitting) {
       return
@@ -36,19 +71,6 @@ function QuizPage() {
     initialSeconds: 30 * 60,
     onTimeEnd: handleSubmit,
   })
-
-  useEffect(() => {
-    const fetchQuizData = async () => {
-      try {
-        const data = await getExamQuestions(1)
-        setQuizData(data)
-      } catch (error) {
-        console.error(error)
-      }
-    }
-
-    fetchQuizData()
-  }, [])
 
   if (!quizData) {
     return <div>로딩중...</div>
