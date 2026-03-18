@@ -8,6 +8,14 @@ import { api } from './api'
 import { APIS_PATHS } from '@/constants/apisPaths'
 import type { ChangePasswordRequest } from '@/types/api-request/myPageRequest'
 import type { ChangePasswordResponse } from '@/types/api-response/myPageResponse'
+import type {
+  ChangePhoneRequest,
+  SendPhoneVerificationCodeRequest,
+  VerifyPhoneVerificationCodeRequest,
+  ChangePhoneResponse,
+  SendPhoneVerificationCodeResponse,
+  VerifyPhoneVerificationCodeResponse,
+} from '@/types/mypage-type/verifyPhone'
 
 export const getMyInfo = async () => {
   const { data } = await api.get<MyInfoResponse>(APIS_PATHS.GET_MY_INFO)
@@ -42,6 +50,37 @@ export const postChangePassword = async (
 ): Promise<ChangePasswordResponse> => {
   const { data } = await api.post<ChangePasswordResponse>(
     APIS_PATHS.CHANGE_PASSWORD,
+    payload
+  )
+
+  return data
+}
+
+export const sendPhoneVerificationCode = async (
+  payload: SendPhoneVerificationCodeRequest
+) => {
+  const { data } = await api.post<SendPhoneVerificationCodeResponse>(
+    APIS_PATHS.PHONE_VERIFICATION_SEND,
+    payload
+  )
+
+  return data
+}
+
+export const verifyPhoneVerificationCode = async (
+  payload: VerifyPhoneVerificationCodeRequest
+) => {
+  const { data } = await api.post<VerifyPhoneVerificationCodeResponse>(
+    APIS_PATHS.PHONE_VERIFICATION_VERIFY,
+    payload
+  )
+
+  return data
+}
+
+export const changePhone = async (payload: ChangePhoneRequest) => {
+  const { data } = await api.patch<ChangePhoneResponse>(
+    APIS_PATHS.CHANGE_PHONE,
     payload
   )
 
