@@ -23,9 +23,9 @@ function App() {
       </Route>
 
       <Route element={<QuizLayout />}>
-        <Route path={ROUTES_PATHS.QUIZ_PAGE} element={<QuizPage />} />
+        <Route path={`${ROUTES_PATHS.QUIZ_PAGE}/:id`} element={<QuizPage />} />
         <Route
-          path={ROUTES_PATHS.QUIZ_RESULT_PAGE}
+          path={`${ROUTES_PATHS.QUIZ_RESULT_PAGE}/:id`}
           element={<QuizResultPage />}
         />
       </Route>
