@@ -1,6 +1,6 @@
-import type { QuizHeaderProps } from '@/types/quizpage-type/quizHeader'
 import ArrowIcon from '@/assets/icons/quiz/arrow-left.svg?react'
 import WarningIcon from '@/assets/icons/quiz/warningIcon.svg?react'
+import type { QuizHeaderProps } from '@/types/quizpage-type/quizHeader'
 
 export default function QuizHeader({
   variant,

@@ -8,5 +8,4 @@ export type QuizHeaderProps = {
   timeText?: string
   misconductCount?: number
   onBack?: () => void
-  onMisconductClick?: () => void
 }
