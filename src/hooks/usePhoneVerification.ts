@@ -101,5 +101,6 @@ export const usePhoneVerification = () => {
     setVerificationError,
     validateBeforeVerify,
     validateBeforeSubmit,
+    isExpired,
   }
 }

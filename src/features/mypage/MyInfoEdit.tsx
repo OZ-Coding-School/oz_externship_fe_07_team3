@@ -4,6 +4,11 @@ import { useEffect, useState } from 'react'
 import profileViewIcon from '../../assets/icons/profileViewIcon.svg'
 import cameraIcon from '../../assets/icons/cameraIcon.svg'
 import InputField from '@/components/common/InputField'
+import { useImageUpload } from '@/hooks/useImageUpload'
+import { useChangePhone } from '@/api/queries/useChangePhone'
+import { toast } from 'sonner'
+import PhoneVerifySection from './PhoneVerifySection'
+import { cn } from '@/lib/utils'
 
 type MyInfoEditProps = {
   myInfo: MyInfoResponse
@@ -20,22 +25,72 @@ export default function MyInfoEdit({
   const [name, setName] = useState('')
   const [birthday, setBirthday] = useState('')
   const [gender, setGender] = useState<'M' | 'F'>('M')
+  const [phoneNumber, setPhoneNumber] = useState(myInfo.phone_number ?? '')
+  const [verifiedPhoneToken, setVerifiedPhoneToken] = useState<string | null>(
+    null
+  )
+
+  const changePhoneMutation = useChangePhone()
 
   useEffect(() => {
     setNickname(myInfo.nickname ?? '')
     setName(myInfo.name ?? '')
     setBirthday(myInfo.birthday ?? '')
     setGender(myInfo.gender ?? 'M')
+    setPhoneNumber(myInfo.phone_number ?? '')
+    setVerifiedPhoneToken(null)
   }, [myInfo])
 
-  const handleSubmit = () => {
-    onSubmit({
-      nickname,
-      name,
-      birthday,
-      gender,
-    })
+  const handleSubmit = async () => {
+    try {
+      /**
+       * 휴대전화 번호를 변경한 경우에만 change-phone API 호출
+       * 토큰이 없으면 기존 번호 유지로 간주
+       */
+      if (verifiedPhoneToken) {
+        const result = await changePhoneMutation.mutateAsync({
+          phone_verify_token: {
+            token: verifiedPhoneToken,
+          },
+        })
+
+        setPhoneNumber(result.phone_number)
+        setVerifiedPhoneToken(null)
+      }
+
+      await onSubmit({
+        nickname,
+        name,
+        birthday,
+        gender,
+      })
+
+      toast.success('내 정보가 저장되었습니다.')
+    } catch {
+      toast.error('저장에 실패했습니다.')
+    }
   }
+
+  const { fileInputRef, preview, handleOpenFilePicker, handleChangeImage } =
+    useImageUpload({
+      initialPreview: myInfo.profile_img_url ?? null,
+      onChange: (file, previewUrl) => {
+        if (!file || !previewUrl) {
+          return
+        }
+
+        /**
+         * TODO:
+         * 백엔드 업로드 방식 확정 후 여기에 연결
+         * 1. Presigned URL 발급
+         * 2. S3 업로드
+         * 3. 저장 API 호출
+         * 또는 direct upload 방식 연결
+         * console.log('선택된 파일:', file)
+         * console.log('로컬 미리보기 URL:', previewUrl)
+         */
+      },
+    })
 
   return (
     <section className="w-186">
@@ -60,31 +115,44 @@ export default function MyInfoEdit({
         </h2>
 
         <div className="flex flex-col items-center">
-          <div className="relative mb-13 h-46 w-46 rounded-full bg-violet-100">
-            {myInfo.profile_img_url ? (
-              <img
-                src={myInfo.profile_img_url}
-                alt="프로필 이미지"
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div>
+          <div className="relative mb-13 h-46 w-46">
+            <div className="h-full w-full overflow-hidden rounded-full bg-violet-100">
+              {preview ? (
+                <img
+                  src={preview}
+                  alt="프로필 이미지"
+                  className="h-full w-full object-cover"
+                />
+              ) : (
                 <img
                   src={profileViewIcon}
                   alt="프로필 이미지"
                   className="h-full w-full"
                 />
-              </div>
-            )}
+              )}
 
-            <button
-              type="button"
-              className="absolute right-0 bottom-0 flex h-15 w-15 cursor-pointer items-center justify-center rounded-full border border-gray-200 bg-white text-sm shadow-sm"
-            >
-              <img src={cameraIcon} alt="카메라 이미지" className="h-13 w-13" />
-            </button>
+              <button
+                type="button"
+                onClick={handleOpenFilePicker}
+                aria-label="프로필 이미지 선택"
+                className="absolute right-0 bottom-0 flex h-15 w-15 cursor-pointer items-center justify-center rounded-full border border-gray-200 bg-white text-sm shadow-sm"
+              >
+                <img
+                  src={cameraIcon}
+                  alt="카메라 이미지"
+                  className="h-13 w-13"
+                />
+              </button>
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/jpg"
+                className="hidden"
+                onChange={handleChangeImage}
+              />
+            </div>
           </div>
-
           <div className="w-full space-y-10">
             <div>
               <div className="flex gap-3">
@@ -92,7 +160,7 @@ export default function MyInfoEdit({
                   id="nickname"
                   value={nickname}
                   status="default"
-                  helperText="*한글 8자, 영문 및 숫자 16자까지 혼용할 수 있어요"
+                  helperText="*한글 2자, 영문 및 숫자 10자까지 혼용할 수 있어요"
                   onChange={(e) => setNickname(e.target.value)}
                   placeholder={nickname}
                   label="닉네임"
@@ -139,28 +207,14 @@ export default function MyInfoEdit({
                 placeholder={name}
                 label="이름"
                 fieldLabelClassName="text-ui-gray-primary block text-base font-normal"
-                disabled
               />
             </div>
 
-            <div className="flex gap-3">
-              <InputField
-                id="phone_number"
-                value={myInfo.phone_number}
-                label="휴대전화"
-                fieldLabelClassName="text-ui-gray-primary block text-base font-normal"
-              />
-              <div className="flex items-end">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="px-7 py-4"
-                >
-                  변경
-                </Button>
-              </div>
-            </div>
+            <PhoneVerifySection
+              phoneNumber={phoneNumber}
+              onChangePhoneNumber={setPhoneNumber}
+              onVerifiedTokenChange={setVerifiedPhoneToken}
+            />
 
             <div>
               <p className="text-ui-gray-primary mb-2 block text-base font-normal">
@@ -171,25 +225,25 @@ export default function MyInfoEdit({
                 <button
                   type="button"
                   onClick={() => setGender('M')}
-                  disabled
-                  className={`flex h-10.5 min-w-20 items-center justify-center rounded-[100px] border px-7 py-4 text-base font-semibold ${
+                  className={cn(
+                    `flex h-10.5 min-w-20 cursor-pointer items-center justify-center rounded-full border px-7 py-4 text-base font-semibold`,
                     gender === 'M'
                       ? 'border-primary-default bg-primary-100 text-primary-default'
                       : 'bg-ui-gray-200 border-ui-gray-250 text-ui-gray-600'
-                  }`}
+                  )}
                 >
                   남
                 </button>
 
                 <button
                   type="button"
-                  disabled
                   onClick={() => setGender('F')}
-                  className={`flex h-10.5 min-w-20 items-center justify-center rounded-full border px-7 py-4 text-base font-semibold ${
+                  className={cn(
+                    'flex h-10.5 min-w-20 cursor-pointer items-center justify-center rounded-full border px-7 py-4 text-base font-semibold',
                     gender === 'F'
                       ? 'border-violet-500 bg-violet-50 text-violet-600'
                       : 'bg-ui-gray-200 border-ui-gray-250 text-ui-gray-600'
-                  }`}
+                  )}
                 >
                   여
                 </button>
@@ -202,7 +256,6 @@ export default function MyInfoEdit({
               onChange={(e) => setBirthday(e.target.value)}
               placeholder={birthday}
               label="생년월일"
-              disabled
               fieldLabelClassName="text-ui-gray-primary block text-base font-normal"
             />
           </div>
