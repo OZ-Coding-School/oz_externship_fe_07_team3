@@ -5,6 +5,7 @@ import { usePhoneVerification } from '@/hooks/usePhoneVerification'
 
 type Step = 'input' | 'reset'
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const PASSWORD_REGEX =
   /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{6,15}$/
 
@@ -30,7 +31,8 @@ export const useFindPassword = ({
   const [email, setEmail] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [findErrorMessage, setFindErrorMessage] = useState('')
+  const [inputErrorMessage, setInputErrorMessage] = useState('')
+  const [resetErrorMessage, setResetErrorMessage] = useState('')
   const [isCompletePopupOpen, setIsCompletePopupOpen] = useState(false)
 
   const {
@@ -54,43 +56,48 @@ export const useFindPassword = ({
       setEmail('')
       setNewPassword('')
       setConfirmPassword('')
-      setFindErrorMessage('')
+      setInputErrorMessage('')
+      setResetErrorMessage('')
       setIsCompletePopupOpen(false)
       resetVerification()
     }
   }, [isOpen, resetVerification])
 
-  const clearFindErrorMessage = () => {
-    if (findErrorMessage) {
-      setFindErrorMessage('')
+  const clearInputErrorMessage = () => {
+    if (inputErrorMessage) {
+      setInputErrorMessage('')
+    }
+  }
+
+  const clearResetErrorMessage = () => {
+    if (resetErrorMessage) {
+      setResetErrorMessage('')
     }
   }
 
   const handleEmailChange = (value: string) => {
     setEmail(value)
-    clearFindErrorMessage()
+    clearInputErrorMessage()
   }
 
   const handleNewPasswordChange = (value: string) => {
     setNewPassword(value)
-    clearFindErrorMessage()
+    clearResetErrorMessage()
   }
 
   const handleConfirmPasswordChange = (value: string) => {
     setConfirmPassword(value)
-    clearFindErrorMessage()
+    clearResetErrorMessage()
   }
 
   const validateEmail = () => {
     if (!email.trim()) {
-      setFindErrorMessage('이메일을 입력해주세요.')
+      setInputErrorMessage('이메일을 입력해주세요.')
       return false
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-    if (!emailRegex.test(email.trim())) {
-      setFindErrorMessage('올바른 이메일 형식을 입력해주세요.')
+    if (!EMAIL_REGEX.test(email.trim())) {
+      setInputErrorMessage('올바른 이메일 형식을 입력해주세요.')
       return false
     }
 
@@ -99,22 +106,22 @@ export const useFindPassword = ({
 
   const validatePassword = () => {
     if (!newPassword.trim()) {
-      setFindErrorMessage('새 비밀번호를 입력해주세요.')
+      setResetErrorMessage('새 비밀번호를 입력해주세요.')
       return false
     }
 
     if (!confirmPassword.trim()) {
-      setFindErrorMessage('비밀번호를 다시 입력해주세요.')
+      setResetErrorMessage('비밀번호를 다시 입력해주세요.')
       return false
     }
 
     if (!PASSWORD_REGEX.test(newPassword)) {
-      setFindErrorMessage('비밀번호 형식이 올바르지 않습니다.')
+      setResetErrorMessage('비밀번호 형식이 올바르지 않습니다.')
       return false
     }
 
     if (newPassword !== confirmPassword) {
-      setFindErrorMessage('비밀번호가 일치하지 않습니다.')
+      setResetErrorMessage('비밀번호가 일치하지 않습니다.')
       return false
     }
 
@@ -126,7 +133,7 @@ export const useFindPassword = ({
       return
     }
 
-    setFindErrorMessage('')
+    setInputErrorMessage('')
 
     try {
       await handlers.onSendCode({ email })
@@ -134,11 +141,11 @@ export const useFindPassword = ({
       toast.success('전송 완료! 이메일을 확인해주세요.')
     } catch (error) {
       if (error instanceof Error) {
-        setFindErrorMessage(error.message)
+        setInputErrorMessage(error.message)
         return
       }
 
-      setFindErrorMessage('인증코드 전송에 실패했습니다.')
+      setInputErrorMessage('인증코드 전송에 실패했습니다.')
     }
   }
 
@@ -150,7 +157,7 @@ export const useFindPassword = ({
     try {
       await handlers.onVerifyCode({ code })
       markCodeVerified()
-      setFindErrorMessage('')
+      setInputErrorMessage('')
     } catch (error) {
       if (error instanceof Error) {
         setVerificationError(error.message)
@@ -170,7 +177,7 @@ export const useFindPassword = ({
       return
     }
 
-    setFindErrorMessage('')
+    setInputErrorMessage('')
     setStep('reset')
   }
 
@@ -181,15 +188,15 @@ export const useFindPassword = ({
 
     try {
       await handlers.onResetPassword({ email, newPassword })
-      setFindErrorMessage('')
+      setResetErrorMessage('')
       setIsCompletePopupOpen(true)
     } catch (error) {
       if (error instanceof Error) {
-        setFindErrorMessage(error.message)
+        setResetErrorMessage(error.message)
         return
       }
 
-      setFindErrorMessage('비밀번호 변경에 실패했습니다.')
+      setResetErrorMessage('비밀번호 변경에 실패했습니다.')
     }
   }
 
@@ -206,7 +213,8 @@ export const useFindPassword = ({
     isCodeSent,
     isCodeVerified,
     codeErrorMessage,
-    findErrorMessage,
+    inputErrorMessage,
+    resetErrorMessage,
     formattedTime,
     isCompletePopupOpen,
     handleEmailChange,

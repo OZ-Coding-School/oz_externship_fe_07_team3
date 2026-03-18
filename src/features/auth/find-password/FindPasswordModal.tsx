@@ -31,7 +31,8 @@ const FindPasswordModal = ({
     isCodeSent,
     isCodeVerified,
     codeErrorMessage,
-    findErrorMessage,
+    inputErrorMessage,
+    resetErrorMessage,
     formattedTime,
     isCompletePopupOpen,
     handleEmailChange,
@@ -69,9 +70,9 @@ const FindPasswordModal = ({
               비밀번호 찾기
             </h2>
 
-            {findErrorMessage && (
+            {inputErrorMessage && (
               <p className="text-other-red text-[14px] leading-[140%] tracking-[-0.03em] whitespace-pre-line">
-                {findErrorMessage}
+                {inputErrorMessage}
               </p>
             )}
           </div>
@@ -170,9 +171,9 @@ const FindPasswordModal = ({
                 className="h-[48px]"
               />
 
-              {findErrorMessage && (
+              {resetErrorMessage && (
                 <p className="text-other-red text-[14px] leading-[140%] font-normal tracking-[-0.03em]">
-                  {findErrorMessage}
+                  {resetErrorMessage}
                 </p>
               )}
             </div>
@@ -207,6 +208,7 @@ const FindPasswordModal = ({
         isOpen={isOpen && isCompletePopupOpen}
         onClose={handleCloseCompletePopup}
         width="w-[396px]"
+        isNested
       >
         <div className="flex h-[128px] w-full items-center p-[24px]">
           <div className="flex w-full flex-col items-center gap-[16px] text-center">
