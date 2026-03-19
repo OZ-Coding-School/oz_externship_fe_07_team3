@@ -1,6 +1,6 @@
+import { QUESTION_TYPE_LABEL } from '@/constants/exam/quiz'
 import type { QuizQuestion } from '@/types/quizpage-type/question'
 import QuestionRenderer from './QuestionRenderer'
-import { QUESTION_TYPE_LABEL } from '@/constants/quiz'
 
 type QuestionItemProps = {
   question: QuizQuestion

@@ -1,11 +1,11 @@
 import ExamEmptyState from '@/components/exam/ExamEmptyState'
-import { EXAM_SUBJECT_ICON_MAP } from '@/constants/examSubjectIconMap'
+import { EXAM_SUBJECT_ICON_MAP } from '@/constants/exam/examSubjectIconMap'
 import {
   EMPTY_TITLE_MAP,
   EXAM_STATUS_META,
   EXAM_TAB_LABEL,
   EXAM_TABS,
-} from '@/constants/examTab'
+} from '@/constants/exam/examTab'
 import { getQuizPage, getQuizResultPage } from '@/constants/routesPaths'
 import { cn } from '@/lib/utils'
 import { mockExamDeploymentList } from '@/mocks/data/mockExamDeploymentList'

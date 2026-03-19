@@ -1,7 +1,7 @@
-import { type ReactNode } from 'react'
-import { createPortal } from 'react-dom'
 import { useModalScroll } from '@/hooks/useModalScroll'
 import { cn } from '@/lib/utils'
+import { type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 
 type ModalProps = {
   isOpen: boolean
@@ -10,6 +10,7 @@ type ModalProps = {
   width?: string
   shadow?: boolean
   dimmed?: boolean
+  closeButtonWrapperClassName?: string
 }
 
 export default function Modal({
@@ -19,10 +20,13 @@ export default function Modal({
   width,
   shadow = true,
   dimmed = true,
+  closeButtonWrapperClassName,
 }: ModalProps) {
   useModalScroll(isOpen)
 
-  if (!isOpen) return null
+  if (!isOpen) {
+    return null
+  }
 
   return createPortal(
     <div
@@ -41,7 +45,12 @@ export default function Modal({
         )}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-end px-[24px] pt-[20px]">
+        <div
+          className={cn(
+            'flex justify-end px-[24px] pt-[20px]',
+            closeButtonWrapperClassName
+          )}
+        >
           <button
             type="button"
             onClick={onClose}
