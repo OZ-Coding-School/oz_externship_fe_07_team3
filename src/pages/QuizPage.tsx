@@ -104,11 +104,12 @@ function QuizPage() {
         subText="집중해서 천천히, 끝까지 응시해 주세요. 응원할게요💪"
         timeText={`${formattedTime} 뒤에 끝나요`}
         onBack={handleBack}
+        cheatingCount={cheatingCount}
       />
 
-      <section className="px-90 pt-32">
+      <section className="px-90 pt-8">
         {isWarningVisible && (
-          <div className="bg-primary-100 mt-8 flex w-full items-start justify-between rounded-[8px] px-5 py-6">
+          <div className="bg-primary-100 flex w-full items-start justify-between rounded-[8px] px-5 py-6">
             <div className="flex gap-3">
               <img className="h-6 w-6 shrink-0" src={AlertIcon} alt="" />
               <div>
@@ -138,7 +139,7 @@ function QuizPage() {
           ))}
         </div>
       </section>
-
+      {/* 제출하기 */}
       <div className="mt-50 mb-25 flex justify-center">
         <Button
           type="button"
@@ -149,9 +150,10 @@ function QuizPage() {
           제출하기
         </Button>
       </div>
-
+      {/* 부정행위 모달 */}
       <CheatingModal
         isOpen={isCheatingModalOpen}
+        cheatingCount={cheatingCount}
         message={cheatingMessage}
         onClose={handleCheatingModalClose}
         onConfirm={handleCheatingModalConfirm}

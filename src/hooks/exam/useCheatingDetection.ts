@@ -12,7 +12,7 @@ export function useCheatingDetection({
 }: UseCheatingDetectionParams) {
   const [cheatingCount, setCheatingCount] = useState(0)
   const [isCheatingModalOpen, setIsCheatingModalOpen] = useState(false)
-  const [cheatingMessage, setCheatingMessage] = useState('')
+  const [cheatingMessage, setCheatingMessage] = useState<readonly string[]>([])
   const [isTerminated, setIsTerminated] = useState(false)
   const lastCheatingDetectedAt = useRef(0)
 
@@ -41,21 +41,13 @@ export function useCheatingDetection({
     })
   }, [isSubmitting, isTerminated])
 
-  // 3회 이상 막기
-  const handleCheatingModalClose = useCallback(() => {
-    if (cheatingCount >= 3) {
-      return
-    }
-    setIsCheatingModalOpen(false)
-  }, [cheatingCount])
-
   // 3회 이상시 퇴장
-  const handleCheatingModalConfirm = useCallback(async () => {
+  const handleCheatingModalAction = useCallback(async () => {
     setIsCheatingModalOpen(false)
-    if (cheatingCount < 3) {
-      return
+
+    if (cheatingCount >= 3) {
+      await onTerminate()
     }
-    await onTerminate()
   }, [cheatingCount, onTerminate])
 
   // 부정행위 감지 기능 (탭전환)
@@ -91,7 +83,7 @@ export function useCheatingDetection({
     isCheatingModalOpen,
     cheatingMessage,
     isTerminated,
-    handleCheatingModalClose,
-    handleCheatingModalConfirm,
+    handleCheatingModalClose: handleCheatingModalAction,
+    handleCheatingModalConfirm: handleCheatingModalAction,
   }
 }
