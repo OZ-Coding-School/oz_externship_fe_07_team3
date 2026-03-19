@@ -2,10 +2,10 @@
 export type QuizHeaderVariant = 'inProgress' | 'result'
 
 export type QuizHeaderProps = {
-  variant: QuizHeaderVariant
+  variant: 'default' | 'inProgress'
   title: string
   subText?: string
   timeText?: string
-  misconductCount?: number
   onBack?: () => void
+  cheatingCount?: number
 }
