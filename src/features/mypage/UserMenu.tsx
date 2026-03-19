@@ -50,7 +50,7 @@ export default function UserMenu() {
         </button>
 
         {showUserMenu && (
-          <div className="absolute left-0 mt-6 flex -translate-x-3/4 flex-col rounded-2xl border border-gray-200 bg-white px-4 py-6 shadow-lg">
+          <div className="absolute left-40 mt-6 flex -translate-x-3/4 flex-col rounded-2xl border border-gray-200 bg-white px-4 py-6 shadow-lg">
             <div className="mb-5">
               <span className="text-ui-gray-primary block text-xl font-bold">
                 {/* TODO: 유저 닉네임 */}
@@ -75,7 +75,10 @@ export default function UserMenu() {
             >
               수강생 등록
             </Button>
-            <Link to={ROUTES_PATHS.MY_PAGE}>
+            <Link
+              to={ROUTES_PATHS.MY_PAGE}
+              onClick={() => setShowUserMenu(false)}
+            >
               <Button
                 type="button"
                 variant="sidebarTab"
@@ -94,6 +97,7 @@ export default function UserMenu() {
               variant="sidebarTab"
               size="sidebarTab"
               className="w-full rounded-none px-2 py-2.5 text-sm font-normal"
+              onClick={() => setShowUserMenu(false)}
             >
               로그아웃
             </Button>
