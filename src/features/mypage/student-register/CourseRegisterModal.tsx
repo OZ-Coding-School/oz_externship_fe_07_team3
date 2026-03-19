@@ -3,6 +3,7 @@ import Button from '@/components/ui/button'
 import Modal from '@/components/ui/modal/Modal'
 import type { SelectedCourseRegisterValue } from '@/types/api-response/course'
 import CourseRegisterFields from './CourseRegisterFields'
+import { cn } from '@/lib/utils'
 
 type CourseRegisterModalProps = {
   isOpen: boolean
@@ -22,6 +23,8 @@ export default function CourseRegisterModal({
   onChange,
   onImageError,
 }: CourseRegisterModalProps) {
+  const isSubmitDisabled = !value.courseId || !value.cohortId
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="w-99 p-6">
@@ -52,8 +55,12 @@ export default function CourseRegisterModal({
           type="button"
           variant="fill"
           size="full"
-          className="h-13 rounded-lg p-2 text-base font-normal"
+          className={cn(
+            `h-13 rounded-lg p-2 text-base font-normal`,
+            isSubmitDisabled ? 'cursor-not-allowed' : ''
+          )}
           onClick={onClose}
+          disabled={isSubmitDisabled}
         >
           등록하기
         </Button>
