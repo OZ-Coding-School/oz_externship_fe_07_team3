@@ -1,8 +1,7 @@
-// components/quiz/types.ts
 export type QuizHeaderVariant = 'inProgress' | 'result'
 
 export type QuizHeaderProps = {
-  variant: 'default' | 'inProgress'
+  variant: QuizHeaderVariant
   title: string
   subText?: string
   timeText?: string
