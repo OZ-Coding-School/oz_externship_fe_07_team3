@@ -1,7 +1,7 @@
-import { useState } from 'react'
-import { cn } from '@/lib/utils'
 import Check from '@/assets/icons/quiz/check-gray.svg?react'
-import { OPTION_META } from '@/constants/quiz'
+import { OPTION_META } from '@/constants/exam/quiz'
+import { cn } from '@/lib/utils'
+import { useState } from 'react'
 
 type OXQuestionProps = {
   options: string[]

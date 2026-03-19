@@ -1,11 +1,13 @@
 import { getExamQuestions } from '@/api/exam'
 import AlertIcon from '@/assets/icons/quiz/alert-circle.png'
 import CloseIcon from '@/assets/icons/quiz/icon-x-gray.svg?react'
+import CheatingModal from '@/components/exam/CheatingModal'
 import QuizHeader from '@/components/layout/quiz/QuizHeader'
 import Button from '@/components/ui/button'
 import { getMyPageTab, getQuizResultPage } from '@/constants/routesPaths'
 import { QuestionItem } from '@/features/quiz'
-import { useQuizTimer } from '@/hooks/useQuizTimer'
+import { useCheatingDetection } from '@/hooks/exam/useCheatingDetection'
+import { useQuizTimer } from '@/hooks/exam/useQuizTimer'
 import type { QuizData } from '@/types/quizpage-type/question'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -16,11 +18,42 @@ function QuizPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const navigate = useNavigate()
+
+  const handleSubmit = useCallback(async () => {
+    if (isSubmitting) {
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      navigate(getQuizResultPage(1))
+    } catch (error) {
+      console.error(error)
+      setIsSubmitting(false)
+    }
+  }, [isSubmitting, navigate])
+
+  const {
+    cheatingCount,
+    isCheatingModalOpen,
+    cheatingMessage,
+    isTerminated,
+    handleCheatingModalClose,
+    handleCheatingModalConfirm,
+  } = useCheatingDetection({
+    isSubmitting,
+    onTerminate: handleSubmit,
+  })
+
   const handleBack = () => {
+    if (isTerminated) {
+      return
+    }
     navigate(getMyPageTab('exam'))
   }
 
-  // 페이지 첫 진입시 전체화면
+  // 진입시 전체화면
   useEffect(() => {
     const enterFullscreen = async () => {
       try {
@@ -39,7 +72,7 @@ function QuizPage() {
     }
   }, [])
 
-  // 시험 데이터 호출
+  // 데이터 호출
   useEffect(() => {
     const fetchQuizData = async () => {
       try {
@@ -49,36 +82,22 @@ function QuizPage() {
         console.error(error)
       }
     }
-
     fetchQuizData()
   }, [])
 
-  // 시험 제출
-  const handleSubmit = useCallback(async () => {
-    if (isSubmitting) {
-      return
-    }
-    setIsSubmitting(true)
-    try {
-      navigate(getQuizResultPage(1))
-    } catch (error) {
-      console.error(error)
-      setIsSubmitting(false)
-    }
-  }, [isSubmitting, navigate])
-
+  // 타이머 호출
   const { formattedTime } = useQuizTimer({
     initialSeconds: 30 * 60,
     onTimeEnd: handleSubmit,
   })
 
+  // 로딩 가드
   if (!quizData) {
     return <div>로딩중...</div>
   }
 
   return (
     <>
-      {/* 헤더 */}
       <QuizHeader
         variant="inProgress"
         title="TypeScript 쪽지시험"
@@ -86,7 +105,7 @@ function QuizPage() {
         timeText={`${formattedTime} 뒤에 끝나요`}
         onBack={handleBack}
       />
-      {/* 경고창 */}
+
       <section className="px-90 pt-32">
         {isWarningVisible && (
           <div className="bg-primary-100 mt-8 flex w-full items-start justify-between rounded-[8px] px-5 py-6">
@@ -112,14 +131,14 @@ function QuizPage() {
             </button>
           </div>
         )}
-        {/* 문제리스트 */}
+
         <div className="mt-15">
           {quizData.questions.map((question) => (
             <QuestionItem key={question.question_id} question={question} />
           ))}
         </div>
       </section>
-      {/* 제출버튼 */}
+
       <div className="mt-50 mb-25 flex justify-center">
         <Button
           type="button"
@@ -130,6 +149,13 @@ function QuizPage() {
           제출하기
         </Button>
       </div>
+
+      <CheatingModal
+        isOpen={isCheatingModalOpen}
+        message={cheatingMessage}
+        onClose={handleCheatingModalClose}
+        onConfirm={handleCheatingModalConfirm}
+      />
     </>
   )
 }

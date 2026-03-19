@@ -1,4 +1,4 @@
-import useOrderingDragAndDrop from '@/hooks/useOrderingDragAndDrop'
+import useOrderingDragAndDrop from '@/hooks/exam/useOrderingDragAndDrop'
 
 type OrderingQuestionProps = {
   options: string[]
