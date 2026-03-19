@@ -10,6 +10,7 @@ import { toast } from 'sonner'
 import PhoneVerifySection from './PhoneVerifySection'
 import { cn } from '@/lib/utils'
 import { useUploadProfileImage } from '@/api/queries/useProfileImage'
+import NicknameFieldWithCheck from './NickNameFieldWithCheck'
 
 type MyInfoEditProps = {
   myInfo: MyInfoResponse
@@ -23,6 +24,8 @@ export default function MyInfoEdit({
   onSubmit,
 }: MyInfoEditProps) {
   const [nickname, setNickname] = useState('')
+  const [isNicknameVerified, setIsNicknameVerified] = useState(false)
+
   const [name, setName] = useState('')
   const [birthday, setBirthday] = useState('')
   const [gender, setGender] = useState<'M' | 'F'>('M')
@@ -36,6 +39,7 @@ export default function MyInfoEdit({
 
   useEffect(() => {
     setNickname(myInfo.nickname ?? '')
+    setIsNicknameVerified(true)
     setName(myInfo.name ?? '')
     setBirthday(myInfo.birthday ?? '')
     setGender(myInfo.gender ?? 'M')
@@ -45,6 +49,16 @@ export default function MyInfoEdit({
 
   const handleSubmit = async () => {
     try {
+      /**
+       * 닉네임이 변경된 경우 중복확인 완료 여부 체크
+       */
+      const isNicknameChanged =
+        nickname.trim() !== (myInfo.nickname ?? '').trim()
+
+      if (isNicknameChanged && !isNicknameVerified) {
+        toast.error('닉네임 중복확인을 완료해주세요.')
+        return
+      }
       /**
        * 휴대전화 번호를 변경한 경우에만 change-phone API 호출
        * 토큰이 없으면 기존 번호 유지로 간주
@@ -170,7 +184,22 @@ export default function MyInfoEdit({
             </div>
           </div>
           <div className="w-full space-y-10">
-            <div>
+            {/**
+             * 닉네임 인풋과 버튼 컴포넌트
+             * id - 인풋 id
+             * value - 인풋 value
+             * initialValue - 초기 value 값
+             * onChange - 인풋값이 변경 상태
+             * onVerifiedChange - 중복 확인 상태
+             */}
+            <NicknameFieldWithCheck
+              id="myInfo-nickname"
+              value={nickname}
+              initialValue={myInfo.nickname ?? ''}
+              onChange={setNickname}
+              onVerifiedChange={setIsNicknameVerified}
+            />
+            {/* <div>
               <div className="flex gap-3">
                 <InputField
                   id="nickname"
@@ -194,7 +223,7 @@ export default function MyInfoEdit({
                   </Button>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             <div className="mb-25 flex flex-col gap-2">
               <InputField
