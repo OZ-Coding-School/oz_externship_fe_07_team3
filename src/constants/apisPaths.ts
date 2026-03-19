@@ -13,4 +13,5 @@ export const APIS_PATHS = {
   CHANGE_PHONE: '/accounts/change-phone',
   PRESIGNED_URL: '/questions/presigned-url',
   PROFILE_IMAGE: '/accounts/me/profile-image',
+  CHECK_NICKNAME: '/accounts/check-nickname',
 }
