@@ -1,10 +1,28 @@
+import type { AnswerValue } from '@/types/answer-type/answer'
+
 type FillBlankQuestionProps = {
   prompt: string
   answerInput: string[]
+  value: AnswerValue
+  onChange: (answer: AnswerValue) => void
 }
 
-function FillBlankQuestion({ prompt, answerInput }: FillBlankQuestionProps) {
+function FillBlankQuestion({
+  prompt,
+  answerInput,
+  value,
+  onChange,
+}: FillBlankQuestionProps) {
   const highlightedPrompt = prompt.split(/(\([A-Z]\)\s*_{2,})/g)
+  const answers = Array.isArray(value)
+    ? value
+    : new Array(answerInput.length).fill('')
+
+  const handleChangeBlank = (targetIndex: number, inputValue: string) => {
+    const nextAnswers = [...answers]
+    nextAnswers[targetIndex] = inputValue
+    onChange(nextAnswers)
+  }
 
   return (
     <div>
@@ -23,17 +41,19 @@ function FillBlankQuestion({ prompt, answerInput }: FillBlankQuestionProps) {
       </div>
 
       <div className="flex flex-col gap-3">
-        {answerInput.map((value, index) => (
+        {answerInput.map((_, index) => (
           <div
             key={index}
             className="flex h-12 w-162 items-center rounded-[4px] bg-gray-100 px-4"
           >
             <span className="text-ui-gray-primary mr-3 text-xl font-bold">
-              {/* 인덱스를 알파벳순서로  */}
               {String.fromCharCode(65 + index)}
             </span>
             <input
-              defaultValue={value}
+              value={answers[index] ?? ''}
+              onChange={(event) => {
+                handleChangeBlank(index, event.target.value)
+              }}
               placeholder="정답을 입력해 주세요."
               className="placeholder:text-ui-gray-tertiary text-ui-gray-primary w-full bg-transparent text-base outline-none"
             />

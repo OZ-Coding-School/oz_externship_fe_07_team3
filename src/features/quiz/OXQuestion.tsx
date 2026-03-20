@@ -1,15 +1,15 @@
 import Check from '@/assets/icons/quiz/check-gray.svg?react'
 import { OPTION_META } from '@/constants/exam/quiz'
 import { cn } from '@/lib/utils'
-import { useState } from 'react'
+import type { AnswerValue } from '@/types/answer-type/answer'
 
 type OXQuestionProps = {
   options: string[]
+  value: AnswerValue
+  onChange: (answer: AnswerValue) => void
 }
 
-function OXQuestion({ options }: OXQuestionProps) {
-  const [selectedOption, setSelectedOption] = useState<string>('')
-
+function OXQuestion({ options, value, onChange }: OXQuestionProps) {
   return (
     <fieldset className="mt-4">
       <legend className="sr-only">OX 선택</legend>
@@ -22,7 +22,7 @@ function OXQuestion({ options }: OXQuestionProps) {
             return null
           }
 
-          const isSelected = selectedOption === option
+          const isSelected = value === option
           const Icon = meta.Icon
 
           return (
@@ -38,7 +38,7 @@ function OXQuestion({ options }: OXQuestionProps) {
                   name="ox-question"
                   value={option}
                   checked={isSelected}
-                  onChange={() => setSelectedOption(option)}
+                  onChange={() => onChange(option)}
                   className="sr-only"
                 />
 

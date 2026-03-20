@@ -1,20 +1,26 @@
-import { useState } from 'react'
 import CheckActive from '@/assets/icons/quiz/check-active.svg?react'
 import CheckDefault from '@/assets/icons/quiz/check-default.svg?react'
+import type { AnswerValue } from '@/types/answer-type/answer'
 
 type MultipleChoiceQuestionProps = {
   options: string[]
+  value: AnswerValue
+  onChange: (answer: AnswerValue) => void
 }
 
-function MultipleChoiceQuestion({ options }: MultipleChoiceQuestionProps) {
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([])
+function MultipleChoiceQuestion({
+  options,
+  value,
+  onChange,
+}: MultipleChoiceQuestionProps) {
+  const selectedOptions = Array.isArray(value) ? value : []
 
   const handleToggleOption = (option: string) => {
-    setSelectedOptions((prev) =>
-      prev.includes(option)
-        ? prev.filter((item) => item !== option)
-        : [...prev, option]
-    )
+    const nextSelectedOptions = selectedOptions.includes(option)
+      ? selectedOptions.filter((item) => item !== option)
+      : [...selectedOptions, option]
+
+    onChange(nextSelectedOptions)
   }
 
   return (
