@@ -1,7 +1,7 @@
 import { getExamQuestions } from '@/api/exam'
-import AlertIcon from '@/assets/icons/quiz/alert-circle.png'
-import CloseIcon from '@/assets/icons/quiz/icon-x-gray.svg?react'
 import CheatingModal from '@/components/exam/CheatingModal'
+import ExamTerminatedModal from '@/components/exam/ExamTerminatedModal'
+import ExamWarning from '@/components/exam/ExamWarning'
 import QuizHeader from '@/components/layout/quiz/QuizHeader'
 import Button from '@/components/ui/button'
 import { getMyPageTab, getQuizResultPage } from '@/constants/routesPaths'
@@ -27,11 +27,9 @@ function QuizPage() {
     if (answer === null) {
       return false
     }
-
     if (typeof answer === 'string') {
       return answer.trim().length > 0
     }
-
     if (Array.isArray(answer)) {
       return (
         answer.length > 0 &&
@@ -39,16 +37,13 @@ function QuizPage() {
           if (typeof item === 'string') {
             return item.trim().length > 0
           }
-
           return true
         })
       )
     }
-
     if (typeof answer === 'boolean') {
       return true
     }
-
     return true
   }, [])
 
@@ -56,7 +51,6 @@ function QuizPage() {
     if (!quizData) {
       return false
     }
-
     return quizData.questions.every((question) =>
       isAnswered(answers[question.question_id] ?? null)
     )
@@ -77,16 +71,13 @@ function QuizPage() {
       if (isSubmitting) {
         return
       }
-
       if (!quizData) {
         return
       }
-
       if (!force && !isAllQuestionsAnswered) {
         toast.error('모든 문제를 풀어야 제출할 수 있습니다.')
         return
       }
-
       setIsSubmitting(true)
 
       try {
@@ -107,16 +98,15 @@ function QuizPage() {
     handleCheatingModalConfirm,
   } = useCheatingDetection({
     isSubmitting,
-    onTerminate: () => handleSubmit(true),
+    onTerminate: async () => {},
   })
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     if (isTerminated) {
       return
     }
-
     navigate(getMyPageTab('exam'))
-  }
+  }, [isTerminated, navigate])
 
   useEffect(() => {
     const enterFullscreen = async () => {
@@ -128,9 +118,7 @@ function QuizPage() {
         console.error('전체화면 진입 실패', error)
       }
     }
-
     enterFullscreen()
-
     return () => {
       if (document.fullscreenElement) {
         document.exitFullscreen().catch(() => {})
@@ -148,13 +136,14 @@ function QuizPage() {
         setIsError(true)
       }
     }
-
     fetchQuizData()
   }, [])
 
   const { formattedTime } = useQuizTimer({
     initialSeconds: 30 * 60,
-    onTimeEnd: () => handleSubmit(true),
+    onTimeEnd: () => {
+      void handleSubmit(true)
+    },
   })
 
   if (isError) {
@@ -177,34 +166,10 @@ function QuizPage() {
       />
 
       <section className="px-90 pt-8">
-        {isWarningVisible && (
-          <div className="bg-primary-100 flex w-full items-start justify-between rounded-[8px] px-5 py-6">
-            <div className="flex gap-3">
-              <img
-                className="h-6 w-6 shrink-0"
-                src={AlertIcon}
-                alt="경고 아이콘"
-              />
-              <div>
-                <strong className="block text-base font-semibold">
-                  시험에만 집중해 주세요
-                </strong>
-                <p className="mt-1 text-sm leading-[140%] font-normal">
-                  탭이나 창을 이동하면 부정행위로 처리돼 시험이 중단될 수
-                  있어요. 안정적인 환경에서 시험을 이어가 주세요.
-                </p>
-              </div>
-            </div>
-            <button
-              type="button"
-              aria-label="경고 닫기"
-              onClick={() => setIsWarningVisible(false)}
-              className="ml-4 shrink-0 cursor-pointer"
-            >
-              <CloseIcon className="h-3 w-3 text-[#0F172A]" />
-            </button>
-          </div>
-        )}
+        <ExamWarning
+          isVisible={isWarningVisible}
+          onClose={() => setIsWarningVisible(false)}
+        />
 
         <div className="mt-15">
           {quizData.questions.map((question) => (
@@ -223,7 +188,9 @@ function QuizPage() {
       <div className="mt-50 mb-25 flex justify-center">
         <Button
           type="button"
-          onClick={() => handleSubmit()}
+          onClick={() => {
+            void handleSubmit()
+          }}
           disabled={isSubmitting || !isAllQuestionsAnswered}
           className="text-primary-100 border-primary-600 w-auto rounded-[4px] bg-[#721AE3] px-7 py-6.25"
         >
@@ -237,6 +204,11 @@ function QuizPage() {
         message={cheatingMessage}
         onClose={handleCheatingModalClose}
         onConfirm={handleCheatingModalConfirm}
+      />
+
+      <ExamTerminatedModal
+        isOpen={isTerminated}
+        onConfirm={() => navigate(getMyPageTab('exam'))}
       />
     </>
   )
