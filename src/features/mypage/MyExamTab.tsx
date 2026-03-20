@@ -89,11 +89,12 @@ export default function MyExamTab() {
                         setActiveTab(tab)
                       }}
                       aria-pressed={isActive}
-                      className={`cursor-pointer border-b-2 p-4 ${
+                      className={cn(
+                        'cursor-pointer border-b-2 p-4',
                         isActive
                           ? 'border-[#721AE3] text-[#721AE3]'
                           : 'border-transparent text-gray-400 hover:text-[#721AE3]'
-                      }`}
+                      )}
                     >
                       {EXAM_TAB_LABEL[tab]}
                     </button>
@@ -121,7 +122,11 @@ export default function MyExamTab() {
                     key={item.id}
                     className="flex items-center gap-4 rounded-lg border px-8 py-7"
                   >
-                    <img src={subjectIcon} alt="" className="h-12 w-12" />
+                    <img
+                      src={subjectIcon}
+                      alt={`${item.exam.subject.title} 과목 아이콘`}
+                      className="h-12 w-12"
+                    />
 
                     <div className="flex-1 flex-col">
                       <div className="mb-2 flex items-center gap-3">
@@ -180,7 +185,9 @@ export default function MyExamTab() {
         questionCount={selectedExam?.question_count ?? 0}
         timeLimit={selectedExam?.duration_time ?? 20}
         imageSrc={modalImageSrc}
-        imageAlt={selectedExam?.exam.subject.title ?? ''}
+        imageAlt={
+          selectedExam ? `${selectedExam.exam.subject.title} 과목 아이콘` : ''
+        }
         onClose={handleCloseEntryCodeModal}
         onConfirm={handleConfirmEntryCode}
       />
