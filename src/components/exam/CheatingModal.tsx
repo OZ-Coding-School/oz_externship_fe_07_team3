@@ -37,7 +37,7 @@ function CheatingModal({
 
         <div>
           {message.map((line) => (
-            <p key={line} className="m-0">
+            <p key={line} className="m-0 text-[14px] text-gray-700">
               {line}
             </p>
           ))}
