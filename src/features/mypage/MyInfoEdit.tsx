@@ -11,11 +11,19 @@ import PhoneVerifySection from './PhoneVerifySection'
 import { cn } from '@/lib/utils'
 import { useUploadProfileImage } from '@/api/queries/useProfileImage'
 import NicknameFieldWithCheck from './NickNameFieldWithCheck'
+import {
+  formatBirthdayInput,
+  updateMyInfoFormSchema,
+} from '@/schemas/updateMyInfoSchema'
+import {
+  parseUpdateMyInfoError,
+  type MyInfoFieldErrors,
+} from '@/utils/parseUpdateMyInfoError'
 
 type MyInfoEditProps = {
   myInfo: MyInfoResponse
   isPending: boolean
-  onSubmit: (payload: UpdateMyInfoRequest) => Promise<void> | void
+  onSubmit: (payload: UpdateMyInfoRequest) => Promise<void>
 }
 
 export default function MyInfoEdit({
@@ -23,16 +31,17 @@ export default function MyInfoEdit({
   isPending,
   onSubmit,
 }: MyInfoEditProps) {
-  const [nickname, setNickname] = useState('')
+  const [nickname, setNickname] = useState(myInfo.nickname ?? '')
   const [isNicknameVerified, setIsNicknameVerified] = useState(false)
 
-  const [name, setName] = useState('')
-  const [birthday, setBirthday] = useState('')
-  const [gender, setGender] = useState<'M' | 'F'>('M')
+  const [name, setName] = useState(myInfo.name ?? '')
+  const [birthday, setBirthday] = useState(myInfo.birthday ?? '')
+  const [gender, setGender] = useState<'M' | 'F'>(myInfo.gender ?? 'M')
   const [phoneNumber, setPhoneNumber] = useState(myInfo.phone_number ?? '')
   const [verifiedPhoneToken, setVerifiedPhoneToken] = useState<string | null>(
     null
   )
+  const [errors, setErrors] = useState<MyInfoFieldErrors>({})
 
   const changePhoneMutation = useChangePhone()
   const uploadProfileImageMutation = useUploadProfileImage()
@@ -45,10 +54,31 @@ export default function MyInfoEdit({
     setGender(myInfo.gender ?? 'M')
     setPhoneNumber(myInfo.phone_number ?? '')
     setVerifiedPhoneToken(null)
+    setErrors({})
   }, [myInfo])
 
   const handleSubmit = async () => {
     try {
+      const parsed = updateMyInfoFormSchema.safeParse({
+        nickname,
+        name,
+        birthday,
+        gender,
+      })
+
+      if (!parsed.success) {
+        const fieldErrors = parsed.error.flatten().fieldErrors
+
+        setErrors({
+          nickname: fieldErrors.nickname?.[0],
+          name: fieldErrors.name?.[0],
+          birthday: fieldErrors.birthday?.[0],
+          gender: fieldErrors.gender?.[0],
+        })
+
+        toast.error('입력값을 다시 확인해주세요.')
+        return
+      }
       /**
        * 닉네임이 변경된 경우 중복확인 완료 여부 체크
        */
@@ -56,6 +86,10 @@ export default function MyInfoEdit({
         nickname.trim() !== (myInfo.nickname ?? '').trim()
 
       if (isNicknameChanged && !isNicknameVerified) {
+        setErrors((prev) => ({
+          ...prev,
+          nickname: '닉네임 중복확인을 완료해주세요.',
+        }))
         toast.error('닉네임 중복확인을 완료해주세요.')
         return
       }
@@ -73,17 +107,29 @@ export default function MyInfoEdit({
         setPhoneNumber(result.phone_number)
         setVerifiedPhoneToken(null)
       }
+      setErrors({})
 
       await onSubmit({
-        nickname,
-        name,
-        birthday,
-        gender,
+        nickname: parsed.data.nickname.trim(),
+        name: parsed.data.name.trim(),
+        birthday: parsed.data.birthday,
+        gender: parsed.data.gender,
       })
 
       toast.success('내 정보가 저장되었습니다.')
-    } catch {
-      toast.error('저장에 실패했습니다.')
+    } catch (error) {
+      const parsedError = parseUpdateMyInfoError(error)
+
+      if (
+        parsedError.nickname ||
+        parsedError.name ||
+        parsedError.birthday ||
+        parsedError.gender
+      ) {
+        setErrors(parsedError)
+      }
+
+      toast.error(parsedError.common ?? '저장에 실패했습니다.')
     }
   }
 
@@ -196,34 +242,13 @@ export default function MyInfoEdit({
               id="myInfo-nickname"
               value={nickname}
               initialValue={myInfo.nickname ?? ''}
-              onChange={setNickname}
+              onChange={(value) => {
+                setNickname(value)
+                setErrors((prev) => ({ ...prev, nickname: undefined }))
+              }}
               onVerifiedChange={setIsNicknameVerified}
+              externalError={errors.nickname}
             />
-            {/* <div>
-              <div className="flex gap-3">
-                <InputField
-                  id="nickname"
-                  value={nickname}
-                  status="default"
-                  helperText="*한글 2자, 영문 및 숫자 10자까지 혼용할 수 있어요"
-                  onChange={(e) => setNickname(e.target.value)}
-                  placeholder={nickname}
-                  label="닉네임"
-                  fieldLabelClassName="text-ui-gray-primary block text-base font-normal"
-                  fieldHelperTextClassName="text-ui-gray-400 mt-2 text-xs font-medium"
-                />
-                <div className="flex items-center">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="bg-ui-gray-200 border-ui-gray-250 border px-5 py-4 text-base"
-                  >
-                    중복확인
-                  </Button>
-                </div>
-              </div>
-            </div> */}
 
             <div className="mb-25 flex flex-col gap-2">
               <InputField
@@ -248,9 +273,14 @@ export default function MyInfoEdit({
               <InputField
                 id="name"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder={name}
+                onChange={(e) => {
+                  setName(e.target.value)
+                  setErrors((prev) => ({ ...prev, name: undefined }))
+                }}
+                status={errors.name ? 'danger' : 'default'}
+                placeholder="이름을 입력해주세요"
                 label="이름"
+                helperText={errors.name}
                 fieldLabelClassName="text-ui-gray-primary block text-base font-normal"
               />
             </div>
@@ -269,7 +299,10 @@ export default function MyInfoEdit({
               <div className="flex gap-3">
                 <button
                   type="button"
-                  onClick={() => setGender('M')}
+                  onClick={() => {
+                    setGender('M')
+                    setErrors((prev) => ({ ...prev, gender: undefined }))
+                  }}
                   className={cn(
                     `flex h-10.5 min-w-20 cursor-pointer items-center justify-center rounded-full border px-7 py-4 text-base font-semibold`,
                     gender === 'M'
@@ -282,7 +315,10 @@ export default function MyInfoEdit({
 
                 <button
                   type="button"
-                  onClick={() => setGender('F')}
+                  onClick={() => {
+                    setGender('M')
+                    setErrors((prev) => ({ ...prev, gender: undefined }))
+                  }}
                   className={cn(
                     'flex h-10.5 min-w-20 cursor-pointer items-center justify-center rounded-full border px-7 py-4 text-base font-semibold',
                     gender === 'F'
@@ -298,9 +334,16 @@ export default function MyInfoEdit({
             <InputField
               id="birthday"
               value={birthday}
-              onChange={(e) => setBirthday(e.target.value)}
-              placeholder={birthday}
+              onChange={(e) => {
+                setBirthday(formatBirthdayInput(e.target.value))
+                setErrors((prev) => ({ ...prev, birthday: undefined }))
+              }}
+              placeholder="숫자 8자리를 입력해주세요."
               label="생년월일"
+              status={errors.birthday ? 'danger' : 'default'}
+              helperText={
+                errors.birthday ?? '생년월일 8자리를 숫자로 입력해주세요.'
+              }
               fieldLabelClassName="text-ui-gray-primary block text-base font-normal"
             />
           </div>

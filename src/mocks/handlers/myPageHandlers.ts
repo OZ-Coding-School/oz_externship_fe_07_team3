@@ -7,7 +7,7 @@ let myInfoMock: MyInfoResponse = {
   nickname: '오조오조',
   name: '김오조',
   phone_number: '010-1234-1234',
-  birthday: '2000.12.25',
+  birthday: '2000-12-25',
   gender: 'M',
   profile_img_url: null,
   created_at: '2025-10-30T14:01:57.505250+09:00',
@@ -57,9 +57,9 @@ export const mypageHandlers = [
   http.delete('/api/v1/accounts/me', async ({ request }) => {
     /**
      * TODO: authHeader 수정 예정
-     */
-    // const authHeader = request.headers.get('Authorization')
-
+     * // const authHeader = request.headers.get('Authorization')
+     * 
+     * 
     // if (!authHeader) {
     //   return HttpResponse.json(
     //     {
@@ -68,6 +68,7 @@ export const mypageHandlers = [
     //     { status: 401 }
     //   )
     // }
+     */
 
     const body = (await request.json()) as {
       reason?: string
