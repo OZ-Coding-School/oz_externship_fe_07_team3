@@ -18,9 +18,9 @@ function CheatingModal({
   onClose,
   onConfirm,
 }: CheatingModalProps) {
-  const isTerminated = cheatingCount >= 3
-  const warningImage = isTerminated ? WarningHandRed : WarnigHandYellow
-  const confirmButtonText = isTerminated ? '시험종료' : '확인'
+  const isLastWarning = cheatingCount >= 3
+  const warningImage = isLastWarning ? WarningHandRed : WarnigHandYellow
+  const confirmButtonText = isLastWarning ? '시험종료' : '확인'
 
   return (
     <Modal
