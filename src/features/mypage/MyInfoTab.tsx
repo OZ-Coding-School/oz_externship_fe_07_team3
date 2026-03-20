@@ -12,7 +12,7 @@ export default function MyInfoTab() {
   const { data: myInfo, isLoading: isMyInfoLoading } = useGetMyInfo()
   const { data: enrolledCourses = [], isLoading: isCoursesLoading } =
     useGetMyEnrolledCourses()
-  const { mutate: patchMyInfo, isPending } = usePatchMyInfo()
+  const { mutateAsync: patchMyInfo, isPending } = usePatchMyInfo()
 
   if (isMyInfoLoading || isCoursesLoading) {
     return <Loading />
@@ -33,12 +33,9 @@ export default function MyInfoTab() {
       <MyInfoEdit
         myInfo={myInfo}
         isPending={isPending}
-        onSubmit={(payload) => {
-          patchMyInfo(payload, {
-            onSuccess: () => {
-              setIsEditMode(false)
-            },
-          })
+        onSubmit={async (payload) => {
+          await patchMyInfo(payload)
+          setIsEditMode(false)
         }}
       />
     )
