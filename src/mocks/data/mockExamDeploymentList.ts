@@ -25,7 +25,7 @@ export const mockExamDeploymentList: ExamDeploymentListResponse = {
         correct_answer_count: 8,
       },
       is_done: true,
-      duration_time: 20,
+      duration_time: 25,
     },
     {
       id: 102,
@@ -40,7 +40,7 @@ export const mockExamDeploymentList: ExamDeploymentListResponse = {
           thumbnail_img_url: 'https://cdn.ozcoding/aws.png',
         },
       },
-      question_count: 10,
+      question_count: 12,
       total_score: 100,
       exam_info: {
         status: 'pending',
