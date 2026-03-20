@@ -16,61 +16,86 @@ export function useCheatingDetection({
   const [isTerminated, setIsTerminated] = useState(false)
   const lastCheatingDetectedAt = useRef(0)
 
-  // 감지시 메세지와 모달오픈 + 시간별로 감지해서 중복방지
+  // 부정행위 감지 공통 처리
   const handleCheatingDetected = useCallback(() => {
     if (isSubmitting || isTerminated) {
       return
     }
+
     const now = Date.now()
+
     if (now - lastCheatingDetectedAt.current < 800) {
       return
     }
+
     lastCheatingDetectedAt.current = now
 
     setCheatingCount((prev) => {
       if (prev >= 3) {
         return prev
       }
+
       const nextCount = prev + 1
+
       setCheatingMessage(CHEATING_MESSAGES[nextCount as 1 | 2 | 3])
       setIsCheatingModalOpen(true)
-      if (nextCount === 3) {
-        setIsTerminated(true)
-      }
+
       return nextCount
     })
   }, [isSubmitting, isTerminated])
 
-  // 3회 이상시 퇴장
-  const handleCheatingModalAction = useCallback(async () => {
+  // 실제 종료 처리 공통 함수
+  const terminateExam = useCallback(async () => {
     setIsCheatingModalOpen(false)
+    setIsTerminated(true)
+    await onTerminate()
+  }, [onTerminate])
 
+  // 경고 모달 X 버튼
+  const handleCheatingModalClose = useCallback(async () => {
+    // 3회째에서는 X도 시험종료 버튼과 동일하게 처리
     if (cheatingCount >= 3) {
-      await onTerminate()
+      await terminateExam()
+      return
     }
-  }, [cheatingCount, onTerminate])
 
-  // 부정행위 감지 기능 (탭전환)
+    // 1, 2회는 그냥 닫기
+    setIsCheatingModalOpen(false)
+  }, [cheatingCount, terminateExam])
+
+  // 경고 모달 확인 / 시험종료 버튼
+  const handleCheatingModalConfirm = useCallback(async () => {
+    // 3회 미만이면 단순 닫기
+    if (cheatingCount < 3) {
+      setIsCheatingModalOpen(false)
+      return
+    }
+
+    // 3회는 시험 종료 처리
+    await terminateExam()
+  }, [cheatingCount, terminateExam])
+
   useEffect(() => {
-    // 다른 탭으로 이동하거나 브라우저가 최소화되어 페이지가 보이지 않을 때 감지
     const handleVisibilityChange = () => {
       if (document.hidden) {
         handleCheatingDetected()
       }
     }
-    // 브라우저 창이 포커스를 잃었을 때 감지
+
     const handleWindowBlur = () => {
       handleCheatingDetected()
     }
-    // 전체화면이 해제되었을 때 감지
+
     const handleFullscreenChange = () => {
       if (!document.fullscreenElement) {
         handleCheatingDetected()
       }
     }
+
     document.addEventListener('visibilitychange', handleVisibilityChange)
     window.addEventListener('blur', handleWindowBlur)
     document.addEventListener('fullscreenchange', handleFullscreenChange)
+
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
       window.removeEventListener('blur', handleWindowBlur)
@@ -83,7 +108,7 @@ export function useCheatingDetection({
     isCheatingModalOpen,
     cheatingMessage,
     isTerminated,
-    handleCheatingModalClose: handleCheatingModalAction,
-    handleCheatingModalConfirm: handleCheatingModalAction,
+    handleCheatingModalClose,
+    handleCheatingModalConfirm,
   }
 }

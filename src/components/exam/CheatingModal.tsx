@@ -1,4 +1,5 @@
 import WarningHandRed from '@/assets/icons/quiz/warning-hand-red.png'
+
 import WarnigHandYellow from '@/assets/icons/quiz/warning-hand-yellow.png'
 import Button from '../ui/button'
 import Modal from '../ui/modal/Modal'
@@ -18,9 +19,9 @@ function CheatingModal({
   onClose,
   onConfirm,
 }: CheatingModalProps) {
-  const isTerminated = cheatingCount >= 3
-  const warningImage = isTerminated ? WarningHandRed : WarnigHandYellow
-  const confirmButtonText = isTerminated ? '시험종료' : '확인'
+  const isLastWarning = cheatingCount >= 3
+  const warningImage = isLastWarning ? WarningHandRed : WarnigHandYellow
+  const confirmButtonText = isLastWarning ? '시험종료' : '확인'
 
   return (
     <Modal
@@ -32,7 +33,13 @@ function CheatingModal({
         <img src={warningImage} alt="손경고이미지" className="mb-4" />
 
         <h2 className="mb-4 p-0 text-[18px] font-semibold">
-          부정행위 <span>{cheatingCount}회</span> 감지
+          부정행위{' '}
+          <span
+            className={cheatingCount >= 3 ? 'text-red-500' : 'text-yellow-500'}
+          >
+            {cheatingCount}회
+          </span>{' '}
+          감지
         </h2>
 
         <div>
@@ -43,7 +50,11 @@ function CheatingModal({
           ))}
         </div>
 
-        <Button type="button" onClick={onConfirm} className="mt-5 w-full">
+        <Button
+          type="button"
+          onClick={onConfirm}
+          className="mt-5 w-full rounded-[4px]"
+        >
           {confirmButtonText}
         </Button>
       </div>

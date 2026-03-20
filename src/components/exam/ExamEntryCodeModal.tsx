@@ -71,9 +71,9 @@ export default function ExamEntryCodeModal({
       <section className="mx-6 mt-2.5 mb-6">
         <header className="flex flex-col items-center justify-center gap-2">
           <img src={imageSrc} alt={imageAlt} />
-          <h2 className="text-ui-gray-primary text-[18px] font-semibold">
+          <span className="text-ui-gray-primary m-0 p-0 text-[18px] font-semibold">
             {examTitle}
-          </h2>
+          </span>
           <p
             id={descriptionId}
             className="text-ui-gray-700 text-[14px] font-normal"

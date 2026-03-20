@@ -1,10 +1,15 @@
 import useOrderingDragAndDrop from '@/hooks/exam/useOrderingDragAndDrop'
+import type { AnswerValue } from '@/types/answer-type/answer'
 
 type OrderingQuestionProps = {
   options: string[]
+  value: AnswerValue
+  onChange: (answer: AnswerValue) => void
 }
 
-function OrderingQuestion({ options }: OrderingQuestionProps) {
+function OrderingQuestion({ options, value, onChange }: OrderingQuestionProps) {
+  const orderedValue = Array.isArray(value) ? value : []
+
   const {
     availableItems,
     answerSlots,
@@ -14,7 +19,11 @@ function OrderingQuestion({ options }: OrderingQuestionProps) {
     handleDragOver,
     handleSlotDrop,
     handleRemoveSlotItem,
-  } = useOrderingDragAndDrop(options)
+  } = useOrderingDragAndDrop({
+    options,
+    value: orderedValue,
+    onChange,
+  })
 
   return (
     <div>
