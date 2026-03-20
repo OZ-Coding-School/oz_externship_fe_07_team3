@@ -29,7 +29,7 @@ function CheatingModal({
       closeButtonWrapperClassName="pt-6 mb-2.5"
     >
       <div className="mx-6 mb-6 flex flex-col items-center justify-center text-center">
-        <img src={warningImage} alt="" className="mb-4" />
+        <img src={warningImage} alt="손경고이미지" className="mb-4" />
 
         <h2 className="mb-4 p-0 text-[18px] font-semibold">
           부정행위 <span>{cheatingCount}회</span> 감지
