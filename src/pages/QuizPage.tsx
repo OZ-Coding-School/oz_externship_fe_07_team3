@@ -1,5 +1,6 @@
 import { getExamQuestions } from '@/api/exam'
 import CheatingModal from '@/components/exam/CheatingModal'
+import ExamSubmitModal from '@/components/exam/ExamSubmitModal.tsx'
 import ExamTerminatedModal from '@/components/exam/ExamTerminatedModal'
 import ExamWarning from '@/components/exam/ExamWarning'
 import QuizHeader from '@/components/layout/quiz/QuizHeader'
@@ -20,6 +21,7 @@ function QuizPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isError, setIsError] = useState(false)
   const [answers, setAnswers] = useState<AnswerMap>({})
+  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false)
 
   const navigate = useNavigate()
 
@@ -27,9 +29,11 @@ function QuizPage() {
     if (answer === null) {
       return false
     }
+
     if (typeof answer === 'string') {
       return answer.trim().length > 0
     }
+
     if (Array.isArray(answer)) {
       return (
         answer.length > 0 &&
@@ -37,13 +41,16 @@ function QuizPage() {
           if (typeof item === 'string') {
             return item.trim().length > 0
           }
+
           return true
         })
       )
     }
+
     if (typeof answer === 'boolean') {
       return true
     }
+
     return true
   }, [])
 
@@ -51,6 +58,7 @@ function QuizPage() {
     if (!quizData) {
       return false
     }
+
     return quizData.questions.every((question) =>
       isAnswered(answers[question.question_id] ?? null)
     )
@@ -71,16 +79,20 @@ function QuizPage() {
       if (isSubmitting) {
         return
       }
+
       if (!quizData) {
         return
       }
+
       if (!force && !isAllQuestionsAnswered) {
         toast.error('모든 문제를 풀어야 제출할 수 있습니다.')
         return
       }
+
       setIsSubmitting(true)
 
       try {
+        setIsSubmitModalOpen(false)
         navigate(getQuizResultPage(1))
       } finally {
         setIsSubmitting(false)
@@ -105,6 +117,7 @@ function QuizPage() {
     if (isTerminated) {
       return
     }
+
     navigate(getMyPageTab('exam'))
   }, [isTerminated, navigate])
 
@@ -118,7 +131,9 @@ function QuizPage() {
         console.error('전체화면 진입 실패', error)
       }
     }
+
     enterFullscreen()
+
     return () => {
       if (document.fullscreenElement) {
         document.exitFullscreen().catch(() => {})
@@ -136,6 +151,7 @@ function QuizPage() {
         setIsError(true)
       }
     }
+
     fetchQuizData()
   }, [])
 
@@ -189,7 +205,7 @@ function QuizPage() {
         <Button
           type="button"
           onClick={() => {
-            void handleSubmit()
+            setIsSubmitModalOpen(true)
           }}
           disabled={isSubmitting || !isAllQuestionsAnswered}
           className="text-primary-100 border-primary-600 w-auto rounded-[4px] bg-[#721AE3] px-7 py-6.25"
@@ -209,6 +225,14 @@ function QuizPage() {
       <ExamTerminatedModal
         isOpen={isTerminated}
         onConfirm={() => navigate(getMyPageTab('exam'))}
+      />
+
+      <ExamSubmitModal
+        isOpen={isSubmitModalOpen}
+        onClose={() => setIsSubmitModalOpen(false)}
+        onConfirm={() => {
+          void handleSubmit()
+        }}
       />
     </>
   )

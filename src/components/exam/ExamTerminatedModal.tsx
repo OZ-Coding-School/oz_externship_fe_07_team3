@@ -1,7 +1,6 @@
-import WarningHandRed from '@/assets/icons/quiz/warning-hand-red.png'
+import WarningCircleImg from '@/assets/icons/quiz/warning-circle-red.png'
 import Button from '@/components/ui/button'
 import Modal from '@/components/ui/modal/Modal'
-
 type ExamTerminatedModalProps = {
   isOpen: boolean
   onConfirm: () => void
@@ -12,13 +11,14 @@ function ExamTerminatedModal({ isOpen, onConfirm }: ExamTerminatedModalProps) {
     <Modal isOpen={isOpen} onClose={onConfirm}>
       <div className="mx-6 mb-6 flex flex-col items-center text-center">
         <img
-          src={WarningHandRed}
+          src={WarningCircleImg}
           alt="시험 종료 경고 아이콘"
-          className="mb-6 h-16 w-16"
+          className="mb-2"
         />
 
         <strong className="text-lg font-semibold">
-          관리자에 의해 시험이 종료되었습니다
+          관리자에 의해 시험이 <span className="text-other-red">종료 </span>
+          되었습니다
         </strong>
 
         <p className="mt-3 text-sm leading-[140%] text-gray-600">
