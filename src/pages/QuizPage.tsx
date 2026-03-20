@@ -92,8 +92,11 @@ function QuizPage() {
       setIsSubmitting(true)
 
       try {
+        // TODO: 현재까지 풀이 데이터 서버 전송
         setIsSubmitModalOpen(false)
         navigate(getQuizResultPage(1))
+      } catch (error) {
+        toast.error('시험 제출에 실패했습니다.')
       } finally {
         setIsSubmitting(false)
       }
