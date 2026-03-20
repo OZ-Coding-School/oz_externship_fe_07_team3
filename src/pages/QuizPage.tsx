@@ -11,27 +11,21 @@ import { useQuizTimer } from '@/hooks/exam/useQuizTimer'
 import type { QuizData } from '@/types/quizpage-type/question'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 
 function QuizPage() {
   const [quizData, setQuizData] = useState<QuizData | null>(null)
   const [isWarningVisible, setIsWarningVisible] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
-
+  const [isError, setIsError] = useState(false)
   const navigate = useNavigate()
 
   const handleSubmit = useCallback(async () => {
     if (isSubmitting) {
       return
     }
-
     setIsSubmitting(true)
-
-    try {
-      navigate(getQuizResultPage(1))
-    } catch (error) {
-      console.error(error)
-      setIsSubmitting(false)
-    }
+    navigate(getQuizResultPage(1))
   }, [isSubmitting, navigate])
 
   const {
@@ -79,7 +73,8 @@ function QuizPage() {
         const data = await getExamQuestions(1)
         setQuizData(data)
       } catch (error) {
-        console.error(error)
+        toast.error('시험 문제를 불러오지 못했습니다.')
+        setIsError(true)
       }
     }
     fetchQuizData()
@@ -91,7 +86,10 @@ function QuizPage() {
     onTimeEnd: handleSubmit,
   })
 
-  // 로딩 가드
+  // 가드
+  if (isError) {
+    return <div>시험 문제를 불러오지 못했습니다.</div>
+  }
   if (!quizData) {
     return <div>로딩중...</div>
   }
@@ -106,12 +104,16 @@ function QuizPage() {
         onBack={handleBack}
         cheatingCount={cheatingCount}
       />
-
+      {/* 닫히는 경고 */}
       <section className="px-90 pt-8">
         {isWarningVisible && (
           <div className="bg-primary-100 flex w-full items-start justify-between rounded-[8px] px-5 py-6">
             <div className="flex gap-3">
-              <img className="h-6 w-6 shrink-0" src={AlertIcon} alt="" />
+              <img
+                className="h-6 w-6 shrink-0"
+                src={AlertIcon}
+                alt="경고 아이콘"
+              />
               <div>
                 <strong className="block text-base font-semibold">
                   시험에만 집중해 주세요
@@ -132,7 +134,7 @@ function QuizPage() {
             </button>
           </div>
         )}
-
+        {/* 시험문제리스트 */}
         <div className="mt-15">
           {quizData.questions.map((question) => (
             <QuestionItem key={question.question_id} question={question} />
