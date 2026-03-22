@@ -2,11 +2,11 @@ import { getExamQuestions } from '@/api/exam'
 import CheatingModal from '@/components/exam/CheatingModal'
 import ExamSubmitModal from '@/components/exam/ExamSubmitModal.tsx'
 import ExamTerminatedModal from '@/components/exam/ExamTerminatedModal'
-import ExamWarning from '@/components/exam/ExamWarning'
-import QuizHeader from '@/components/layout/quiz/QuizHeader'
+import QuizHeader from '@/components/exam/QuizHeader'
 import Button from '@/components/ui/button'
 import { getMyPageTab, getQuizResultPage } from '@/constants/routesPaths'
 import { QuestionItem } from '@/features/quiz'
+import QuizWarning from '@/features/quiz/QuizWarning'
 import { useCheatingDetection } from '@/hooks/exam/useCheatingDetection'
 import { useQuizTimer } from '@/hooks/exam/useQuizTimer'
 import type { AnswerMap, AnswerValue } from '@/types/answer-type/answer'
@@ -185,7 +185,7 @@ function QuizPage() {
       />
 
       <section className="px-90 pt-8">
-        <ExamWarning
+        <QuizWarning
           isVisible={isWarningVisible}
           onClose={() => setIsWarningVisible(false)}
         />

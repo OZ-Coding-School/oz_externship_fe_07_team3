@@ -6,7 +6,7 @@ export const ROUTES_PATHS = {
   TEST_PAGE: '/test',
   PAGE_NOT_FOUND: '*',
   QUIZ_PAGE: '/quiz',
-  QUIZ_RESULT_PAGE: '/quiz/result',
+  RESULT_PAGE: '/result',
   LOGIN_PAGE: '/login',
   SIGNUP_PAGE: '/signup',
   MY_PAGE: '/mypage',
@@ -17,7 +17,7 @@ export const getQuizPage = (id: number | string) =>
   `${ROUTES_PATHS.QUIZ_PAGE}/${id}`
 
 export const getQuizResultPage = (id: number | string) =>
-  `${ROUTES_PATHS.QUIZ_RESULT_PAGE}/${id}`
+  `${ROUTES_PATHS.RESULT_PAGE}/${id}`
 
 export const getMyPageTab = (tab: string) =>
   `${ROUTES_PATHS.MY_PAGE}?tab=${tab}`
