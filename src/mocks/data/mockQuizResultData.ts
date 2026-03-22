@@ -31,9 +31,9 @@ export const mockQuizResultData: ResultData = {
       point: 10,
       prompt: null,
       blank_count: null,
-      options: ['string', 'number', 'banana', 'boolean'],
-      user_answer: ['string', 'number'],
-      correct_answer: ['string', 'number', 'boolean'],
+      options: ['string', 'number', 'banana', 'apple'],
+      user_answer: ['string', 'banana'],
+      correct_answer: ['string', 'number'],
       is_correct: false,
       explanation:
         'string, number, boolean은 기본 타입이며 banana는 타입이 아닙니다.',
@@ -79,7 +79,7 @@ export const mockQuizResultData: ResultData = {
       prompt: null,
       blank_count: null,
       options: ['tsconfig 생성', '패키지 설치', '파일 작성', '컴파일 실행'],
-      user_answer: ['패키지 설치', '파일 작성', 'tsconfig 생성', '컴파일 실행'],
+      user_answer: ['패키지 설치', '파일 작성', '컴파일 실행'],
       correct_answer: [
         '패키지 설치',
         'tsconfig 생성',
@@ -97,12 +97,13 @@ export const mockQuizResultData: ResultData = {
       type: 'fill_blank',
       question: '빈칸을 채우세요.',
       point: 10,
-      prompt: 'TypeScript는 ____ 기반으로 동작하며, ____ 검사를 지원합니다.',
+      prompt:
+        'TypeScript는 (A) ____ 기반으로 동작하며, (B) ____ 검사를 지원합니다.',
       blank_count: 2,
       options: null,
-      user_answer: ['JavaScript', '정적 타입'],
+      user_answer: ['JavaScript', '동적 타입'],
       correct_answer: ['JavaScript', '정적 타입'],
-      is_correct: true,
+      is_correct: false,
       explanation:
         'TypeScript는 JavaScript 기반이며 정적 타입 검사를 제공합니다.',
       earned_point: 10,
