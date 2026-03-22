@@ -20,7 +20,7 @@ export const mockExamDeploymentList: ExamDeploymentListResponse = {
       question_count: 10,
       total_score: 100,
       exam_info: {
-        status: 'pending',
+        status: 'done',
         score: 80,
         correct_answer_count: 8,
       },

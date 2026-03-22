@@ -1,12 +1,12 @@
 import AlertIcon from '@/assets/icons/quiz/alert-circle.png'
 import CloseIcon from '@/assets/icons/quiz/icon-x-gray.svg?react'
 
-type ExamWarningProps = {
+type QuizWarningProps = {
   isVisible: boolean
   onClose: () => void
 }
 
-function ExamWarning({ isVisible, onClose }: ExamWarningProps) {
+function QuizWarning({ isVisible, onClose }: QuizWarningProps) {
   if (!isVisible) {
     return null
   }
@@ -38,4 +38,4 @@ function ExamWarning({ isVisible, onClose }: ExamWarningProps) {
   )
 }
 
-export default ExamWarning
+export default QuizWarning
