@@ -23,9 +23,10 @@ type CodeVerificationProps = {
   formattedTime: string
   sendButtonText?: string
   verifyButtonText?: string
+  buttonClassName?: string
 }
 
-const verificationBtnClassName =
+const defaultBtnClassName =
   '!h-[48px] !w-[112px] !rounded-[4px] !border !border-[#BDBDBD] !px-[16px] !py-[20px] !text-[16px] !font-semibold whitespace-nowrap'
 
 const CodeVerification = ({
@@ -50,6 +51,7 @@ const CodeVerification = ({
   formattedTime,
   sendButtonText = '인증코드전송',
   verifyButtonText = '인증코드확인',
+  buttonClassName,
 }: CodeVerificationProps) => {
   const hasError = Boolean(errorMessage)
 
@@ -58,6 +60,8 @@ const CodeVerification = ({
     if (isCodeVerified) return 'border-other-green'
     return 'border-grey-9 focus:border-btn-fill-default'
   })()
+
+  const btnClass = buttonClassName ?? defaultBtnClassName
 
   return (
     <div className="flex flex-col gap-[12px]">
@@ -70,7 +74,7 @@ const CodeVerification = ({
       </label>
 
       <div className="flex flex-col gap-[20px]">
-        <div className="flex gap-[8px]">
+        <div className="flex gap-[12px]">
           <Input
             id={targetInputId}
             type={targetInputType}
@@ -85,7 +89,7 @@ const CodeVerification = ({
             type="button"
             variant="ghost"
             size="sm"
-            className={verificationBtnClassName}
+            className={btnClass}
             onClick={onSendCode}
           >
             {sendButtonText}
@@ -93,7 +97,7 @@ const CodeVerification = ({
         </div>
 
         <div className="flex flex-col">
-          <div className="flex gap-[8px]">
+          <div className="flex gap-[12px]">
             <div className="relative flex-1">
               <input
                 id={verificationCodeInputId}
@@ -102,7 +106,9 @@ const CodeVerification = ({
                 value={verificationCode}
                 onChange={(e) => onVerificationCodeChange(e.target.value)}
                 placeholder={verificationCodePlaceholder}
-                className={`bg-grey-1 placeholder:text-grey-9 flex h-[48px] w-full rounded-[4px] border px-[16px] py-[10px] font-['Pretendard'] text-[16px] leading-[140%] tracking-[-0.03em] transition-all focus:outline-none ${isCodeSent && !isCodeVerified ? 'pr-[64px]' : ''} ${codeBorderClass}`}
+                className={`bg-grey-1 placeholder:text-grey-9 flex h-[48px] w-full rounded-[4px] border px-[16px] py-[10px] font-['Pretendard'] text-[16px] leading-[140%] tracking-[-0.03em] transition-all focus:outline-none ${
+                  isCodeSent && !isCodeVerified ? 'pr-[64px]' : ''
+                } ${codeBorderClass}`}
               />
 
               {isCodeSent && !isCodeVerified && (
@@ -116,7 +122,7 @@ const CodeVerification = ({
               type="button"
               variant="ghost"
               size="sm"
-              className={verificationBtnClassName}
+              className={btnClass}
               onClick={onVerifyCode}
             >
               {verifyButtonText}
@@ -124,13 +130,13 @@ const CodeVerification = ({
           </div>
 
           {hasError && (
-            <p className="text-other-red mt-[12px] text-[14px] leading-[140%] font-normal tracking-[-0.03em]">
+            <p className="text-other-red mt-[12px] text-[14px] leading-[140%] tracking-[-0.03em]">
               {errorMessage}
             </p>
           )}
 
           {isCodeVerified && !hasError && (
-            <p className="text-other-green mt-[12px] text-[14px] leading-[140%] font-normal tracking-[-0.03em]">
+            <p className="text-other-green mt-[12px] text-[14px] leading-[140%] tracking-[-0.03em]">
               {successMessage}
             </p>
           )}

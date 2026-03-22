@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
-import { usePhoneVerification } from '@/hooks/usePhoneVerification'
+import { useCodeVerification } from '@/features/auth/shared/useCodeVerification'
 
 export type FindIdStep = 'input' | 'result'
 
@@ -39,7 +39,7 @@ export const useFindId = ({ isOpen, handlers }: UseFindIdParams) => {
     setVerificationError,
     validateBeforeVerify,
     validateBeforeSubmit,
-  } = usePhoneVerification()
+  } = useCodeVerification()
 
   useEffect(() => {
     if (!isOpen) {

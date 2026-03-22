@@ -6,6 +6,7 @@ import TestModal from '@/test/TestModal'
 import TestFindIdModal from '@/test/TestFindIdModal'
 import TestFindPasswordModal from '@/test/TestFindPasswordModal'
 import TestRecoverAccountModal from '@/test/TestRecoverAccountModal'
+import TestSignupForm from '@/test/TestSignupForm'
 
 function TestPage() {
   return (
@@ -19,7 +20,7 @@ function TestPage() {
       <TestFindIdModal />
       <TestFindPasswordModal />
       <TestRecoverAccountModal />
-
+      <TestSignupForm />
       <div className="flex min-h-90 items-center justify-center"></div>
     </div>
   )
