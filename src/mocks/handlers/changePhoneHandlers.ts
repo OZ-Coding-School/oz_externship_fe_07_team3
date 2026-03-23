@@ -15,8 +15,11 @@ type ChangePhoneRequestBody = {
   }
 }
 
+const MOCK_SMS_CODE = '123123'
+const MOCK_PHONE_VERIFY_TOKEN = '123456'
+
 export const changePhoneHandlers = [
-  http.post('/api/v1/accounts/phone-verification/send', async ({ request }) => {
+  http.post('/api/v1/accounts/verification/send-sms', async ({ request }) => {
     const body = (await request.json()) as SendRequestBody
 
     if (!body.phone_number || body.phone_number.length !== 11) {
@@ -38,38 +41,35 @@ export const changePhoneHandlers = [
     )
   }),
 
-  http.post(
-    '/api/v1/accounts/phone-verification/verify',
-    async ({ request }) => {
-      const body = (await request.json()) as VerifyRequestBody
+  http.post('/api/v1/accounts/verification/verify-sms', async ({ request }) => {
+    const body = (await request.json()) as VerifyRequestBody
 
-      if (!body.phone_number || !body.code) {
-        return HttpResponse.json(
-          {
-            error_detail: '잘못된 요청입니다.',
-          },
-          { status: 400 }
-        )
-      }
-
-      if (body.code !== '123123') {
-        return HttpResponse.json(
-          {
-            error_detail: '인증번호가 유효하지 않습니다.',
-          },
-          { status: 401 }
-        )
-      }
-
+    if (!body.phone_number || !body.code) {
       return HttpResponse.json(
         {
-          detail: '휴대전화 인증에 성공했습니다.',
-          token: '123456',
+          error_detail: '잘못된 요청입니다.',
         },
-        { status: 200 }
+        { status: 400 }
       )
     }
-  ),
+
+    if (body.code !== MOCK_SMS_CODE) {
+      return HttpResponse.json(
+        {
+          error_detail: '인증번호가 유효하지 않습니다.',
+        },
+        { status: 401 }
+      )
+    }
+
+    return HttpResponse.json(
+      {
+        detail: '휴대전화 인증에 성공했습니다.',
+        token: '123456',
+      },
+      { status: 200 }
+    )
+  }),
 
   http.patch('/api/v1/accounts/change-phone', async ({ request }) => {
     const body = (await request.json()) as ChangePhoneRequestBody
@@ -105,10 +105,10 @@ export const changePhoneHandlers = [
       )
     }
 
-    if (token !== '123dsd123uhnxxzf456') {
+    if (token !== MOCK_PHONE_VERIFY_TOKEN) {
       return HttpResponse.json(
         {
-          error_detail: '휴대폰 인증 실패 - 인증토크가 유효하지 않습니다.',
+          error_detail: '휴대폰 인증 실패 - 인증토큰이 유효하지 않습니다.',
         },
         { status: 401 }
       )

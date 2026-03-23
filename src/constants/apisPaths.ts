@@ -1,3 +1,4 @@
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 /**
  * api endPoint
  */
@@ -8,8 +9,8 @@ export const APIS_PATHS = {
   GET_MY_ENROLLED_COURSES: '/accounts/me/enrolled-courses',
   AVAILABLE_COURSES: '/accounts/available-courses',
   CHANGE_PASSWORD: '/accounts/change-password',
-  PHONE_VERIFICATION_SEND: '/accounts/phone-verification/send',
-  PHONE_VERIFICATION_VERIFY: '/accounts/phone-verification/verify',
+  PHONE_VERIFICATION_SEND: '/accounts/verification/send-sms',
+  PHONE_VERIFICATION_VERIFY: '/accounts/verification/verify-sms',
   CHANGE_PHONE: '/accounts/change-phone',
   PRESIGNED_URL: '/questions/presigned-url',
   PROFILE_IMAGE: '/accounts/me/profile-image',
