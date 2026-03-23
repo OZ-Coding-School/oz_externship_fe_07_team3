@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils'
 import Button from '@/components/ui/button'
 import Input from '@/components/ui/input'
 
@@ -27,7 +28,7 @@ type CodeVerificationProps = {
 }
 
 const defaultBtnClassName =
-  '!h-[48px] !w-[112px] !rounded-[4px] !border !border-[#BDBDBD] !px-[16px] !py-[20px] !text-[16px] !font-semibold whitespace-nowrap'
+  '!h-[48px] !w-[112px] !rounded-[4px] !border !border-ui-gray-disabled !px-[16px] !py-[20px] !text-[16px] !font-semibold whitespace-nowrap'
 
 const CodeVerification = ({
   label,
@@ -106,9 +107,11 @@ const CodeVerification = ({
                 value={verificationCode}
                 onChange={(e) => onVerificationCodeChange(e.target.value)}
                 placeholder={verificationCodePlaceholder}
-                className={`bg-grey-1 placeholder:text-grey-9 flex h-[48px] w-full rounded-[4px] border px-[16px] py-[10px] font-['Pretendard'] text-[16px] leading-[140%] tracking-[-0.03em] transition-all focus:outline-none ${
-                  isCodeSent && !isCodeVerified ? 'pr-[64px]' : ''
-                } ${codeBorderClass}`}
+                className={cn(
+                  "bg-grey-1 placeholder:text-grey-9 flex h-[48px] w-full rounded-[4px] border px-[16px] py-[10px] font-['Pretendard'] text-[16px] leading-[140%] tracking-[-0.03em] transition-all focus:outline-none",
+                  isCodeSent && !isCodeVerified && 'pr-[64px]',
+                  codeBorderClass
+                )}
               />
 
               {isCodeSent && !isCodeVerified && (

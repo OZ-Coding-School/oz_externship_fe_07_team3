@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils'
 import Button from '@/components/ui/button'
 import Input from '@/components/ui/input'
 import type {
@@ -90,11 +91,11 @@ const SignupVerificationFields = ({
             type="button"
             variant="ghost"
             size="sm"
-            className={`${actionButtonClassName} ${
-              isEmailSent
-                ? '!border-btn-fill-default !bg-primary-100 !text-btn-fill-default'
-                : ''
-            }`}
+            className={cn(
+              actionButtonClassName,
+              isEmailSent &&
+                '!border-btn-fill-default !bg-primary-100 !text-btn-fill-default'
+            )}
             onClick={handleSendEmailCode}
           >
             인증번호 전송
@@ -197,11 +198,11 @@ const SignupVerificationFields = ({
             type="button"
             variant="ghost"
             size="sm"
-            className={`${actionButtonClassName} ${
-              isPhoneSent
-                ? '!border-btn-fill-default !bg-primary-100 !text-btn-fill-default'
-                : ''
-            }`}
+            className={cn(
+              actionButtonClassName,
+              isPhoneSent &&
+                '!border-btn-fill-default !bg-primary-100 !text-btn-fill-default'
+            )}
             onClick={handleSendPhoneCode}
           >
             인증번호 전송

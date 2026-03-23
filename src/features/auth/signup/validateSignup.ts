@@ -9,7 +9,9 @@ const PASSWORD_REGEX =
   /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=[{\]};:'",.<>/?\\|`~]).{8,15}$/
 
 export const validateName = (name: string) => {
-  if (!name.trim()) return '이름을 입력해주세요.'
+  if (!name.trim()) {
+    return '이름을 입력해주세요.'
+  }
   if (!NAME_REGEX.test(name.trim())) {
     return '이름은 2~20자의 한글 또는 영문으로 입력해주세요.'
   }

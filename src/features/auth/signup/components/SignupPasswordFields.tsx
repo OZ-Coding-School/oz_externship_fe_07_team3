@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils'
 import Input from '@/components/ui/input'
 import type {
   SignupErrors,
@@ -11,11 +12,9 @@ const fieldLabelClassName =
 const guideTextClassName =
   'text-btn-fill-default text-[14px] leading-[140%] font-semibold tracking-[-0.03em]'
 
-const errorTextClassName =
-  'text-other-red text-[14px] leading-[140%] tracking-[-0.03em]'
-
-const successTextClassName =
-  'text-other-green text-[14px] leading-[140%] tracking-[-0.03em]'
+const baseTextClassName = 'text-[14px] leading-[140%] tracking-[-0.03em]'
+const errorTextClassName = cn(baseTextClassName, 'text-other-red')
+const successTextClassName = cn(baseTextClassName, 'text-other-green')
 
 type Props = {
   state: SignupState

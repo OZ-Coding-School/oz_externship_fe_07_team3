@@ -17,8 +17,12 @@ export const useCodeVerification = () => {
   const [timeLeft, setTimeLeft] = useState(INITIAL_TIME)
 
   useEffect(() => {
-    if (!isCodeSent || isCodeVerified) return
-    if (timeLeft <= 0) return
+    if (!isCodeSent || isCodeVerified) {
+      return
+    }
+    if (timeLeft <= 0) {
+      return
+    }
 
     const timer = setInterval(() => {
       setTimeLeft((prev) => prev - 1)
