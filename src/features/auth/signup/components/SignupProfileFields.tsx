@@ -1,5 +1,6 @@
 import Button from '@/components/ui/button'
 import Input from '@/components/ui/input'
+import { cn } from '@/lib/utils'
 import type {
   SignupErrors,
   SignupState,
@@ -136,11 +137,12 @@ const SignupProfileFields = ({
             type="button"
             variant="ghost"
             size="sm"
-            className={`${genderButtonBaseClassName} ${
+            className={cn(
+              genderButtonBaseClassName,
               isMaleSelected
                 ? '!border-btn-fill-default !bg-primary-100 !text-btn-fill-default !border'
                 : '!border-ui-gray-250 !bg-ui-gray-200 !text-ui-gray-600 !border'
-            }`}
+            )}
             onClick={() => handleGenderChange('male')}
           >
             남
@@ -150,11 +152,12 @@ const SignupProfileFields = ({
             type="button"
             variant="ghost"
             size="sm"
-            className={`${genderButtonBaseClassName} ${
+            className={cn(
+              genderButtonBaseClassName,
               isFemaleSelected
                 ? '!border-btn-fill-default !bg-primary-100 !text-btn-fill-default !border'
                 : '!border-ui-gray-250 !bg-ui-gray-200 !text-ui-gray-600 !border'
-            }`}
+            )}
             onClick={() => handleGenderChange('female')}
           >
             여

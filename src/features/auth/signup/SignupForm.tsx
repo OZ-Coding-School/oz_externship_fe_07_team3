@@ -3,6 +3,7 @@ import { useSignup } from '@/features/auth/signup/useSignup'
 import SignupPasswordFields from './components/SignupPasswordFields'
 import SignupProfileFields from './components/SignupProfileFields'
 import SignupVerificationFields from './components/SignupVerificationFields'
+import logo from '@/assets/images/logo.png'
 
 const SignupForm = () => {
   const signup = useSignup()
@@ -14,13 +15,7 @@ const SignupForm = () => {
           <div className="text-center text-[18px] leading-[140%] font-bold tracking-[-0.02em] text-[#000A30]">
             마법같이 빠르게 성장시켜줄
           </div>
-
-          <img
-            src="/src/assets/images/logo.png"
-            alt="오즈코딩스쿨"
-            className="h-[24px] w-[180px]"
-          />
-
+          <img src={logo} alt="오즈코딩스쿨" className="h-[24px] w-[180px]" />
           <h1 className="text-ui-gray-primary w-full text-left text-[18px] leading-[140%] font-semibold tracking-[-0.03em]">
             회원가입
           </h1>

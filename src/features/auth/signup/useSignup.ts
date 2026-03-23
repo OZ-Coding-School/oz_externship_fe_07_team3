@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { AxiosError } from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { ROUTES_PATHS } from '@/constants/routesPaths'
 import { toast } from 'sonner'
 
 import { useCheckNickName } from '@/api/queries/useCheckNickName'
@@ -368,7 +369,7 @@ export const useSignup = () => {
     void payload
 
     toast.success('회원가입이 완료되었습니다.')
-    navigate('/login')
+    navigate(ROUTES_PATHS.LOGIN_PAGE)
   }
 
   return {
