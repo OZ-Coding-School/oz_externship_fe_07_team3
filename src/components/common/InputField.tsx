@@ -4,19 +4,23 @@ import Input, { type InputProps } from '../ui/input'
 
 type InputFieldProps = InputProps & {
   label?: string
+  required?: boolean
   helperText?: string
   fieldLabelClassName?: string
   fieldHelperTextClassName?: string
+  requiredMarkClassName?: string
 }
 
 const InputField = ({
   label,
+  required = false,
   helperText,
   status,
   id,
   disabled,
   fieldLabelClassName,
   fieldHelperTextClassName,
+  requiredMarkClassName = 'text-other-red',
   ...props
 }: InputFieldProps) => {
   const generatedId = React.useId()
@@ -30,6 +34,7 @@ const InputField = ({
       {label && (
         <FieldLabel htmlFor={inputId} className={fieldLabelClassName}>
           {label}
+          {required && <span className={requiredMarkClassName}>*</span>}
         </FieldLabel>
       )}
 

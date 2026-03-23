@@ -57,7 +57,8 @@ const SignupProfileFields = ({
       <div className="flex w-full flex-col gap-[20px]">
         <InputField
           id="signup-name"
-          label="이름*"
+          label="이름"
+          required
           type="text"
           value={state.name}
           onChange={(e) => handleNameChange(e.target.value)}
@@ -109,7 +110,8 @@ const SignupProfileFields = ({
       <div className="flex w-full flex-col gap-[20px]">
         <InputField
           id="signup-birth"
-          label="생년월일*"
+          label="이름"
+          required
           type="text"
           inputMode="numeric"
           value={state.birth}
