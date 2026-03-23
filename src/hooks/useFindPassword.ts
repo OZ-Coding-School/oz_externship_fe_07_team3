@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
-import { usePhoneVerification } from '@/hooks/usePhoneVerification'
+import { useCodeVerification } from '@/features/auth/shared/useCodeVerification'
 
 type Step = 'input' | 'reset'
 
@@ -48,7 +48,7 @@ export const useFindPassword = ({
     setVerificationError,
     validateBeforeVerify,
     validateBeforeSubmit,
-  } = usePhoneVerification()
+  } = useCodeVerification()
 
   useEffect(() => {
     if (!isOpen) {
