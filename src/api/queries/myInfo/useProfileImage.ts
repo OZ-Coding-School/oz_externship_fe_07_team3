@@ -1,9 +1,9 @@
-import { useMutation } from '@tanstack/react-query'
 import {
   getProfileImagePresignedUrl,
   patchProfileImage,
   uploadImageToAWS,
-} from '../profileImage'
+} from '@/api/profileImage'
+import { useMutation } from '@tanstack/react-query'
 
 export function useGetProfileImagePresignedUrl() {
   return useMutation({

@@ -8,7 +8,6 @@ import { useImageUpload } from '@/hooks/useImageUpload'
 import { toast } from 'sonner'
 import PhoneVerifySection from './PhoneVerifySection'
 import { cn } from '@/lib/utils'
-import { useUploadProfileImage } from '@/api/queries/useProfileImage'
 import NicknameFieldWithCheck from './NickNameFieldWithCheck'
 import {
   formatBirthdayInput,
@@ -19,6 +18,8 @@ import {
   type MyInfoFieldErrors,
 } from '@/utils/parseUpdateMyInfoError'
 import { useChangePhone } from '@/api/queries/myInfo/useChangePhone'
+import { useUploadProfileImage } from '@/api/queries/myInfo/useProfileImage'
+import { GENDER_OPTIONS } from '@/constants/genderOptions'
 
 type MyInfoEditProps = {
   myInfo: MyInfoResponse
@@ -147,29 +148,23 @@ export default function MyInfoEdit({
         } catch {
           toast.error('프로필 사진 업로드에 실패했습니다.')
         }
-
-        /**
-         * TODO:
-         * 백엔드 업로드 방식 확정 후 여기에 연결
-         * 1. Presigned URL 발급
-         * 2. S3 업로드
-         * 3. 저장 API 호출
-         * 또는 direct upload 방식 연결
-         * console.log('선택된 파일:', file)
-         * console.log('로컬 미리보기 URL:', previewUrl)
-         */
       },
     })
+
   const isSubmitDisabled =
     isPending ||
     changePhoneMutation.isPending ||
     uploadProfileImageMutation.isPending
 
+  const handleChangeGender = (value: 'M' | 'F') => {
+    setGender(value)
+    setErrors((prev) => ({ ...prev, gender: undefined }))
+  }
+
   return (
     <section className="w-186">
       <div className="mb-5 flex items-center justify-between">
         <h1 className="text-gray-primary text-[32px] font-bold">내 정보</h1>
-
         <Button
           type="button"
           variant="fill"
@@ -188,7 +183,6 @@ export default function MyInfoEdit({
         <h2 className="text-primary-400 mb-13 border-b border-gray-200 pb-4 text-xl font-bold">
           프로필 수정
         </h2>
-
         <div className="flex flex-col items-center">
           <div className="relative mb-13 h-46 w-46">
             <div className="h-full w-full overflow-hidden rounded-full bg-violet-100">
@@ -205,7 +199,6 @@ export default function MyInfoEdit({
                   className="h-full w-full"
                 />
               )}
-
               <button
                 type="button"
                 onClick={handleOpenFilePicker}
@@ -219,7 +212,6 @@ export default function MyInfoEdit({
                   className="h-13 w-13"
                 />
               </button>
-
               <input
                 ref={fileInputRef}
                 type="file"
@@ -267,7 +259,6 @@ export default function MyInfoEdit({
           <h3 className="text-primary-400 border-ui-gray-disabled mb-13 border-b pb-4 text-xl font-bold">
             개인 정보 수정
           </h3>
-
           <div className="space-y-6">
             <div>
               <InputField
@@ -295,39 +286,22 @@ export default function MyInfoEdit({
               <p className="text-ui-gray-primary mb-2 block text-base font-normal">
                 성별
               </p>
-
               <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setGender('M')
-                    setErrors((prev) => ({ ...prev, gender: undefined }))
-                  }}
-                  className={cn(
-                    `flex h-10.5 min-w-20 cursor-pointer items-center justify-center rounded-full border px-7 py-4 text-base font-semibold`,
-                    gender === 'M'
-                      ? 'border-primary-default bg-primary-100 text-primary-default'
-                      : 'bg-ui-gray-200 border-ui-gray-250 text-ui-gray-600'
-                  )}
-                >
-                  남
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setGender('F')
-                    setErrors((prev) => ({ ...prev, gender: undefined }))
-                  }}
-                  className={cn(
-                    'flex h-10.5 min-w-20 cursor-pointer items-center justify-center rounded-full border px-7 py-4 text-base font-semibold',
-                    gender === 'F'
-                      ? 'border-violet-500 bg-violet-50 text-violet-600'
-                      : 'bg-ui-gray-200 border-ui-gray-250 text-ui-gray-600'
-                  )}
-                >
-                  여
-                </button>
+                {GENDER_OPTIONS.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => handleChangeGender(option.value)}
+                    className={cn(
+                      'flex h-10.5 min-w-20 cursor-pointer items-center justify-center rounded-full border px-7 py-4 text-base font-semibold',
+                      gender === option.value
+                        ? option.activeClassName
+                        : 'bg-ui-gray-200 border-ui-gray-250 text-ui-gray-600'
+                    )}
+                  >
+                    {option.label}
+                  </button>
+                ))}
               </div>
             </div>
 
