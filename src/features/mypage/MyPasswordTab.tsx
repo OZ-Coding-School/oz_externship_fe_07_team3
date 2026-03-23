@@ -1,5 +1,4 @@
 import { useForm } from 'react-hook-form'
-import { useChangePassword } from '@/api/queries/useChangePassword'
 import {
   changePasswordSchema,
   type ChangePasswordFormValues,
@@ -10,6 +9,7 @@ import Button from '@/components/ui/button'
 import { toast } from 'sonner'
 import { changePasswordZodErrorsToRHF } from '@/utils/changePasswordZodErrorsToRHF'
 import { PASSWORD_CHANGE_FIELDS } from '@/constants/passwordChangeFields'
+import { useChangePassword } from '@/api/queries/myInfo/useChangePassword'
 
 type ErrorResponseData = {
   error_detail?: string | Record<string, string[]>
