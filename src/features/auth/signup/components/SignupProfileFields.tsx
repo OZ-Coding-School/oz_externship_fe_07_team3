@@ -1,6 +1,7 @@
+import { cn } from '@/lib/utils'
 import Button from '@/components/ui/button'
 import Input from '@/components/ui/input'
-import { cn } from '@/lib/utils'
+import InputField from '@/components/common/InputField'
 import type {
   SignupErrors,
   SignupState,
@@ -52,26 +53,26 @@ const SignupProfileFields = ({
 
   return (
     <>
+      {/* 이름 */}
       <div className="flex w-full flex-col gap-[20px]">
-        <label htmlFor="signup-name" className={fieldLabelClassName}>
-          이름<span className="text-other-red">*</span>
-        </label>
-
-        <Input
+        <InputField
           id="signup-name"
+          label="이름"
+          required
           type="text"
           value={state.name}
           onChange={(e) => handleNameChange(e.target.value)}
           onBlur={() => setFieldTouched('name')}
           placeholder="이름을 입력해주세요"
           className="h-[48px]"
+          fieldLabelClassName={fieldLabelClassName}
         />
-
         {(touched.name || submitted) && errors.name && (
           <p className={errorTextClassName}>{errors.name}</p>
         )}
       </div>
 
+      {/* 닉네임 - 버튼이 같은 행에 있어서 InputField 미적용 */}
       <div className="flex w-full flex-col gap-[20px]">
         <label htmlFor="signup-nickname" className={fieldLabelClassName}>
           닉네임<span className="text-other-red">*</span>
@@ -87,7 +88,6 @@ const SignupProfileFields = ({
             placeholder="닉네임을 입력해주세요"
             className="h-[48px] flex-1"
           />
-
           <Button
             type="button"
             variant="ghost"
@@ -106,13 +106,12 @@ const SignupProfileFields = ({
         ) : null}
       </div>
 
+      {/* 생년월일 */}
       <div className="flex w-full flex-col gap-[20px]">
-        <label htmlFor="signup-birth" className={fieldLabelClassName}>
-          생년월일<span className="text-other-red">*</span>
-        </label>
-
-        <Input
+        <InputField
           id="signup-birth"
+          label="이름"
+          required
           type="text"
           inputMode="numeric"
           value={state.birth}
@@ -120,13 +119,14 @@ const SignupProfileFields = ({
           onBlur={() => setFieldTouched('birth')}
           placeholder="8자리 입력해주세요 (ex.20001004)"
           className="h-[48px]"
+          fieldLabelClassName={fieldLabelClassName}
         />
-
         {(touched.birth || submitted) && errors.birth && (
           <p className={errorTextClassName}>{errors.birth}</p>
         )}
       </div>
 
+      {/* 성별 */}
       <div className="flex w-full flex-col gap-[20px]">
         <label className={fieldLabelClassName}>
           성별<span className="text-other-red">*</span>
