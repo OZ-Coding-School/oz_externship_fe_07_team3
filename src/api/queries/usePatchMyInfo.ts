@@ -2,7 +2,7 @@ import type { UpdateMyInfoRequest } from '@/types'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { patchMyInfo } from '../mypage'
 import { MY_INFO_QUERY_KEY } from './useGetMyInfo'
-import { MY_ENROLLED_COURSES_QUERY_KEY } from './useGetMyEnrolledCourses'
+import { MY_ENROLLED_COURSES_QUERY_KEY } from './enrolled-student/useGetMyEnrolledCourses'
 
 export const usePatchMyInfo = () => {
   const queryClient = useQueryClient()

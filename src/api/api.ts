@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/constants/apisPaths'
 import axios from 'axios'
 
 /**
@@ -8,6 +9,19 @@ import axios from 'axios'
 export const API_BASE = '/api/v1'
 
 export const api = axios.create({
-  baseURL: '/api/v1',
+  baseURL: API_BASE_URL,
   withCredentials: true,
 })
+
+//요청
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('accessToken')
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+
+  return config
+})
+
+//응답, 오류처리

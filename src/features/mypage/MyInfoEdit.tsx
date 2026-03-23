@@ -5,7 +5,6 @@ import profileViewIcon from '../../assets/icons/profileViewIcon.svg'
 import cameraIcon from '../../assets/icons/cameraIcon.svg'
 import InputField from '@/components/common/InputField'
 import { useImageUpload } from '@/hooks/useImageUpload'
-import { useChangePhone } from '@/api/queries/useChangePhone'
 import { toast } from 'sonner'
 import PhoneVerifySection from './PhoneVerifySection'
 import { cn } from '@/lib/utils'
@@ -19,6 +18,7 @@ import {
   parseUpdateMyInfoError,
   type MyInfoFieldErrors,
 } from '@/utils/parseUpdateMyInfoError'
+import { useChangePhone } from '@/api/queries/myInfo/useChangePhone'
 
 type MyInfoEditProps = {
   myInfo: MyInfoResponse
@@ -316,7 +316,7 @@ export default function MyInfoEdit({
                 <button
                   type="button"
                   onClick={() => {
-                    setGender('M')
+                    setGender('F')
                     setErrors((prev) => ({ ...prev, gender: undefined }))
                   }}
                   className={cn(

@@ -1,12 +1,12 @@
 import { useMemo } from 'react'
 
-import { useGetAvailableCourses } from '@/api/queries/useGetAvailableCourses'
 import type {
   AvailableCourseItem,
   CourseOption,
   SelectedCourseRegisterValue,
 } from '@/types/api-response/course'
 import CourseSelectDropdown from './CourseSelectDropdown'
+import { useGetAvailableCourses } from '@/api/queries/enrolled-student/useGetAvailableCourses'
 
 type CourseRegisterFieldsProps = {
   value: SelectedCourseRegisterValue
