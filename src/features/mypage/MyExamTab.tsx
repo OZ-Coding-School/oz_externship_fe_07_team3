@@ -1,3 +1,5 @@
+import { checkExamCode } from '@/api/exam'
+import { useExamDeployments } from '@/api/queries/exam/useExamDeployments'
 import ExamEmptyState from '@/components/exam/ExamEmptyState'
 import ExamEntryCodeModal from '@/components/exam/ExamEntryCodeModal'
 import { EXAM_SUBJECT_ICON_MAP } from '@/constants/exam/examSubjectIconMap'
@@ -9,21 +11,24 @@ import {
 } from '@/constants/exam/examTab'
 import { getQuizPage, getQuizResultPage } from '@/constants/routesPaths'
 import { cn } from '@/lib/utils'
-import { mockExamDeploymentList } from '@/mocks/data/mockExamDeploymentList'
-import type { ExamTabType } from '@/types/mypage-type/examDeployment'
+import type {
+  ExamDeploymentItem,
+  ExamTabType,
+} from '@/types/mypage-type/examDeployment'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-type ExamItem = (typeof mockExamDeploymentList.results)[number]
+type ExamItem = ExamDeploymentItem
 
 export default function MyExamTab() {
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<ExamTabType>('all')
   const [selectedExam, setSelectedExam] = useState<ExamItem | null>(null)
   const [isEntryCodeModalOpen, setIsEntryCodeModalOpen] = useState(false)
+  const { data, isPending, isError } = useExamDeployments()
+  const examList = data?.results ?? []
 
-  const navigate = useNavigate()
-
-  const filteredExamList = mockExamDeploymentList.results.filter((item) => {
+  const filteredExamList = examList.filter((item) => {
     if (activeTab === 'all') {
       return true
     }
@@ -31,7 +36,8 @@ export default function MyExamTab() {
   })
 
   const handleExamActionClick = (item: ExamItem) => {
-    const isDone = item.exam_info.status === 'done'
+    const status = item.exam_info.status as keyof typeof EXAM_STATUS_META
+    const isDone = status === 'done'
     if (isDone) {
       navigate(getQuizResultPage(item.id))
       return
@@ -49,22 +55,36 @@ export default function MyExamTab() {
     if (!selectedExam) {
       return false
     }
-    const isValidCode = code === '777777'
-    if (!isValidCode) {
+    try {
+      await checkExamCode(selectedExam.id, code)
+      setIsEntryCodeModalOpen(false)
+      navigate(getQuizPage(selectedExam.id))
+      return true
+    } catch {
       return false
     }
-    setIsEntryCodeModalOpen(false)
-    navigate(getQuizPage(selectedExam.id))
-    return true
   }
 
   const selectedSubjectTitle = selectedExam?.exam.subject.title as
     | keyof typeof EXAM_SUBJECT_ICON_MAP
     | undefined
 
-  const modalImageSrc = selectedSubjectTitle
-    ? EXAM_SUBJECT_ICON_MAP[selectedSubjectTitle]
-    : ''
+  const modalImageSrc =
+    (selectedSubjectTitle
+      ? EXAM_SUBJECT_ICON_MAP[selectedSubjectTitle]
+      : undefined) ??
+    selectedExam?.exam.subject.thumbnail_img_url ??
+    selectedExam?.exam.thumbnail_img_url ??
+    ''
+
+  if (isPending) {
+    return <div>로딩 중...</div>
+  }
+
+  if (isError) {
+    return <div>시험 목록을 불러오지 못했습니다.</div>
+  }
+
   return (
     <>
       <section className="w-186">
@@ -113,14 +133,19 @@ export default function MyExamTab() {
               {filteredExamList.map((item) => {
                 const subjectTitle = item.exam.subject
                   .title as keyof typeof EXAM_SUBJECT_ICON_MAP
-                const subjectIcon = EXAM_SUBJECT_ICON_MAP[subjectTitle]
-                const statusMeta = EXAM_STATUS_META[item.exam_info.status]
-                const isDone = item.exam_info.status === 'done'
+                const subjectIcon =
+                  EXAM_SUBJECT_ICON_MAP[subjectTitle] ??
+                  item.exam.subject.thumbnail_img_url ??
+                  item.exam.thumbnail_img_url ??
+                  ''
+                const status = item.exam_info.status
+                const statusMeta = EXAM_STATUS_META[status]
+                const isDone = status === 'done'
 
                 return (
                   <li
                     key={item.id}
-                    className="flex items-center gap-4 rounded-lg border px-8 py-7"
+                    className="flex items-center gap-4 rounded-lg border border-gray-200 bg-[#fafafa] px-8 py-7"
                   >
                     <img
                       src={subjectIcon}
@@ -128,7 +153,7 @@ export default function MyExamTab() {
                       className="h-12 w-12"
                     />
 
-                    <div className="flex-1 flex-col">
+                    <div className="flex flex-1 flex-col">
                       <div className="mb-2 flex items-center gap-3">
                         <h3 className="text-[18px] leading-[140%] font-semibold tracking-[-0.03em]">
                           {item.exam.title}

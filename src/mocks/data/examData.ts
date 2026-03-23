@@ -1,5 +1,5 @@
 // 쪽지시험 문제 목록
-export const examQuestions = [
+export const mockQuizData = [
   {
     question_id: 1,
     number: 1,

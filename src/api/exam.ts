@@ -1,16 +1,43 @@
+import type { ExamDeploymentListResponse } from '@/types/mypage-type/examDeployment'
 import type { QuizData } from '@/types/quizpage-type/question'
+import type { ResultData } from '@/types/result-type/answer'
 import { api } from './api'
+
+export const getExamDeployments =
+  async (): Promise<ExamDeploymentListResponse> => {
+    const { data } =
+      await api.get<ExamDeploymentListResponse>('/exams/deployments')
+    return data
+  }
 
 export const getExamQuestions = async (
   deploymentId: number
 ): Promise<QuizData> => {
-  const { data } = await api.get<QuizData>(
-    `/exams/deployments/${deploymentId}`,
-    {
-      headers: {
-        Authorization: 'Bearer test-token',
-      },
-    }
+  const { data } = await api.get(`/exams/deployments/${deploymentId}`)
+  return data
+}
+
+export const checkExamCode = async (deploymentId: number, code: string) => {
+  const { data } = await api.post(
+    `/exams/deployments/${deploymentId}/check-code`,
+    { code }
   )
+  return data
+}
+
+export const getExamStatus = async (deploymentId: number) => {
+  const { data } = await api.get(`/exams/deployments/${deploymentId}/status`)
+  return data
+}
+
+export const submitExam = async (payload: unknown) => {
+  const { data } = await api.post('/exams/submissions', payload)
+  return data
+}
+
+export const getExamSubmissionResult = async (
+  submissionId: number
+): Promise<ResultData> => {
+  const { data } = await api.get(`/exams/submissions/${submissionId}`)
   return data
 }
