@@ -2,10 +2,10 @@ import { useState } from 'react'
 
 import MyInfoView from './MyInfoView'
 import MyInfoEdit from './MyInfoEdit'
-import { useGetMyInfo } from '@/api/queries/useGetMyInfo'
-import { usePatchMyInfo } from '@/api/queries/usePatchMyInfo'
 import Loading from '@/components/common/loading/Loading'
 import { useGetMyEnrolledCourses } from '@/api/queries/enrolled-student/useGetMyEnrolledCourses'
+import { useGetMyInfo } from '@/api/queries/myInfo/useGetMyInfo'
+import { usePatchMyInfo } from '@/api/queries/myInfo/usePatchMyInfo'
 
 export default function MyInfoTab() {
   const [isEditMode, setIsEditMode] = useState(false)
@@ -15,7 +15,11 @@ export default function MyInfoTab() {
   const { mutateAsync: patchMyInfo, isPending } = usePatchMyInfo()
 
   if (isMyInfoLoading || isCoursesLoading) {
-    return <Loading />
+    return (
+      <div className="flex justify-center">
+        <Loading />
+      </div>
+    )
   }
 
   if (!myInfo) {

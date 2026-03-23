@@ -8,8 +8,8 @@ import profileViewIcon from '../../assets/icons/profileViewIcon.svg'
 import EnrolledCourseCard from './EnrolledCourseCard'
 import DeleteUserAccountModal from './delete-user/DeleteUserAccountModal'
 import { useState } from 'react'
-import { useDeleteMyAccount } from '@/api/queries/useDeleteMyAccount'
 import { toast } from 'sonner'
+import { useDeleteMyAccount } from '@/api/queries/myInfo/useDeleteMyAccount'
 
 type MyInfoViewProps = {
   myInfo: MyInfoResponse

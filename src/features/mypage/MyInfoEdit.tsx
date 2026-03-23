@@ -8,7 +8,6 @@ import { useImageUpload } from '@/hooks/useImageUpload'
 import { toast } from 'sonner'
 import PhoneVerifySection from './PhoneVerifySection'
 import { cn } from '@/lib/utils'
-import { useUploadProfileImage } from '@/api/queries/useProfileImage'
 import NicknameFieldWithCheck from './NickNameFieldWithCheck'
 import {
   formatBirthdayInput,
@@ -19,6 +18,7 @@ import {
   type MyInfoFieldErrors,
 } from '@/utils/parseUpdateMyInfoError'
 import { useChangePhone } from '@/api/queries/myInfo/useChangePhone'
+import { useUploadProfileImage } from '@/api/queries/myInfo/useProfileImage'
 
 type MyInfoEditProps = {
   myInfo: MyInfoResponse

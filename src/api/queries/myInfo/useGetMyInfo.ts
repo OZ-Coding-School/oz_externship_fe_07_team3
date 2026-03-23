@@ -1,5 +1,5 @@
+import { getMyInfo } from '@/api/mypage'
 import { useQuery } from '@tanstack/react-query'
-import { getMyInfo } from '../mypage'
 
 export const MY_INFO_QUERY_KEY = ['my-info']
 
