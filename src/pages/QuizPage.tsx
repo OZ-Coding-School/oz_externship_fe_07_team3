@@ -2,7 +2,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 
-import { getExamQuestions, getExamStatus, submitExam } from '@/api/exam'
+import { useExamQuestions } from '@/api/queries/exam/useExamQuestions'
+import { useStatus } from '@/api/queries/exam/useStatus'
+import { useSubmitExam } from '@/api/queries/exam/useSubmitExam'
 import CheatingModal from '@/components/exam/CheatingModal'
 import ExamSubmitModal from '@/components/exam/ExamSubmitModal'
 import ExamTerminatedModal from '@/components/exam/ExamTerminatedModal'
@@ -13,10 +15,8 @@ import { QuestionItem } from '@/features/quiz'
 import QuizWarning from '@/features/quiz/QuizWarning'
 import { useCheatingDetection } from '@/hooks/exam/useCheatingDetection'
 import { useQuizTimer } from '@/hooks/exam/useQuizTimer'
-import { createSubmitPayload } from '@/utils/createSubmitPayload'
-
 import type { AnswerMap, AnswerValue } from '@/types/answer-type/answer'
-import type { QuizData } from '@/types/quizpage-type/question'
+import { createSubmitPayload } from '@/utils/createSubmitPayload'
 
 function QuizPage() {
   const { deploymentId } = useParams()
@@ -24,7 +24,7 @@ function QuizPage() {
   const numericDeploymentId = Number(deploymentId)
 
   const [startedAt] = useState(() => new Date().toISOString())
-  const [quizData, setQuizData] = useState<QuizData | null>(null)
+
   const [answers, setAnswers] = useState<AnswerMap>({})
   const [isWarningVisible, setIsWarningVisible] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -32,6 +32,25 @@ function QuizPage() {
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false)
   const [isTerminated, setIsTerminated] = useState(false)
 
+  const {
+    data: statusData,
+    isLoading: isStatusLoading,
+    isError: isStatusError,
+  } = useStatus(numericDeploymentId, !!numericDeploymentId)
+
+  const shouldFetchQuestions =
+    !!numericDeploymentId &&
+    !Number.isNaN(numericDeploymentId) &&
+    !!statusData &&
+    !(statusData.exam_status === 'closed' && statusData.force_submit)
+
+  const {
+    data: quizData,
+    isLoading: isQuizLoading,
+    isError: isQuizError,
+  } = useExamQuestions(numericDeploymentId, shouldFetchQuestions)
+
+  const submitExamMutation = useSubmitExam()
   const {
     cheatingCount,
     isCheatingModalOpen,
@@ -109,8 +128,10 @@ function QuizPage() {
           quizData,
           answers,
         })
-
-        const result = await submitExam(numericDeploymentId, payload)
+        const result = await submitExamMutation.mutateAsync({
+          deploymentId: numericDeploymentId,
+          payload,
+        })
         navigate(getQuizResultPage(result.submission_id))
         setIsSubmitModalOpen(false)
       } catch (error) {
@@ -128,6 +149,7 @@ function QuizPage() {
       numericDeploymentId,
       quizData,
       startedAt,
+      submitExamMutation,
     ]
   )
 
@@ -181,30 +203,20 @@ function QuizPage() {
   useEffect(() => {
     if (Number.isNaN(numericDeploymentId)) {
       setIsError(true)
+    }
+  }, [numericDeploymentId])
+
+  useEffect(() => {
+    if (!statusData) {
       return
     }
 
-    const fetchQuizData = async () => {
-      try {
-        const statusData = await getExamStatus(numericDeploymentId)
-
-        if (statusData.exam_status === 'closed' && statusData.force_submit) {
-          setIsTerminated(true)
-          return
-        }
-
-        const data = await getExamQuestions(numericDeploymentId)
-        setQuizData(data)
-      } catch (error) {
-        toast.error('시험 정보를 불러오지 못했습니다.')
-        setIsError(true)
-      }
+    if (statusData.exam_status === 'closed' && statusData.force_submit) {
+      setIsTerminated(true)
     }
+  }, [statusData])
 
-    fetchQuizData()
-  }, [numericDeploymentId])
-
-  if (isError) {
+  if (isError || isStatusError || isQuizError) {
     return <div>시험 정보를 불러오지 못했습니다.</div>
   }
 
@@ -217,7 +229,7 @@ function QuizPage() {
     )
   }
 
-  if (!quizData) {
+  if (isStatusLoading || isQuizLoading || !quizData) {
     return <div>로딩중...</div>
   }
 
@@ -261,7 +273,7 @@ function QuizPage() {
             setIsSubmitModalOpen(true)
           }}
           disabled={isSubmitting || !isAllQuestionsAnswered}
-          className="text-primary-100 border-primary-600 w-auto rounded-[4px] bg-[#721AE3] px-7 py-6.25"
+          className="text-primary-100 border-primary-600 w-auto rounded-lg bg-[#721AE3] px-7 py-6.25"
         >
           제출하기
         </Button>

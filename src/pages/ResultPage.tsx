@@ -1,10 +1,8 @@
-import { getExamResult } from '@/api/exam'
+import { useExamResult } from '@/api/queries/exam/useExamResult'
 import { getMyPageTab } from '@/constants/routesPaths'
 import ResultBottomAction from '@/features/quiz-result/ResultBottomAction'
 import ResultHeader from '@/features/quiz-result/ResultHeader'
 import ResultQuestionList from '@/features/quiz-result/ResultQuestionList'
-import type { ResultData } from '@/types/result-type/answer'
-import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 function ResultPage() {
@@ -12,20 +10,11 @@ function ResultPage() {
   const { submissionId } = useParams()
   const numericSubmissionId = Number(submissionId)
 
-  const [resultData, setResultData] = useState<ResultData | null>(null)
-
-  useEffect(() => {
-    if (!numericSubmissionId) {
-      return
-    }
-
-    const fetchResult = async () => {
-      const data = await getExamResult(numericSubmissionId)
-      setResultData(data)
-    }
-
-    fetchResult()
-  }, [numericSubmissionId])
+  const {
+    data: resultData,
+    isLoading,
+    isError,
+  } = useExamResult(numericSubmissionId)
 
   const handleBack = () => {
     navigate(getMyPageTab('exam'))
@@ -34,8 +23,12 @@ function ResultPage() {
     }, 0)
   }
 
-  if (!resultData) {
+  if (isLoading) {
     return <div>불러오는 중...</div>
+  }
+
+  if (isError || !resultData) {
+    return <div>결과를 불러오지 못했습니다.</div>
   }
 
   return (
