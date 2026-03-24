@@ -8,7 +8,7 @@ import ExamSubmitModal from '@/components/exam/ExamSubmitModal'
 import ExamTerminatedModal from '@/components/exam/ExamTerminatedModal'
 import QuizHeader from '@/components/exam/QuizHeader'
 import Button from '@/components/ui/button'
-import { getMyPageTab } from '@/constants/routesPaths'
+import { getMyPageTab, getQuizResultPage } from '@/constants/routesPaths'
 import { QuestionItem } from '@/features/quiz'
 import QuizWarning from '@/features/quiz/QuizWarning'
 import { useCheatingDetection } from '@/hooks/exam/useCheatingDetection'
@@ -110,8 +110,8 @@ function QuizPage() {
           answers,
         })
 
-        const result = await submitExam(payload)
-        navigate(result.redirect_url)
+        const result = await submitExam(numericDeploymentId, payload)
+        navigate(getQuizResultPage(result.submission_id))
         setIsSubmitModalOpen(false)
       } catch (error) {
         toast.error('시험 제출에 실패했습니다.')

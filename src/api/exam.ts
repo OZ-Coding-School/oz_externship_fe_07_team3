@@ -1,10 +1,10 @@
-import type { SubmitPayload } from '@/types/api-request/examRequest'
 import type { SubmitExamResponse } from '@/types/api-response/examResponse'
 import type { ExamDeploymentListResponse } from '@/types/mypage-type/examDeployment'
 import type { QuizData } from '@/types/quizpage-type/question'
 import type { ExamStatusResponse } from '@/types/quizpage-type/status'
 import type { ResultData } from '@/types/result-type/answer'
 
+import type { SubmitExamRequest } from '@/types/quizpage-type/submit'
 import { api } from './api'
 
 export const getExamDeployments =
@@ -39,16 +39,18 @@ export const getExamStatus = async (
 }
 
 export const submitExam = async (
-  payload: SubmitPayload
+  deploymentId: number,
+  payload: SubmitExamRequest
 ): Promise<SubmitExamResponse> => {
   const { data } = await api.post<SubmitExamResponse>(
-    '/exams/submissions',
+    `/exams/deployments/${deploymentId}/submit`,
     payload
   )
+
   return data
 }
 
-export const getExamSubmissionResult = async (
+export const getExamResult = async (
   submissionId: number
 ): Promise<ResultData> => {
   const { data } = await api.get<ResultData>(

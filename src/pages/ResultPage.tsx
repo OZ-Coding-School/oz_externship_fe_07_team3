@@ -1,12 +1,31 @@
+import { getExamResult } from '@/api/exam'
 import { getMyPageTab } from '@/constants/routesPaths'
 import ResultBottomAction from '@/features/quiz-result/ResultBottomAction'
 import ResultHeader from '@/features/quiz-result/ResultHeader'
 import ResultQuestionList from '@/features/quiz-result/ResultQuestionList'
-import { mockQuizResultData } from '@/mocks/data/mockQuizResultData'
-import { useNavigate } from 'react-router-dom'
+import type { ResultData } from '@/types/result-type/answer'
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 
 function ResultPage() {
   const navigate = useNavigate()
+  const { submissionId } = useParams()
+  const numericSubmissionId = Number(submissionId)
+
+  const [resultData, setResultData] = useState<ResultData | null>(null)
+
+  useEffect(() => {
+    if (!numericSubmissionId) {
+      return
+    }
+
+    const fetchResult = async () => {
+      const data = await getExamResult(numericSubmissionId)
+      setResultData(data)
+    }
+
+    fetchResult()
+  }, [numericSubmissionId])
 
   const handleBack = () => {
     navigate(getMyPageTab('exam'))
@@ -14,14 +33,19 @@ function ResultPage() {
       window.scrollTo({ top: 0, behavior: 'auto' })
     }, 0)
   }
+
+  if (!resultData) {
+    return <div>불러오는 중...</div>
+  }
+
   return (
     <div>
       <ResultHeader
-        title={mockQuizResultData.exam_name}
-        questionCount={mockQuizResultData.questions.length}
-        cheatingCount={mockQuizResultData.cheating_count}
-        elapsedTime={mockQuizResultData.elapsed_time}
-        totalScore={mockQuizResultData.total_score}
+        title={resultData.exam_name}
+        questionCount={resultData.questions.length}
+        cheatingCount={resultData.cheating_count}
+        elapsedTime={resultData.elapsed_time}
+        totalScore={resultData.total_score}
         onBack={handleBack}
       />
       <section>
@@ -35,7 +59,7 @@ function ResultPage() {
       </section>
 
       <div className="mt-[78px] px-90">
-        <ResultQuestionList questions={mockQuizResultData.questions} />
+        <ResultQuestionList questions={resultData.questions} />
         <ResultBottomAction onConfirm={handleBack} />
       </div>
     </div>
