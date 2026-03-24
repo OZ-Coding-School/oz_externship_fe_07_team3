@@ -19,12 +19,10 @@ import type { AnswerMap, AnswerValue } from '@/types/answer-type/answer'
 import { createSubmitPayload } from '@/utils/createSubmitPayload'
 
 function QuizPage() {
-  const { deploymentId } = useParams()
   const navigate = useNavigate()
+  const { deploymentId } = useParams()
   const numericDeploymentId = Number(deploymentId)
-
   const [startedAt] = useState(() => new Date().toISOString())
-
   const [answers, setAnswers] = useState<AnswerMap>({})
   const [isWarningVisible, setIsWarningVisible] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -68,11 +66,9 @@ function QuizPage() {
     if (answer === null) {
       return false
     }
-
     if (typeof answer === 'string') {
       return answer.trim().length > 0
     }
-
     if (Array.isArray(answer)) {
       return (
         answer.length > 0 &&
@@ -80,16 +76,13 @@ function QuizPage() {
           if (typeof item === 'string') {
             return item.trim().length > 0
           }
-
           return true
         })
       )
     }
-
     if (typeof answer === 'boolean') {
       return true
     }
-
     return true
   }, [])
 
@@ -97,7 +90,6 @@ function QuizPage() {
     if (!quizData) {
       return false
     }
-
     return quizData.questions.every((question) =>
       isAnswered(answers[question.question_id] ?? null)
     )
@@ -108,18 +100,14 @@ function QuizPage() {
       if (isSubmitting) {
         return
       }
-
       if (!quizData) {
         return
       }
-
       if (!force && !isAllQuestionsAnswered) {
         toast.error('모든 문제를 풀어야 제출할 수 있습니다.')
         return
       }
-
       setIsSubmitting(true)
-
       try {
         const payload = createSubmitPayload({
           deploymentId: numericDeploymentId,
@@ -174,7 +162,6 @@ function QuizPage() {
     if (isTerminated) {
       return
     }
-
     navigate(getMyPageTab('exam'))
   }, [isTerminated, navigate])
 
@@ -183,16 +170,13 @@ function QuizPage() {
       if (document.fullscreenElement) {
         return
       }
-
       try {
         await document.documentElement.requestFullscreen()
       } catch (error) {
         console.warn('전체화면 진입이 차단되었습니다.')
       }
     }
-
     enterFullscreen()
-
     return () => {
       if (document.fullscreenElement) {
         document.exitFullscreen().catch(() => {})
@@ -210,7 +194,6 @@ function QuizPage() {
     if (!statusData) {
       return
     }
-
     if (statusData.exam_status === 'closed' && statusData.force_submit) {
       setIsTerminated(true)
     }

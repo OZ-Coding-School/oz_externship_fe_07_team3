@@ -50,8 +50,7 @@ export default function MyExamTab() {
     setIsEntryCodeModalOpen(false)
     setSelectedExam(null)
   }
-  const { mutateAsync: checkCode, isPending: isCheckingCode } =
-    useCheckExamCode()
+  const { mutateAsync: checkCode } = useCheckExamCode()
   const handleConfirmEntryCode = async (entryCode: string) => {
     if (!selectedExam) {
       return false
