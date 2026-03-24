@@ -1,29 +1,49 @@
-import { getExamQuestions } from '@/api/exam'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { toast } from 'sonner'
+
+import { getExamQuestions, getExamStatus, submitExam } from '@/api/exam'
 import CheatingModal from '@/components/exam/CheatingModal'
-import ExamSubmitModal from '@/components/exam/ExamSubmitModal.tsx'
+import ExamSubmitModal from '@/components/exam/ExamSubmitModal'
 import ExamTerminatedModal from '@/components/exam/ExamTerminatedModal'
 import QuizHeader from '@/components/exam/QuizHeader'
 import Button from '@/components/ui/button'
-import { getMyPageTab, getQuizResultPage } from '@/constants/routesPaths'
+import { getMyPageTab } from '@/constants/routesPaths'
 import { QuestionItem } from '@/features/quiz'
 import QuizWarning from '@/features/quiz/QuizWarning'
 import { useCheatingDetection } from '@/hooks/exam/useCheatingDetection'
 import { useQuizTimer } from '@/hooks/exam/useQuizTimer'
+import { createSubmitPayload } from '@/utils/createSubmitPayload'
+
 import type { AnswerMap, AnswerValue } from '@/types/answer-type/answer'
 import type { QuizData } from '@/types/quizpage-type/question'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { toast } from 'sonner'
 
 function QuizPage() {
+  const { deploymentId } = useParams()
+  const navigate = useNavigate()
+  const numericDeploymentId = Number(deploymentId)
+
+  const [startedAt] = useState(() => new Date().toISOString())
   const [quizData, setQuizData] = useState<QuizData | null>(null)
+  const [answers, setAnswers] = useState<AnswerMap>({})
   const [isWarningVisible, setIsWarningVisible] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isError, setIsError] = useState(false)
-  const [answers, setAnswers] = useState<AnswerMap>({})
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false)
+  const [isTerminated, setIsTerminated] = useState(false)
 
-  const navigate = useNavigate()
+  const {
+    cheatingCount,
+    isCheatingModalOpen,
+    cheatingMessage,
+    handleCheatingModalClose,
+    handleCheatingModalConfirm,
+  } = useCheatingDetection({
+    isSubmitting,
+    onTerminate: async () => {
+      setIsTerminated(true)
+    },
+  })
 
   const isAnswered = useCallback((answer: AnswerValue) => {
     if (answer === null) {
@@ -64,16 +84,6 @@ function QuizPage() {
     )
   }, [answers, isAnswered, quizData])
 
-  const handleAnswerChange = useCallback(
-    (questionId: number, answer: AnswerValue) => {
-      setAnswers((prev) => ({
-        ...prev,
-        [questionId]: answer,
-      }))
-    },
-    []
-  )
-
   const handleSubmit = useCallback(
     async (force = false) => {
       if (isSubmitting) {
@@ -92,29 +102,51 @@ function QuizPage() {
       setIsSubmitting(true)
 
       try {
-        // TODO: 현재까지 풀이 데이터 서버 전송
+        const payload = createSubmitPayload({
+          deploymentId: numericDeploymentId,
+          startedAt,
+          cheatingCount,
+          quizData,
+          answers,
+        })
+
+        const result = await submitExam(payload)
+        navigate(result.redirect_url)
         setIsSubmitModalOpen(false)
-        navigate(getQuizResultPage(1))
       } catch (error) {
         toast.error('시험 제출에 실패했습니다.')
       } finally {
         setIsSubmitting(false)
       }
     },
-    [isAllQuestionsAnswered, isSubmitting, navigate, quizData]
+    [
+      answers,
+      cheatingCount,
+      isAllQuestionsAnswered,
+      isSubmitting,
+      navigate,
+      numericDeploymentId,
+      quizData,
+      startedAt,
+    ]
   )
 
-  const {
-    cheatingCount,
-    isCheatingModalOpen,
-    cheatingMessage,
-    isTerminated,
-    handleCheatingModalClose,
-    handleCheatingModalConfirm,
-  } = useCheatingDetection({
-    isSubmitting,
-    onTerminate: async () => {},
+  const { formattedTime } = useQuizTimer({
+    initialSeconds: (quizData?.duration_time ?? 30) * 60,
+    onTimeEnd: () => {
+      void handleSubmit(true)
+    },
   })
+
+  const handleAnswerChange = useCallback(
+    (questionId: number, answer: AnswerValue) => {
+      setAnswers((prev) => ({
+        ...prev,
+        [questionId]: answer,
+      }))
+    },
+    []
+  )
 
   const handleBack = useCallback(() => {
     if (isTerminated) {
@@ -126,12 +158,14 @@ function QuizPage() {
 
   useEffect(() => {
     const enterFullscreen = async () => {
+      if (document.fullscreenElement) {
+        return
+      }
+
       try {
-        if (!document.fullscreenElement) {
-          await document.documentElement.requestFullscreen()
-        }
+        await document.documentElement.requestFullscreen()
       } catch (error) {
-        console.error('전체화면 진입 실패', error)
+        console.warn('전체화면 진입이 차단되었습니다.')
       }
     }
 
@@ -145,28 +179,42 @@ function QuizPage() {
   }, [])
 
   useEffect(() => {
+    if (Number.isNaN(numericDeploymentId)) {
+      setIsError(true)
+      return
+    }
+
     const fetchQuizData = async () => {
       try {
-        const data = await getExamQuestions(1)
+        const statusData = await getExamStatus(numericDeploymentId)
+
+        if (statusData.exam_status === 'closed' && statusData.force_submit) {
+          setIsTerminated(true)
+          return
+        }
+
+        const data = await getExamQuestions(numericDeploymentId)
         setQuizData(data)
       } catch (error) {
-        toast.error('시험 문제를 불러오지 못했습니다.')
+        toast.error('시험 정보를 불러오지 못했습니다.')
         setIsError(true)
       }
     }
 
     fetchQuizData()
-  }, [])
-
-  const { formattedTime } = useQuizTimer({
-    initialSeconds: 30 * 60,
-    onTimeEnd: () => {
-      void handleSubmit(true)
-    },
-  })
+  }, [numericDeploymentId])
 
   if (isError) {
-    return <div>시험 문제를 불러오지 못했습니다.</div>
+    return <div>시험 정보를 불러오지 못했습니다.</div>
+  }
+
+  if (isTerminated) {
+    return (
+      <ExamTerminatedModal
+        isOpen={isTerminated}
+        onConfirm={() => navigate(getMyPageTab('exam'))}
+      />
+    )
   }
 
   if (!quizData) {
@@ -177,7 +225,7 @@ function QuizPage() {
     <>
       <QuizHeader
         variant="inProgress"
-        title="TypeScript 쪽지시험"
+        title={quizData.exam_name}
         subText="집중해서 천천히, 끝까지 응시해 주세요. 응원할게요💪"
         timeText={`${formattedTime} 뒤에 끝나요`}
         onBack={handleBack}
@@ -187,7 +235,9 @@ function QuizPage() {
       <section className="px-90 pt-8">
         <QuizWarning
           isVisible={isWarningVisible}
-          onClose={() => setIsWarningVisible(false)}
+          onClose={() => {
+            setIsWarningVisible(false)
+          }}
         />
 
         <div className="mt-15">
@@ -225,14 +275,11 @@ function QuizPage() {
         onConfirm={handleCheatingModalConfirm}
       />
 
-      <ExamTerminatedModal
-        isOpen={isTerminated}
-        onConfirm={() => navigate(getMyPageTab('exam'))}
-      />
-
       <ExamSubmitModal
         isOpen={isSubmitModalOpen}
-        onClose={() => setIsSubmitModalOpen(false)}
+        onClose={() => {
+          setIsSubmitModalOpen(false)
+        }}
         onConfirm={() => {
           void handleSubmit()
         }}

@@ -1,4 +1,5 @@
 import { API_BASE_URL } from '@/constants/apisPaths'
+import type { ExamStatusResponse } from '@/types/quizpage-type/status'
 import { http, HttpResponse } from 'msw'
 import { mockQuizData } from '../data/examData'
 import { mockExamDeploymentList } from '../data/mockExamDeploymentList'
@@ -49,29 +50,41 @@ export const examHandlers = [
     }
   ),
 
-  // 시험 상태 확인
-  http.get(`${API_BASE_URL}/exams/deployments/:deploymentId/status`, () => {
-    return HttpResponse.json(
-      {
-        status: 'in_progress',
-      },
-      { status: 200 }
-    )
-  }),
+  // 응시 상태 확인
+  http.get(
+    `${API_BASE_URL}/exams/deployments/:deploymentId/status`,
+    ({ params }) => {
+      const { deploymentId } = params
+
+      const response: ExamStatusResponse =
+        Number(deploymentId) === 999
+          ? {
+              exam_status: 'closed',
+              force_submit: true,
+            }
+          : {
+              exam_status: 'activated',
+              force_submit: false,
+            }
+
+      return HttpResponse.json(response, { status: 200 })
+    }
+  ),
 
   // 시험 제출
-  http.post(`${API_BASE_URL}/exams/submissions`, async ({ request }) => {
-    const body = await request.json()
-
-    return HttpResponse.json(
-      {
-        message: '제출이 완료되었습니다.',
-        submission_id: 1,
-        submitted_data: body,
-      },
-      { status: 201 }
-    )
-  }),
+  http.post(
+    `${API_BASE_URL}/exams/deployments/:deploymentId/submit`,
+    async () => {
+      return HttpResponse.json(
+        {
+          message: '제출 완료',
+          submission_id: 1,
+          redirect_url: '/quiz/result/1',
+        },
+        { status: 200 }
+      )
+    }
+  ),
 
   // 시험 결과 조회
   http.get(`${API_BASE_URL}/exams/submissions/:submissionId`, ({ params }) => {

@@ -1,4 +1,4 @@
-import { checkExamCode } from '@/api/exam'
+import { useCheckExamCode } from '@/api/queries/exam/useCheckExamCode'
 import { useExamDeployments } from '@/api/queries/exam/useExamDeployments'
 import ExamEmptyState from '@/components/exam/ExamEmptyState'
 import ExamEntryCodeModal from '@/components/exam/ExamEntryCodeModal'
@@ -50,21 +50,23 @@ export default function MyExamTab() {
     setIsEntryCodeModalOpen(false)
     setSelectedExam(null)
   }
-
-  const handleConfirmEntryCode = async (code: string) => {
+  const { mutateAsync: checkCode, isPending: isCheckingCode } =
+    useCheckExamCode()
+  const handleConfirmEntryCode = async (entryCode: string) => {
     if (!selectedExam) {
       return false
     }
     try {
-      await checkExamCode(selectedExam.id, code)
-      setIsEntryCodeModalOpen(false)
+      await checkCode({
+        deploymentId: selectedExam.id,
+        entryCode,
+      })
       navigate(getQuizPage(selectedExam.id))
       return true
     } catch {
       return false
     }
   }
-
   const selectedSubjectTitle = selectedExam?.exam.subject.title as
     | keyof typeof EXAM_SUBJECT_ICON_MAP
     | undefined

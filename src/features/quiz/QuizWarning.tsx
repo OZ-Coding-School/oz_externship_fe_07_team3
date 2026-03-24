@@ -12,7 +12,7 @@ function QuizWarning({ isVisible, onClose }: QuizWarningProps) {
   }
 
   return (
-    <div className="bg-primary-100 flex w-full items-start justify-between rounded-[8px] px-5 py-6">
+    <div className="bg-primary-100 flex w-full items-start justify-between rounded-[8px] px-5 py-6 whitespace-nowrap">
       <div className="flex gap-3">
         <img className="h-6 w-6 shrink-0" src={AlertIcon} alt="경고 아이콘" />
         <div>
