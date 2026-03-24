@@ -10,6 +10,9 @@ import DeleteUserAccountModal from './delete-user/DeleteUserAccountModal'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useDeleteMyAccount } from '@/api/queries/myInfo/useDeleteMyAccount'
+import { useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
+import { ROUTES_PATHS } from '@/constants/routesPaths'
 
 type MyInfoViewProps = {
   myInfo: MyInfoResponse
@@ -30,21 +33,23 @@ export default function MyInfoView({
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false)
 
   const { mutate: deleteMyAccountMutate, isPending } = useDeleteMyAccount()
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   const handleWithdrawSubmit = (payload: DeleteMyAccountRequest) => {
     deleteMyAccountMutate(payload, {
       onSuccess: () => {
-        toast.success('회원 탈퇴가 완료되었습니다.')
-
         setIsWithdrawModalOpen(false)
 
+        queryClient.clear()
+
+        toast.success('회원 탈퇴가 완료되었습니다.')
+
         /**
-         * TODO:
-         * - 로그아웃 처리
-         * - 토큰 제거
-         * - 메인/로그인 페이지 이동
-         * - 토스트 표시
+         * TODO: 토큰 제거
          */
+
+        navigate(ROUTES_PATHS.LOGIN_PAGE)
       },
       onError: () => {
         toast.error('회원 탈퇴에 실패했습니다.')

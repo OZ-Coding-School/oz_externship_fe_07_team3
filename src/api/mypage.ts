@@ -86,3 +86,12 @@ export const changePhone = async (payload: ChangePhoneRequest) => {
 
   return data
 }
+
+export type LogoutResponse = {
+  detail: string
+}
+
+export const logout = async (): Promise<LogoutResponse> => {
+  const { data } = await api.post<LogoutResponse>(APIS_PATHS.LOGOUT)
+  return data
+}

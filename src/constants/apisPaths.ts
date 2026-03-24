@@ -15,4 +15,5 @@ export const APIS_PATHS = {
   PRESIGNED_URL: '/questions/presigned-url',
   PROFILE_IMAGE: '/accounts/me/profile-image',
   CHECK_NICKNAME: '/accounts/check-nickname',
+  LOGOUT: '/accounts/logout',
 }
