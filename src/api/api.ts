@@ -1,8 +1,6 @@
 import { API_BASE_URL } from '@/constants/apisPaths'
 import axios from 'axios'
 
-import { useAuthStore } from '@/store/authStore'
-
 /**
  * axios - create
  * TODO: baseURL 수정 예정
@@ -17,7 +15,7 @@ export const api = axios.create({
 
 //요청
 api.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().accessToken
+  const token = localStorage.getItem('accessToken')
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`

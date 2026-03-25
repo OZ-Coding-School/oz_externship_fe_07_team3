@@ -8,14 +8,17 @@ type SingleChoiceResultProps = {
 }
 
 function SingleChoiceResult({ question }: SingleChoiceResultProps) {
+  const submittedAnswers = question.submitted_answer ?? []
+  const correctAnswers = question.answer ?? []
+
   return (
     <fieldset className="mt-4">
       <legend className="sr-only">객관식 결과 보기</legend>
 
       <ul className="space-y-4">
-        {question.options?.map((option) => {
-          const isSelected = question.user_answer === option
-          const isCorrectAnswer = question.correct_answer === option
+        {question.options.map((option) => {
+          const isSelected = submittedAnswers.includes(option)
+          const isCorrectAnswer = correctAnswers.includes(option)
           const isWrongSelected = isSelected && !isCorrectAnswer
 
           return (

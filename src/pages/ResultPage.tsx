@@ -37,7 +37,7 @@ function ResultPage() {
   return (
     <div>
       <ResultHeader
-        title={resultData.exam_name}
+        title={resultData.exam.title}
         questionCount={resultData.questions.length}
         cheatingCount={resultData.cheating_count}
         elapsedTime={resultData.elapsed_time}

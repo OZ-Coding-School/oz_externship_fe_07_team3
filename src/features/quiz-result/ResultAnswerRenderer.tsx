@@ -12,22 +12,22 @@ type ResultAnswerRendererProps = {
 
 function ResultAnswerRenderer({ question }: ResultAnswerRendererProps) {
   switch (question.type) {
-    case 'single_choice':
+    case 'SINGLE_CHOICE':
       return <SingleChoiceResult question={question} />
 
-    case 'multiple_choice':
+    case 'MULTIPLE_CHOICE':
       return <MultipleChoiceResult question={question} />
 
-    case 'short_answer':
+    case 'SHORT_ANSWER':
       return <ShortAnswerResult question={question} />
 
-    case 'ox':
+    case 'OX':
       return <OXResult question={question} />
 
-    case 'ordering':
+    case 'ORDERING':
       return <OrderingResult question={question} />
 
-    case 'fill_blank':
+    case 'FULL_BLANK':
       return <FillBlankResult question={question} />
 
     default:

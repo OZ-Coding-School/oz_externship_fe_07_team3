@@ -1,10 +1,10 @@
 export type QuizQuestionType =
-  | 'single_choice'
-  | 'multiple_choice'
-  | 'ox'
-  | 'short_answer'
-  | 'ordering'
-  | 'fill_blank'
+  | 'SINGLE_CHOICE'
+  | 'MULTIPLE_CHOICE'
+  | 'OX'
+  | 'SHORT_ANSWER'
+  | 'ORDERING'
+  | 'FULL_BLANK'
 
 type BaseQuestion = {
   question_id: number
@@ -15,7 +15,7 @@ type BaseQuestion = {
 }
 
 export type SingleChoiceQuestion = BaseQuestion & {
-  type: 'single_choice'
+  type: 'SINGLE_CHOICE'
   prompt: null
   blank_count: null
   options: string[]
@@ -23,7 +23,7 @@ export type SingleChoiceQuestion = BaseQuestion & {
 }
 
 export type MultipleChoiceQuestion = BaseQuestion & {
-  type: 'multiple_choice'
+  type: 'MULTIPLE_CHOICE'
   prompt: null
   blank_count: null
   options: string[]
@@ -31,7 +31,7 @@ export type MultipleChoiceQuestion = BaseQuestion & {
 }
 
 export type OxQuestion = BaseQuestion & {
-  type: 'ox'
+  type: 'OX'
   prompt: null
   blank_count: null
   options: ['O', 'X'] | string[]
@@ -39,7 +39,7 @@ export type OxQuestion = BaseQuestion & {
 }
 
 export type ShortAnswerQuestion = BaseQuestion & {
-  type: 'short_answer'
+  type: 'SHORT_ANSWER'
   prompt: null
   blank_count: null
   options: null
@@ -47,7 +47,7 @@ export type ShortAnswerQuestion = BaseQuestion & {
 }
 
 export type OrderingQuestion = BaseQuestion & {
-  type: 'ordering'
+  type: 'ORDERING'
   prompt: null
   blank_count: null
   options: string[]
@@ -55,7 +55,7 @@ export type OrderingQuestion = BaseQuestion & {
 }
 
 export type FillBlankQuestion = BaseQuestion & {
-  type: 'fill_blank'
+  type: 'FULL_BLANK'
   prompt: string
   blank_count: number
   options: null

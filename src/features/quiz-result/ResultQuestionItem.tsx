@@ -6,14 +6,15 @@ import type { ResultQuestion } from '@/types/result-type/answer'
 import ResultAnswerRenderer from './ResultAnswerRenderer'
 type ResultQuestionItemProps = {
   question: ResultQuestion
+  number: number
 }
 
-function ResultQuestionItem({ question }: ResultQuestionItemProps) {
+function ResultQuestionItem({ question, number }: ResultQuestionItemProps) {
   return (
     <article className="">
       <div className="flex items-center">
         <h2 className="text-ui-gray-primary text-xl leading-[140%] font-bold tracking-[-0.03em]">
-          <span className="absolute">{question.number}.</span>
+          <span className="absolute">{number}.</span>
           <span className="ml-8">{question.question}</span>
         </h2>
         <div className="ml-4 flex gap-2">
