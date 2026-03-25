@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import logoImg from '@/assets/images/logo.png'
+import { useLogin } from '@/api/queries/auth/useLogin'
 import { ROUTES_PATHS } from '@/constants/routesPaths'
 import FindIdModal from '@/features/auth/find-id/FindIdModal'
 import FindPasswordModal from '@/features/auth/find-password/FindPasswordModal'
@@ -55,14 +56,14 @@ const findPasswordHandlers: FindPasswordHandlers = {
 const LoginPage = () => {
   const [openModal, setOpenModal] = useState<OpenModal>('none')
 
+  const { mutate } = useLogin()
+
   const handleSocialLoginBtnClick = ({ provider }: { provider: Provider }) => {
     void provider
   }
 
   const handleLoginBtnClick = ({ email, password }: SubmitLoginParams) => {
-    void email
-    void password
-    // TODO: 로그인 API 연동 후 탈퇴 계정 응답일 때만 복구 모달을 오픈합니다.
+    mutate({ email, password })
   }
 
   const handleFindIdBtnClick = () => {
