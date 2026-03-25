@@ -24,3 +24,7 @@ export type ChangePasswordRequest = {
   old_password: string
   new_password: string
 }
+
+export type EnrollStudentRequest = {
+  cohort_id: number
+}

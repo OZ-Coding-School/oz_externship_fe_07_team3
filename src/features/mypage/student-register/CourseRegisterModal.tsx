@@ -4,6 +4,8 @@ import Modal from '@/components/ui/modal/Modal'
 import type { SelectedCourseRegisterValue } from '@/types/api-response/course'
 import CourseRegisterFields from './CourseRegisterFields'
 import { cn } from '@/lib/utils'
+import { usePostEnrollStudent } from '@/api/queries/enrolled-student/usePostEnrollStudent'
+import { toast } from 'sonner'
 
 type CourseRegisterModalProps = {
   isOpen: boolean
@@ -24,7 +26,30 @@ export default function CourseRegisterModal({
   onImageError,
 }: CourseRegisterModalProps) {
   const isSubmitDisabled = !value.courseId || !value.cohortId
+  const { mutate, isPending } = usePostEnrollStudent()
 
+  const handleSubmit = () => {
+    if (!value.cohortId) {
+      return
+    }
+
+    mutate(
+      { cohort_id: value.cohortId },
+      {
+        onSuccess: (res) => {
+          toast.success(res.detail)
+          onClose()
+        },
+        onError: (err) => {
+          const errorMsg =
+            typeof err.error_detail === 'string'
+              ? err.error_detail
+              : '등록에 실패했습니다.'
+          toast.error(errorMsg)
+        },
+      }
+    )
+  }
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="w-99 p-6">
@@ -59,10 +84,10 @@ export default function CourseRegisterModal({
             `h-13 rounded-lg p-2 text-base font-normal`,
             isSubmitDisabled ? 'cursor-not-allowed' : ''
           )}
-          onClick={onClose}
+          onClick={handleSubmit}
           disabled={isSubmitDisabled}
         >
-          등록하기
+          {isPending ? '등록중...' : '등록하기'}
         </Button>
       </div>
     </Modal>

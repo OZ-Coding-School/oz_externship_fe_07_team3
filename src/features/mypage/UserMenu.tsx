@@ -8,16 +8,14 @@ import CourseRegisterModal from './student-register/CourseRegisterModal'
 import { useLogout } from '@/api/queries/myInfo/useLogout'
 import { toast } from 'sonner'
 import { useGetMyInfo } from '@/api/queries/myInfo/useGetMyInfo'
+import { INITIAL_REGISTER_VALUE } from '@/constants/initialRegisterValue'
 
 export default function UserMenu() {
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [imageError, setImageError] = useState(false)
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false)
   const [selectedRegisterValue, setSelectedRegisterValue] =
-    useState<SelectedCourseRegisterValue>({
-      courseId: null,
-      cohortId: null,
-    })
+    useState<SelectedCourseRegisterValue>(INITIAL_REGISTER_VALUE)
 
   const navigate = useNavigate()
   const logoutMutation = useLogout()
@@ -25,11 +23,13 @@ export default function UserMenu() {
 
   const handleOpenRegisterModal = () => {
     setShowUserMenu(false)
+    setSelectedRegisterValue(INITIAL_REGISTER_VALUE)
     setIsRegisterModalOpen(true)
   }
 
   const handleCloseRegisterModal = () => {
     setIsRegisterModalOpen(false)
+    setSelectedRegisterValue(INITIAL_REGISTER_VALUE)
   }
 
   const handleLogout = async () => {
@@ -57,7 +57,7 @@ export default function UserMenu() {
 
   return (
     <>
-      <div className="relative">
+      <div className="relative inline-block">
         <button
           onClick={() => setShowUserMenu((prev) => !prev)}
           className="flex cursor-pointer"
@@ -79,12 +79,12 @@ export default function UserMenu() {
         </button>
 
         {showUserMenu && (
-          <div className="absolute left-40 mt-6 flex -translate-x-3/4 flex-col rounded-2xl border border-gray-200 bg-white px-4 py-6 shadow-lg">
+          <div className="absolute top-full left-0 z-50 mt-7 flex flex-col rounded-2xl border border-gray-200 bg-white px-4 py-6 shadow-lg">
             <div className="mb-5">
               <span className="text-ui-gray-primary block text-xl font-bold">
                 {userData?.nickname ?? '사용자'}
               </span>
-              <span className="text-ui-gray-400 block text-sm font-normal">
+              <span className="text-ui-gray-400 block text-sm font-normal break-all">
                 {userData?.email ?? ''}
               </span>
             </div>
