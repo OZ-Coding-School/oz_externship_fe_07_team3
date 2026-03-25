@@ -1,12 +1,20 @@
+import { useExamResult } from '@/api/queries/exam/useExamResult'
 import { getMyPageTab } from '@/constants/routesPaths'
 import ResultBottomAction from '@/features/quiz-result/ResultBottomAction'
 import ResultHeader from '@/features/quiz-result/ResultHeader'
 import ResultQuestionList from '@/features/quiz-result/ResultQuestionList'
-import { mockQuizResultData } from '@/mocks/data/mockQuizResultData'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 function ResultPage() {
   const navigate = useNavigate()
+  const { submissionId } = useParams()
+  const numericSubmissionId = Number(submissionId)
+
+  const {
+    data: resultData,
+    isLoading,
+    isError,
+  } = useExamResult(numericSubmissionId)
 
   const handleBack = () => {
     navigate(getMyPageTab('exam'))
@@ -14,14 +22,23 @@ function ResultPage() {
       window.scrollTo({ top: 0, behavior: 'auto' })
     }, 0)
   }
+
+  if (isLoading) {
+    return <div>불러오는 중...</div>
+  }
+
+  if (isError || !resultData) {
+    return <div>결과를 불러오지 못했습니다.</div>
+  }
+
   return (
     <div>
       <ResultHeader
-        title={mockQuizResultData.exam_name}
-        questionCount={mockQuizResultData.questions.length}
-        cheatingCount={mockQuizResultData.cheating_count}
-        elapsedTime={mockQuizResultData.elapsed_time}
-        totalScore={mockQuizResultData.total_score}
+        title={resultData.exam_name}
+        questionCount={resultData.questions.length}
+        cheatingCount={resultData.cheating_count}
+        elapsedTime={resultData.elapsed_time}
+        totalScore={resultData.total_score}
         onBack={handleBack}
       />
       <section>
@@ -35,7 +52,7 @@ function ResultPage() {
       </section>
 
       <div className="mt-[78px] px-90">
-        <ResultQuestionList questions={mockQuizResultData.questions} />
+        <ResultQuestionList questions={resultData.questions} />
         <ResultBottomAction onConfirm={handleBack} />
       </div>
     </div>

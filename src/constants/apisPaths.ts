@@ -16,4 +16,19 @@ export const APIS_PATHS = {
   PROFILE_IMAGE: '/accounts/me/profile-image',
   CHECK_NICKNAME: '/accounts/check-nickname',
   LOGOUT: '/accounts/logout',
+
+  GET_EXAM_DEPLOYMENTS: '/exams/deployments',
+  GET_EXAM_RESULT: '/exams/submissions',
+}
+
+//exam 동적 경로처리
+export const EXAM_API_PATHS = {
+  DEPLOYMENTS: '/exams/deployments',
+  deploymentDetail: (deploymentId: number) =>
+    `/exams/deployments/${deploymentId}`,
+  checkCode: (deploymentId: number) =>
+    `/exams/deployments/${deploymentId}/check-code`,
+  status: (deploymentId: number) => `/exams/deployments/${deploymentId}/status`,
+  submit: (deploymentId: number) => `/exams/deployments/${deploymentId}/submit`,
+  result: (submissionId: number) => `/exams/submissions/${submissionId}`,
 }

@@ -1,7 +1,5 @@
 export type ExamTabType = 'all' | 'done' | 'pending'
-
-type ExamListStatus = 'done' | 'pending'
-
+export type ExamStatus = 'done' | 'pending'
 export type ExamDeploymentItem = {
   id: number
   submission_id: number | null
@@ -18,7 +16,7 @@ export type ExamDeploymentItem = {
   question_count: number
   total_score: number
   exam_info: {
-    status: ExamListStatus
+    status: ExamStatus
     score: number | null
     correct_answer_count: number | null
   }

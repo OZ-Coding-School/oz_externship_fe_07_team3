@@ -6,11 +6,11 @@ import Rootlayout from './components/layout/RootLayout'
 import { ROUTES_PATHS } from './constants/routesPaths'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
-import SignupPage from './pages/SignupPage'
 import MyPage from './pages/MyPage'
 import NotFound from './pages/NotFoundPage'
 import QuizPage from './pages/QuizPage'
 import QuizResultPage from './pages/ResultPage'
+import SignupPage from './pages/SignupPage'
 import TestPage from './pages/TestPage'
 
 function App() {
@@ -25,9 +25,12 @@ function App() {
       </Route>
 
       <Route element={<QuizLayout />}>
-        <Route path={`${ROUTES_PATHS.QUIZ_PAGE}/:id`} element={<QuizPage />} />
         <Route
-          path={`${ROUTES_PATHS.RESULT_PAGE}/:id`}
+          path={`${ROUTES_PATHS.QUIZ_PAGE}/:deploymentId`}
+          element={<QuizPage />}
+        />
+        <Route
+          path={`${ROUTES_PATHS.RESULT_PAGE}/:submissionId`}
           element={<QuizResultPage />}
         />
       </Route>
