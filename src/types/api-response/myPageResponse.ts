@@ -30,6 +30,10 @@ export type EnrolledCourseResponse = {
   }
 }
 
+export type EnrollStudentResponse = {
+  detail: string
+}
+
 export type ChangePasswordResponse = {
   detail: string
 }

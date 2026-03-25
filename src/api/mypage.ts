@@ -6,8 +6,14 @@ import type {
 } from '@/types'
 import { api } from './api'
 import { APIS_PATHS } from '@/constants/apisPaths'
-import type { ChangePasswordRequest } from '@/types/api-request/myPageRequest'
-import type { ChangePasswordResponse } from '@/types/api-response/myPageResponse'
+import type {
+  ChangePasswordRequest,
+  EnrollStudentRequest,
+} from '@/types/api-request/myPageRequest'
+import type {
+  ChangePasswordResponse,
+  EnrollStudentResponse,
+} from '@/types/api-response/myPageResponse'
 import type {
   ChangePhoneRequest,
   SendPhoneVerificationCodeRequest,
@@ -25,6 +31,14 @@ export const getMyInfo = async () => {
 export const patchMyInfo = async (payload: UpdateMyInfoRequest) => {
   const { data } = await api.patch<MyInfoResponse>(
     APIS_PATHS.PATCH_MY_INFO,
+    payload
+  )
+  return data
+}
+
+export const postEnrollStudent = async (payload: EnrollStudentRequest) => {
+  const { data } = await api.post<EnrollStudentResponse>(
+    APIS_PATHS.POST_ENROLL_STUDENT,
     payload
   )
   return data

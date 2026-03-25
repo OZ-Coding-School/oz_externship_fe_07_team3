@@ -8,6 +8,7 @@ export const APIS_PATHS = {
   PATCH_MY_INFO: '/accounts/me',
   DELETE_MY_ACCOUNT: '/accounts/me',
   GET_MY_ENROLLED_COURSES: '/accounts/me/enrolled-courses',
+  POST_ENROLL_STUDENT: '/accounts/enroll-student',
   AVAILABLE_COURSES: '/accounts/available-courses',
   CHANGE_PASSWORD: '/accounts/change-password',
   PHONE_VERIFICATION_SEND: '/accounts/verification/send-sms',
