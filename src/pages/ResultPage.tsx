@@ -31,6 +31,9 @@ function ResultPage() {
     return <div>결과를 불러오지 못했습니다.</div>
   }
 
+  if (!Number.isFinite(numericSubmissionId) || numericSubmissionId <= 0) {
+    return <div>잘못된 접근입니다.</div>
+  }
   return (
     <div>
       <ResultHeader

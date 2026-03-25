@@ -5,7 +5,7 @@ export const mockExamDeploymentList: ExamDeploymentListResponse = {
   has_next: false,
   results: [
     {
-      id: 101,
+      id: 1,
       submission_id: 333,
       exam: {
         id: 1,
