@@ -1,9 +1,22 @@
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router-dom'
 import Logo from '@/assets/images/logo.png'
 import UserMenu from '@/features/mypage/UserMenu'
 import { ROUTES_PATHS } from '@/constants/routesPaths'
+import { useAuthStore } from '@/store/authStore'
 
 function Header() {
+  const navigate = useNavigate()
+
+  const accessToken = useAuthStore((state) => state.accessToken)
+  const logout = useAuthStore((state) => state.logout)
+
+  const isLoggedIn = Boolean(accessToken)
+
+  const handleLogout = () => {
+    logout()
+    navigate(ROUTES_PATHS.LOGIN_PAGE)
+  }
+
   return (
     <header className="border-b border-gray-200">
       <section className="bg-ui-gray-800 text-grey-1 flex h-12 w-full items-center justify-center text-base">
@@ -36,15 +49,27 @@ function Header() {
 
         <nav aria-label="사용자 메뉴">
           <ul className="flex items-center gap-2">
-            {/* TODO: 로그인 여부에 따른 분기처리 예정 */}
-            <UserMenu />
-            <li className="py-4">
-              <Link to={ROUTES_PATHS.LOGIN_PAGE}>로그인</Link>
-            </li>
-            <li className="text-xl">|</li>
-            <li className="py-4">
-              <Link to={ROUTES_PATHS.SIGNUP_PAGE}>회원가입</Link>
-            </li>
+            {/* 수정: 로그인 여부에 따라 분기 */}
+            {isLoggedIn ? (
+              <>
+                <UserMenu />
+                <li className="py-4">
+                  <button type="button" onClick={handleLogout}>
+                    로그아웃
+                  </button>
+                </li>
+              </>
+            ) : (
+              <>
+                <li className="py-4">
+                  <Link to={ROUTES_PATHS.LOGIN_PAGE}>로그인</Link>
+                </li>
+                <li className="text-xl">|</li>
+                <li className="py-4">
+                  <Link to={ROUTES_PATHS.SIGNUP_PAGE}>회원가입</Link>
+                </li>
+              </>
+            )}
           </ul>
         </nav>
       </section>

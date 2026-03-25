@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import logoImg from '@/assets/images/logo.png'
 import { useLogin } from '@/api/queries/auth/useLogin'
+import { useGetMyInfo } from '@/api/queries/myInfo/useGetMyInfo'
 import { ROUTES_PATHS } from '@/constants/routesPaths'
 import FindIdModal from '@/features/auth/find-id/FindIdModal'
 import FindPasswordModal from '@/features/auth/find-password/FindPasswordModal'
@@ -11,6 +12,8 @@ import SocialLoginButton from '@/features/auth/login/SocialLoginButton'
 import RecoverAccountModal from '@/features/auth/recover-account/RecoverAccountModal'
 import type { FindIdHandlers } from '@/hooks/useFindId'
 import type { FindPasswordHandlers } from '@/hooks/useFindPassword'
+import { useAuthStore } from '@/store/authStore'
+import type { loginSuccessResponse } from '@/types/auth-type/login'
 
 type SubmitLoginParams = {
   email: string
@@ -55,15 +58,42 @@ const findPasswordHandlers: FindPasswordHandlers = {
 
 const LoginPage = () => {
   const [openModal, setOpenModal] = useState<OpenModal>('none')
+  const navigate = useNavigate()
 
-  const { mutate } = useLogin()
+  const { mutate: login } = useLogin()
+  const { refetch } = useGetMyInfo()
+
+  const setAccessToken = useAuthStore((state) => state.setAccessToken)
+  const setUser = useAuthStore((state) => state.setUser)
 
   const handleSocialLoginBtnClick = ({ provider }: { provider: Provider }) => {
     void provider
   }
 
   const handleLoginBtnClick = ({ email, password }: SubmitLoginParams) => {
-    mutate({ email, password })
+    login(
+      { email, password },
+      {
+        onSuccess: async (data: loginSuccessResponse) => {
+          const accessToken = data.access_token
+
+          setAccessToken(accessToken)
+
+          const result = await refetch()
+
+          if (result.data) {
+            const user = result.data as any
+
+            setUser({
+              id: user.id,
+              email: user.email,
+            })
+          }
+
+          navigate('/')
+        },
+      }
+    )
   }
 
   const handleFindIdBtnClick = () => {
