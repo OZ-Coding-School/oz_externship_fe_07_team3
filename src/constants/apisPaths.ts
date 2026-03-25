@@ -3,6 +3,7 @@ export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
  * api endPoint
  */
 export const APIS_PATHS = {
+  POST_LOGIN: '/accounts/login',
   GET_MY_INFO: '/accounts/me',
   PATCH_MY_INFO: '/accounts/me',
   DELETE_MY_ACCOUNT: '/accounts/me',
