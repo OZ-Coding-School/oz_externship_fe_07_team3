@@ -27,7 +27,7 @@ function ResultAnswerRenderer({ question }: ResultAnswerRendererProps) {
     case 'ORDERING':
       return <OrderingResult question={question} />
 
-    case 'FULL_BLANK':
+    case 'FILL_BLANK':
       return <FillBlankResult question={question} />
 
     default:

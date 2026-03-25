@@ -14,14 +14,13 @@ type QuestionRendererProps = {
   value: AnswerValue
   onChange: (answer: AnswerValue) => void
 }
-
 function QuestionRenderer({
   question,
   value,
   onChange,
 }: QuestionRendererProps) {
   switch (question.type) {
-    case 'single_choice':
+    case 'SINGLE_CHOICE':
       return (
         <SingleChoiceQuestion
           options={question.options}
@@ -30,7 +29,7 @@ function QuestionRenderer({
         />
       )
 
-    case 'multiple_choice':
+    case 'MULTIPLE_CHOICE':
       return (
         <MultipleChoiceQuestion
           options={question.options}
@@ -39,7 +38,7 @@ function QuestionRenderer({
         />
       )
 
-    case 'ox':
+    case 'OX':
       return (
         <OXQuestion
           options={question.options}
@@ -48,10 +47,10 @@ function QuestionRenderer({
         />
       )
 
-    case 'short_answer':
+    case 'SHORT_ANSWER':
       return <ShortAnswerQuestion value={value} onChange={onChange} />
 
-    case 'ordering':
+    case 'ORDERING':
       return (
         <OrderingQuestion
           options={question.options}
@@ -60,7 +59,7 @@ function QuestionRenderer({
         />
       )
 
-    case 'fill_blank':
+    case 'FILL_BLANK':
       return (
         <FillBlankQuestion
           prompt={question.prompt}

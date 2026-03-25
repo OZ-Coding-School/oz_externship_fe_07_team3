@@ -20,5 +20,5 @@ export const QUESTION_TYPE_LABEL = {
   OX: 'OX선택',
   SHORT_ANSWER: '단답형',
   ORDERING: '순서배열',
-  FULL_BLANK: '빈칸식',
+  FILL_BLANK: '빈칸식',
 } as const

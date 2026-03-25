@@ -4,7 +4,7 @@ export type QuizQuestionType =
   | 'OX'
   | 'SHORT_ANSWER'
   | 'ORDERING'
-  | 'FULL_BLANK'
+  | 'FILL_BLANK'
 
 type BaseQuestion = {
   question_id: number
@@ -55,7 +55,7 @@ export type OrderingQuestion = BaseQuestion & {
 }
 
 export type FillBlankQuestion = BaseQuestion & {
-  type: 'FULL_BLANK'
+  type: 'FILL_BLANK'
   prompt: string
   blank_count: number
   options: null
