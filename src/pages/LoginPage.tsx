@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 
 import logoImg from '@/assets/images/logo.png'
 import { useLogin } from '@/api/queries/auth/useLogin'
-import { useMyInfo } from '@/api/queries/auth/useMyInfo'
+import { useGetMyInfo } from '@/api/queries/myInfo/useGetMyInfo'
 import { ROUTES_PATHS } from '@/constants/routesPaths'
 import FindIdModal from '@/features/auth/find-id/FindIdModal'
 import FindPasswordModal from '@/features/auth/find-password/FindPasswordModal'
@@ -61,7 +61,7 @@ const LoginPage = () => {
   const navigate = useNavigate()
 
   const { mutate: login } = useLogin()
-  const { refetch } = useMyInfo()
+  const { refetch } = useGetMyInfo()
 
   const setAccessToken = useAuthStore((state) => state.setAccessToken)
   const setUser = useAuthStore((state) => state.setUser)
