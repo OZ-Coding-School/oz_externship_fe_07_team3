@@ -15,3 +15,8 @@ export const postLogin = async (
 
   return data
 }
+
+export const getMyInfo = async () => {
+  const { data } = await api.get(APIS_PATHS.GET_MY_INFO)
+  return data
+}

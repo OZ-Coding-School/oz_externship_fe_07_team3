@@ -4,7 +4,7 @@ export type loginRequest = {
 }
 
 export type loginSuccessResponse = {
-  access_Token: string
+  access_token: string
 }
 
 export type loginErrorResponse = {
