@@ -1,12 +1,6 @@
 import { API_BASE_URL } from '@/constants/apisPaths'
 import axios from 'axios'
-
 import { useAuthStore } from '@/store/authStore'
-
-/**
- * axios - create
- * TODO: baseURL 수정 예정
- */
 
 export const API_BASE = '/api/v1'
 
@@ -15,15 +9,50 @@ export const api = axios.create({
   withCredentials: true,
 })
 
-//요청
 api.interceptors.request.use((config) => {
   const token = useAuthStore.getState().accessToken
 
   if (token) {
+    config.headers = config.headers || {}
     config.headers.Authorization = `Bearer ${token}`
   }
 
   return config
 })
 
-//응답, 오류처리
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config
+
+    if (!originalRequest) {
+      return Promise.reject(error)
+    }
+
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url?.includes('/refresh')
+    ) {
+      originalRequest._retry = true
+
+      try {
+        const { data } = await api.post('/api/v1/accounts/me/refresh')
+
+        const newToken = data.access_token
+
+        useAuthStore.getState().setAccessToken(newToken)
+
+        originalRequest.headers = originalRequest.headers || {}
+        originalRequest.headers.Authorization = `Bearer ${newToken}`
+
+        return api(originalRequest)
+      } catch (refreshError) {
+        useAuthStore.getState().logout()
+        return Promise.reject(refreshError)
+      }
+    }
+
+    return Promise.reject(error)
+  }
+)
