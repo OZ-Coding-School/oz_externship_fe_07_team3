@@ -1,4 +1,3 @@
-import { useCheckExamCode } from '@/api/queries/exam/useCheckExamCode'
 import { useExamDeployments } from '@/api/queries/exam/useExamDeployments'
 import ExamEmptyState from '@/components/exam/ExamEmptyState'
 import ExamEntryCodeModal from '@/components/exam/ExamEntryCodeModal'
@@ -54,12 +53,10 @@ export default function MyExamTab() {
   const handleExamActionClick = (item: ExamDeploymentItem) => {
     const status = item.exam_info.status
     const isDone = status === 'done'
-
     if (isDone && item.submission_id) {
       navigate(getQuizResultPage(item.submission_id))
       return
     }
-
     setSelectedExam(item)
     setIsEntryCodeModalOpen(true)
   }
@@ -69,23 +66,12 @@ export default function MyExamTab() {
     setSelectedExam(null)
   }
 
-  const { mutateAsync: checkCode } = useCheckExamCode()
-
-  const handleConfirmEntryCode = async (entryCode: string) => {
+  const handleSuccessEntryCode = () => {
     if (!selectedExam) {
-      return false
+      return
     }
-
-    try {
-      await checkCode({
-        deploymentId: selectedExam.id,
-        entryCode,
-      })
-      navigate(getQuizPage(selectedExam.id))
-      return true
-    } catch {
-      return false
-    }
+    handleCloseEntryCodeModal()
+    navigate(getQuizPage(selectedExam.id))
   }
 
   const modalImageSrc = getExamImageSrc(selectedExam)
@@ -210,9 +196,9 @@ export default function MyExamTab() {
           )}
         </div>
       </section>
-
       <ExamEntryCodeModal
         isOpen={isEntryCodeModalOpen}
+        deploymentId={selectedExam?.id ?? 0}
         examTitle={selectedExam?.exam.title ?? ''}
         questionCount={selectedExam?.question_count ?? 0}
         timeLimit={selectedExam?.duration_time ?? 20}
@@ -221,7 +207,7 @@ export default function MyExamTab() {
           selectedExam ? `${selectedExam.exam.subject.title} 과목 아이콘` : ''
         }
         onClose={handleCloseEntryCodeModal}
-        onConfirm={handleConfirmEntryCode}
+        onSuccess={handleSuccessEntryCode}
       />
     </>
   )
