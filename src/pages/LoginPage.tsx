@@ -61,7 +61,7 @@ const LoginPage = () => {
   const navigate = useNavigate()
 
   const { mutate: login } = useLogin()
-  const { refetch } = useGetMyInfo()
+  const { refetch } = useGetMyInfo(false)
 
   const setAccessToken = useAuthStore((state) => state.setAccessToken)
   const setUser = useAuthStore((state) => state.setUser)
