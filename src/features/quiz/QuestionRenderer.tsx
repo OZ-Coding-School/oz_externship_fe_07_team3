@@ -62,8 +62,8 @@ function QuestionRenderer({
     case 'FILL_BLANK':
       return (
         <FillBlankQuestion
-          prompt={question.prompt}
-          answerInput={question.answer_input}
+          prompt={question.prompt ?? ''}
+          blankCount={question.blank_count}
           value={value}
           onChange={onChange}
         />
