@@ -2,13 +2,12 @@ import { API_BASE_URL } from '@/constants/apisPaths'
 import type { ExamStatusResponse } from '@/types/quizpage-type/status'
 import { http, HttpResponse } from 'msw'
 import { mockQuizData } from '../data/examData'
-import { mockExamDeploymentList } from '../data/mockExamDeploymentList'
 
 export const examHandlers = [
-  // 시험 목록 조회
-  http.get(`${API_BASE_URL}/exams/deployments`, () => {
-    return HttpResponse.json(mockExamDeploymentList, { status: 200 })
-  }),
+  // // 시험 목록 조회
+  // http.get(`${API_BASE_URL}/exams/deployments`, () => {
+  //   return HttpResponse.json(mockExamDeploymentList, { status: 200 })
+  // }),
 
   // 시험 문제 조회
   http.get(`${API_BASE_URL}/exams/deployments/:deploymentId`, ({ params }) => {
