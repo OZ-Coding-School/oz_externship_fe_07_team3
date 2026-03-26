@@ -14,6 +14,12 @@ import type { FindIdHandlers } from '@/hooks/useFindId'
 import type { FindPasswordHandlers } from '@/hooks/useFindPassword'
 import { useAuthStore } from '@/store/authStore'
 import type { loginSuccessResponse } from '@/types/auth-type/login'
+import { useFindEmail } from '@/api/queries/auth/useFindEmail'
+import {
+  useSendPhoneVerificationCode,
+  useVerifyPhoneVerificationCode,
+} from '@/api/queries/usePhoneVerification'
+import { getErrorMessage } from '@/utils/getErrorMessage'
 
 type SubmitLoginParams = {
   email: string
@@ -23,24 +29,6 @@ type SubmitLoginParams = {
 type Provider = 'kakao' | 'naver'
 
 type OpenModal = 'none' | 'recover' | 'findId' | 'findPassword'
-
-const findIdHandlers: FindIdHandlers = {
-  onSendCode: async () => {
-    throw new Error(
-      '입력한 이름과 휴대폰 번호로 등록된\n이메일이 존재하지 않습니다.'
-    )
-  },
-
-  onVerifyCode: async () => {
-    throw new Error('인증번호 확인에 실패했습니다.')
-  },
-
-  onFindId: async () => {
-    throw new Error(
-      '입력한 이름과 휴대폰 번호로 등록된\n이메일이 존재하지 않습니다.'
-    )
-  },
-}
 
 const findPasswordHandlers: FindPasswordHandlers = {
   onSendCode: async () => {
@@ -58,13 +46,61 @@ const findPasswordHandlers: FindPasswordHandlers = {
 
 const LoginPage = () => {
   const [openModal, setOpenModal] = useState<OpenModal>('none')
-  const navigate = useNavigate()
 
+  const navigate = useNavigate()
   const { mutate: login } = useLogin()
   const { refetch } = useGetMyInfo(false)
 
   const setAccessToken = useAuthStore((state) => state.setAccessToken)
   const setUser = useAuthStore((state) => state.setUser)
+
+  const findEmailMutation = useFindEmail()
+  const sendCodeMutation = useSendPhoneVerificationCode()
+  const verifyCodeMutation = useVerifyPhoneVerificationCode()
+
+  const findIdHandlers: FindIdHandlers = {
+    onSendCode: async ({ phone }) => {
+      try {
+        await sendCodeMutation.mutateAsync({
+          phone_number: phone,
+        })
+      } catch (error) {
+        getErrorMessage(error, '인증번호 전송에 실패했습니다.')
+      }
+    },
+
+    onVerifyCode: async ({ phone, code }) => {
+      try {
+        await verifyCodeMutation.mutateAsync({
+          code,
+          phone_number: phone,
+        })
+      } catch (error) {
+        throw new Error(getErrorMessage(error, '인증번호 확인에 실패했습니다.'))
+      }
+    },
+
+    onFindId: async ({ name, phone, code }) => {
+      try {
+        const result = await findEmailMutation.mutateAsync({
+          name: name,
+          phone_number: phone,
+          code: code,
+        })
+
+        return {
+          maskedEmail: result.email,
+        }
+      } catch (error) {
+        throw new Error(
+          getErrorMessage(
+            error,
+            '입력하신 정보와 일치하는 계정을 찾을 수 없습니다.'
+          )
+        )
+      }
+    },
+  }
 
   const handleSocialLoginBtnClick = ({ provider }: { provider: Provider }) => {
     void provider
@@ -106,11 +142,11 @@ const LoginPage = () => {
 
   return (
     <div className="bg-ui-gray-100 min-h-screen">
-      <div className="flex justify-center pt-[200px]">
-        <div className="flex w-[348px] flex-col gap-[64px]">
-          <div className="flex flex-col items-center gap-[27px]">
+      <div className="flex justify-center pt-50">
+        <div className="flex w-87 flex-col gap-16">
+          <div className="flex flex-col items-center gap-6.75">
             <img src={logoImg} alt="오즈코딩스쿨" width={180} height={24} />
-            <div className="flex items-center gap-[12px] text-[16px] leading-[140%] tracking-[-0.03em]">
+            <div className="flex items-center gap-3 text-[16px] leading-[140%] tracking-[-0.03em]">
               <span className="text-ui-gray-600">아직 회원이 아니신가요?</span>
               <Link
                 to={ROUTES_PATHS.SIGNUP_PAGE}
@@ -121,8 +157,8 @@ const LoginPage = () => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-[36px]">
-            <div className="flex flex-col gap-[12px]">
+          <div className="flex flex-col gap-9">
+            <div className="flex flex-col gap-3">
               <SocialLoginButton
                 provider="kakao"
                 onClick={() => handleSocialLoginBtnClick({ provider: 'kakao' })}

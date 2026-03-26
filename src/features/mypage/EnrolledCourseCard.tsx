@@ -18,14 +18,12 @@ export default function EnrolledCourseCard({
         </p>
       </div>
 
-      <div className="h-25 w-38 rounded-md bg-gray-100">
-        {course.course.thumbnail_img_url ? (
-          <img
-            src={course.course.thumbnail_img_url}
-            alt={course.course.name}
-            className="h-full w-full object-cover"
-          />
-        ) : null}
+      <div className="mb-2 h-25 w-38 rounded-md bg-gray-100">
+        <img
+          src={course.course.thumbnail_img_url}
+          alt={course.course.name}
+          className="h-full w-full object-cover"
+        />
       </div>
     </div>
   )

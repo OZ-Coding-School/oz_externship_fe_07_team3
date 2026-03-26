@@ -7,10 +7,14 @@ export type FindIdStep = 'input' | 'result'
 
 export type FindIdHandlers = {
   onSendCode: (params: { name: string; phone: string }) => Promise<void> | void
-  onVerifyCode: (params: { code: string }) => Promise<void> | void
+  onVerifyCode: (params: {
+    phone: string
+    code: string
+  }) => Promise<void> | void
   onFindId: (params: {
     name: string
     phone: string
+    code: string
   }) => Promise<{ maskedEmail: string }> | { maskedEmail: string }
 }
 
@@ -119,7 +123,7 @@ export const useFindId = ({ isOpen, handlers }: UseFindIdParams) => {
     }
 
     try {
-      await handlers.onVerifyCode({ code })
+      await handlers.onVerifyCode({ phone, code })
       markCodeVerified()
       setFindErrorMessage('')
     } catch (error) {
@@ -137,12 +141,15 @@ export const useFindId = ({ isOpen, handlers }: UseFindIdParams) => {
       return
     }
 
+    /**
+     * TODO: 이메일 찾기에 검증 로직을 제외하려면 if문 주석처리
+     */
     if (!validateBeforeSubmit()) {
       return
     }
 
     try {
-      const result = await handlers.onFindId({ name, phone })
+      const result = await handlers.onFindId({ name, phone, code })
       setFindErrorMessage('')
       setMaskedEmail(result.maskedEmail)
       setStep('result')

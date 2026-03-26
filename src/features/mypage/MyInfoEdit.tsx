@@ -100,9 +100,7 @@ export default function MyInfoEdit({
        */
       if (verifiedPhoneToken) {
         const result = await changePhoneMutation.mutateAsync({
-          phone_verify_token: {
-            token: verifiedPhoneToken,
-          },
+          phone_verify_token: verifiedPhoneToken,
         })
 
         setPhoneNumber(result.phone_number)

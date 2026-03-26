@@ -44,12 +44,12 @@ const FindIdModal = ({
 
   const renderInputContent = () => {
     return (
-      <div className="flex flex-col gap-[32px] px-[24px] pb-[24px]">
-        <div className="flex flex-col items-center gap-[16px] text-center">
-          <FindIdIconSvg className="h-[28px] w-[28px]" />
+      <div className="flex flex-col gap-8 px-6 pb-6">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <FindIdIconSvg className="h-7 w-7" />
 
-          <div className="flex flex-col items-center gap-[12px]">
-            <h2 className="text-ui-gray-primary text-[20px] leading-[140%] font-bold tracking-[-0.03em]">
+          <div className="flex flex-col items-center gap-3">
+            <h2 className="text-ui-gray-primary text-xl leading-[140%] font-bold tracking-[-0.03em]">
               아이디 찾기
             </h2>
 
@@ -61,11 +61,11 @@ const FindIdModal = ({
           </div>
         </div>
 
-        <div className="flex flex-col gap-[32px]">
-          <div className="flex flex-col gap-[12px]">
+        <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-3">
             <label
               htmlFor="find-id-name"
-              className="text-ui-gray-primary text-[16px] leading-[140%] font-normal tracking-[-0.03em]"
+              className="text-ui-gray-primary text-base leading-[140%] font-normal tracking-[-0.03em]"
             >
               이름<span className="text-other-red">*</span>
             </label>
@@ -76,7 +76,7 @@ const FindIdModal = ({
               value={name}
               onChange={(e) => handleNameChange(e.target.value)}
               placeholder="이름을 입력해주세요"
-              className="h-[48px]"
+              className="h-12"
             />
           </div>
 
@@ -106,7 +106,7 @@ const FindIdModal = ({
         <Button
           variant="fill"
           size="full"
-          className="!h-[52px] !rounded-[4px] !p-0"
+          className="h-13 rounded-lg p-0"
           onClick={handleFindId}
         >
           아이디 찾기
@@ -117,32 +117,32 @@ const FindIdModal = ({
 
   const renderResultContent = () => {
     return (
-      <div className="flex flex-col gap-[32px] px-[24px] pb-[24px]">
-        <div className="flex flex-col items-center gap-[16px] text-center">
-          <FindIdIconSvg className="h-[28px] w-[28px]" />
+      <div className="flex flex-col gap-8 px-6 pb-6">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <FindIdIconSvg className="h-7 w-7" />
 
-          <div className="flex flex-col items-center gap-[12px]">
-            <h2 className="text-ui-gray-primary text-[20px] leading-[140%] font-bold tracking-[-0.03em]">
+          <div className="flex flex-col items-center gap-3">
+            <h2 className="text-ui-gray-primary text-xl leading-[140%] font-bold tracking-[-0.03em]">
               아이디 찾기
             </h2>
 
-            <p className="text-ui-gray-600 text-[14px] leading-[140%] font-normal tracking-[-0.03em]">
+            <p className="text-ui-gray-600 text-sm leading-[140%] font-normal tracking-[-0.03em]">
               입력하신 정보와 일치하는 아이디입니다.
             </p>
           </div>
         </div>
 
-        <div className="border-ui-gray-disabled bg-ui-gray-200 flex items-center justify-center rounded-[4px] border px-[16px] py-[20px]">
-          <span className="text-ui-gray-primary text-[18px] leading-[140%] font-semibold tracking-[-0.03em]">
+        <div className="border-ui-gray-disabled bg-ui-gray-200 flex items-center justify-center rounded-lg border px-4 py-5">
+          <span className="text-ui-gray-primary text-lg leading-[140%] font-semibold tracking-[-0.03em]">
             {maskedEmail}
           </span>
         </div>
 
-        <div className="flex gap-[12px]">
+        <div className="flex gap-3">
           <Button
             variant="outline"
             size="full"
-            className="!h-[48px] !rounded-[4px] !bg-white !p-0"
+            className="h-12 rounded-lg bg-white p-0"
             onClick={onClose}
           >
             로그인
@@ -151,7 +151,7 @@ const FindIdModal = ({
           <Button
             variant="fill"
             size="full"
-            className="!h-[48px] !rounded-[4px] !p-0"
+            className="h-12 rounded-lg p-0"
             onClick={() => {
               onClose()
               onFindPassword()
