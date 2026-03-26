@@ -210,9 +210,9 @@ export default function MyExamTab() {
           )}
         </div>
       </section>
-
       <ExamEntryCodeModal
         isOpen={isEntryCodeModalOpen}
+        deploymentId={selectedExam?.id ?? 0}
         examTitle={selectedExam?.exam.title ?? ''}
         questionCount={selectedExam?.question_count ?? 0}
         timeLimit={selectedExam?.duration_time ?? 20}
@@ -221,7 +221,6 @@ export default function MyExamTab() {
           selectedExam ? `${selectedExam.exam.subject.title} 과목 아이콘` : ''
         }
         onClose={handleCloseEntryCodeModal}
-        onConfirm={handleConfirmEntryCode}
       />
     </>
   )

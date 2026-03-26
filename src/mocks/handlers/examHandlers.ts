@@ -23,30 +23,30 @@ export const examHandlers = [
   }),
 
   // 참가 코드 검증
-  http.post(
-    `${API_BASE_URL}/exams/deployments/:deploymentId/check-code`,
-    async ({ request, params }) => {
-      const body = (await request.json()) as { code?: string }
-      const { deploymentId } = params
+  // http.post(
+  //   `${API_BASE_URL}/exams/deployments/:deploymentId/check-code`,
+  //   async ({ request, params }) => {
+  //     const body = (await request.json()) as { code?: string }
+  //     const { deploymentId } = params
 
-      if (body.code === '1234') {
-        return HttpResponse.json(
-          {
-            message: '참가 코드가 확인되었습니다.',
-            deployment_id: Number(deploymentId),
-          },
-          { status: 200 }
-        )
-      }
+  //     if (body.code === '1234') {
+  //       return HttpResponse.json(
+  //         {
+  //           message: '참가 코드가 확인되었습니다.',
+  //           deployment_id: Number(deploymentId),
+  //         },
+  //         { status: 200 }
+  //       )
+  //     }
 
-      return HttpResponse.json(
-        {
-          message: '참가 코드가 올바르지 않습니다.',
-        },
-        { status: 400 }
-      )
-    }
-  ),
+  //     return HttpResponse.json(
+  //       {
+  //         message: '참가 코드가 올바르지 않습니다.',
+  //       },
+  //       { status: 400 }
+  //     )
+  //   }
+  // ),
 
   // 응시 상태 확인
   http.get(

@@ -1,36 +1,36 @@
-import { useEffect, useId, useState } from 'react'
-
+import { useCheckExamCode } from '@/api/queries/exam/useCheckExamCode'
 import Button from '@/components/ui/button'
 import Modal from '@/components/ui/modal/Modal'
+import { useEffect, useId, useState } from 'react'
 import Input from '../ui/input'
 
 type ExamEntryCodeModalProps = {
   isOpen: boolean
+  deploymentId: number
   examTitle: string
   questionCount: number
   timeLimit: number
   imageSrc: string
   imageAlt?: string
   onClose: () => void
-  onConfirm: (code: string) => boolean | Promise<boolean>
 }
 
 export default function ExamEntryCodeModal({
   isOpen,
+  deploymentId,
   examTitle,
   questionCount,
   timeLimit,
   imageSrc,
   imageAlt = '',
   onClose,
-  onConfirm,
 }: ExamEntryCodeModalProps) {
   const [entryCode, setEntryCode] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
-
   const inputId = useId()
   const descriptionId = useId()
   const errorId = useId()
+  const { mutateAsync: checkExamCode, isPending } = useCheckExamCode()
 
   useEffect(() => {
     if (!isOpen) {
@@ -41,22 +41,25 @@ export default function ExamEntryCodeModal({
 
   const handleChangeEntryCode = (value: string) => {
     setEntryCode(value)
-
     if (errorMessage) {
       setErrorMessage('')
     }
   }
+
   const handleSubmit = async () => {
     const trimmedCode = entryCode.trim()
-
     if (!trimmedCode) {
-      setErrorMessage('참가코드를 입력해 주세요.')
+      setErrorMessage('*참가코드를 입력해 주세요.')
       return
     }
-
-    const isValid = await onConfirm(trimmedCode)
-
-    if (!isValid) {
+    try {
+      await checkExamCode({
+        deploymentId,
+        entryCode: trimmedCode,
+      })
+      setErrorMessage('')
+      onClose()
+    } catch {
       setErrorMessage('*코드번호가 일치하지 않습니다.')
     }
   }
@@ -65,7 +68,6 @@ export default function ExamEntryCodeModal({
     setErrorMessage('')
     onClose()
   }
-
   return (
     <Modal isOpen={isOpen} onClose={handleClose}>
       <section className="mx-6 mt-2.5 mb-6">
