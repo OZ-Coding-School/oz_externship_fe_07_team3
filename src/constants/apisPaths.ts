@@ -18,12 +18,12 @@ export const APIS_PATHS = {
   PROFILE_IMAGE: '/accounts/me/profile-image',
   CHECK_NICKNAME: '/accounts/check-nickname',
   LOGOUT: '/accounts/logout',
+  REFRESH_TOKEN: '/accounts/me/refresh',
 
   GET_EXAM_DEPLOYMENTS: '/exams/deployments',
   GET_EXAM_RESULT: '/exams/submissions',
 }
 
-//exam 동적 경로처리
 export const EXAM_API_PATHS = {
   DEPLOYMENTS: '/exams/deployments',
   deploymentDetail: (deploymentId: number) =>

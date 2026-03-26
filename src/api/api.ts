@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '@/constants/apisPaths'
+import { API_BASE_URL, APIS_PATHS } from '@/constants/apisPaths'
 import axios from 'axios'
 import { useAuthStore } from '@/store/authStore'
 
@@ -32,12 +32,12 @@ api.interceptors.response.use(
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
-      !originalRequest.url?.includes('/refresh')
+      !originalRequest.url?.includes(APIS_PATHS.REFRESH_TOKEN)
     ) {
       originalRequest._retry = true
 
       try {
-        const { data } = await api.post('/api/v1/accounts/me/refresh')
+        const { data } = await api.post(APIS_PATHS.REFRESH_TOKEN)
 
         const newToken = data.access_token
 
