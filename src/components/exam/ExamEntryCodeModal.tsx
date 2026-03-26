@@ -13,6 +13,7 @@ type ExamEntryCodeModalProps = {
   imageSrc: string
   imageAlt?: string
   onClose: () => void
+  onSuccess: () => void
 }
 
 export default function ExamEntryCodeModal({
@@ -24,6 +25,7 @@ export default function ExamEntryCodeModal({
   imageSrc,
   imageAlt = '',
   onClose,
+  onSuccess,
 }: ExamEntryCodeModalProps) {
   const [entryCode, setEntryCode] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
@@ -58,16 +60,18 @@ export default function ExamEntryCodeModal({
         entryCode: trimmedCode,
       })
       setErrorMessage('')
-      onClose()
+      onSuccess()
     } catch {
       setErrorMessage('*코드번호가 일치하지 않습니다.')
     }
   }
+
   const handleClose = () => {
     setEntryCode('')
     setErrorMessage('')
     onClose()
   }
+
   return (
     <Modal isOpen={isOpen} onClose={handleClose}>
       <section className="mx-6 mt-2.5 mb-6">
@@ -125,8 +129,12 @@ export default function ExamEntryCodeModal({
             ) : null}
           </div>
 
-          <Button type="submit" className="mt-6 w-full rounded-[4px]">
-            시험시작
+          <Button
+            type="submit"
+            className="mt-6 w-full rounded-[4px]"
+            disabled={isPending}
+          >
+            {isPending ? '확인 중...' : '시험시작'}
           </Button>
         </form>
       </section>
