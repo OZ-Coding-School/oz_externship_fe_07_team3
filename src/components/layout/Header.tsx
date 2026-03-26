@@ -3,18 +3,28 @@ import Logo from '@/assets/images/logo.png'
 import UserMenu from '@/features/mypage/UserMenu'
 import { ROUTES_PATHS } from '@/constants/routesPaths'
 import { useAuthStore } from '@/store/authStore'
+import { useQueryClient } from '@tanstack/react-query'
+import { logout as logoutApi } from '@/api/mypage'
 
 function Header() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   const accessToken = useAuthStore((state) => state.accessToken)
   const logout = useAuthStore((state) => state.logout)
 
   const isLoggedIn = Boolean(accessToken)
 
-  const handleLogout = () => {
-    logout()
-    navigate(ROUTES_PATHS.LOGIN_PAGE)
+  const handleLogout = async () => {
+    try {
+      await logoutApi()
+    } catch {
+      // 로그아웃 API 실패 여부와 관계없이 클라이언트 로그아웃은 진행한다.
+    } finally {
+      logout()
+      queryClient.clear()
+      navigate(ROUTES_PATHS.LOGIN_PAGE)
+    }
   }
 
   return (
