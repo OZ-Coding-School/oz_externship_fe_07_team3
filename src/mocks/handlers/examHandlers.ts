@@ -1,7 +1,6 @@
 import { API_BASE_URL } from '@/constants/apisPaths'
 import type { ExamStatusResponse } from '@/types/quizpage-type/status'
 import { http, HttpResponse } from 'msw'
-import { mockQuizData } from '../data/examData'
 
 export const examHandlers = [
   // // 시험 목록 조회
@@ -9,18 +8,18 @@ export const examHandlers = [
   //   return HttpResponse.json(mockExamDeploymentList, { status: 200 })
   // }),
 
-  // 시험 문제 조회
-  http.get(`${API_BASE_URL}/exams/deployments/:deploymentId`, ({ params }) => {
-    const { deploymentId } = params
+  // // 시험 문제 조회
+  // http.get(`${API_BASE_URL}/exams/deployments/:deploymentId`, ({ params }) => {
+  //   const { deploymentId } = params
 
-    return HttpResponse.json(
-      {
-        ...mockQuizData,
-        deployment_id: Number(deploymentId),
-      },
-      { status: 200 }
-    )
-  }),
+  //   return HttpResponse.json(
+  //     {
+  //       ...mockQuizData,
+  //       deployment_id: Number(deploymentId),
+  //     },
+  //     { status: 200 }
+  //   )
+  // }),
 
   // 참가 코드 검증
   // http.post(

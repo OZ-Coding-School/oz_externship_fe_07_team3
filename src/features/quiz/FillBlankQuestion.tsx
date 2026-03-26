@@ -2,21 +2,21 @@ import type { AnswerValue } from '@/types/answer-type/answer'
 
 type FillBlankQuestionProps = {
   prompt: string
-  answerInput: string[]
+  blankCount: number | null
   value: AnswerValue
   onChange: (answer: AnswerValue) => void
 }
 
 function FillBlankQuestion({
   prompt,
-  answerInput,
+  blankCount,
   value,
   onChange,
 }: FillBlankQuestionProps) {
-  const highlightedPrompt = prompt.split(/(\([A-Z]\)\s*_{2,})/g)
-  const answers = Array.isArray(value)
-    ? value
-    : new Array(answerInput.length).fill('')
+  const highlightedPrompt = (prompt ?? '').split(/(\([A-Z]\)\s*_{2,})/g)
+  const inputCount = blankCount ?? 0
+
+  const answers = Array.isArray(value) ? value : new Array(inputCount).fill('')
 
   const handleChangeBlank = (targetIndex: number, inputValue: string) => {
     const nextAnswers = [...answers]
@@ -41,7 +41,7 @@ function FillBlankQuestion({
       </div>
 
       <div className="flex flex-col gap-3">
-        {answerInput.map((_, index) => (
+        {Array.from({ length: inputCount }).map((_, index) => (
           <div
             key={index}
             className="flex h-12 w-162 items-center rounded-[4px] bg-gray-100 px-4"
