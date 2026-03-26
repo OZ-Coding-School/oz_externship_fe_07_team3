@@ -70,7 +70,7 @@ export default function UserMenu() {
                   : profileViewIcon
               }
               alt="유저아이콘"
-              className="rounded-full"
+              className="h-10 w-10 rounded-full"
               onError={() => {
                 setImageError(true)
               }}

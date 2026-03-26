@@ -49,7 +49,7 @@ export default function DeleteUserAccountModal({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} width="w-[646px]">
       <div className="w-161.5 rounded-2xl bg-white p-6">
         <div className="text-ui-gray-primary mb-10 text-xl font-bold">
           오즈코딩스쿨을 탈퇴하시는 이유는 무엇인가요?

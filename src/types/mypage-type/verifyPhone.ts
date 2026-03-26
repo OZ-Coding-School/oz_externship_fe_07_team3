@@ -13,13 +13,11 @@ export type VerifyPhoneVerificationCodeRequest = {
 
 export type VerifyPhoneVerificationCodeResponse = {
   detail: string
-  token: string
+  sms_token: string
 }
 
 export type ChangePhoneRequest = {
-  phone_verify_token: {
-    token: string
-  }
+  phone_verify_token: string
 }
 
 export type ChangePhoneResponse = {

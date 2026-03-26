@@ -178,7 +178,7 @@ export default function usePhoneNumberVerificationSection({
       markCodeVerified()
       setPhoneEditStep('verified')
       setVerificationStatus('success')
-      onVerifiedTokenChange(result.token)
+      onVerifiedTokenChange(result.sms_token)
       toast.success('휴대전화 인증이 완료되었습니다.')
     } catch {
       setVerificationStatus('danger')
