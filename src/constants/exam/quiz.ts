@@ -15,10 +15,10 @@ export const OPTION_META = {
 } as const
 
 export const QUESTION_TYPE_LABEL = {
-  single_choice: '단일선택',
-  multiple_choice: '다중선택',
-  ox: 'OX선택',
-  short_answer: '단답형',
-  ordering: '순서배열',
-  fill_blank: '빈칸식',
+  SINGLE_CHOICE: '단일선택',
+  MULTIPLE_CHOICE: '다중선택',
+  OX: 'OX선택',
+  SHORT_ANSWER: '단답형',
+  ORDERING: '순서배열',
+  FILL_BLANK: '빈칸식',
 } as const

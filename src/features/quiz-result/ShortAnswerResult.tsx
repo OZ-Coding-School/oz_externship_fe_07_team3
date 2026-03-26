@@ -7,7 +7,9 @@ type ShortAnswerResultProps = {
 
 function ShortAnswerResult({ question }: ShortAnswerResultProps) {
   const answer =
-    typeof question.user_answer === 'string' ? question.user_answer : '미응답'
+    question.submitted_answer && question.submitted_answer.length > 0
+      ? question.submitted_answer.join(', ')
+      : '미응답'
 
   return (
     <div className="mt-4">

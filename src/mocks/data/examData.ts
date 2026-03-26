@@ -10,7 +10,7 @@ export const mockQuizData: QuizData = {
     {
       question_id: 1,
       number: 1,
-      type: 'single_choice',
+      type: 'SINGLE_CHOICE',
       question: 'TypeScript에서 안전한 타입 할당 방식은?',
       point: 10,
       prompt: null,
@@ -26,7 +26,7 @@ export const mockQuizData: QuizData = {
     {
       question_id: 2,
       number: 2,
-      type: 'multiple_choice',
+      type: 'MULTIPLE_CHOICE',
       question: 'TypeScript의 특징을 모두 고르세요.',
       point: 15,
       prompt: null,
@@ -42,7 +42,7 @@ export const mockQuizData: QuizData = {
     {
       question_id: 3,
       number: 3,
-      type: 'ox',
+      type: 'OX',
       question: 'TypeScript는 JavaScript의 상위 집합이다.',
       point: 10,
       prompt: null,
@@ -53,7 +53,7 @@ export const mockQuizData: QuizData = {
     {
       question_id: 4,
       number: 4,
-      type: 'short_answer',
+      type: 'SHORT_ANSWER',
       question: '하위 타입을 상위 타입 변수에 할당하는 것을 무엇이라 하는가?',
       point: 10,
       prompt: null,
@@ -64,7 +64,7 @@ export const mockQuizData: QuizData = {
     {
       question_id: 5,
       number: 5,
-      type: 'ordering',
+      type: 'ORDERING',
       question: 'TypeScript 실행 과정을 순서대로 나열하세요.',
       point: 10,
       prompt: null,
@@ -80,7 +80,7 @@ export const mockQuizData: QuizData = {
     {
       question_id: 6,
       number: 6,
-      type: 'fill_blank',
+      type: 'FILL_BLANK',
       question: '다음 빈칸을 채우세요.',
       point: 10,
       prompt:

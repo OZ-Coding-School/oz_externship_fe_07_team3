@@ -7,17 +7,12 @@ type FillBlankResultProps = {
 
 function FillBlankResult({ question }: FillBlankResultProps) {
   const prompt = question.prompt ?? ''
-  const answerInputs = Array.isArray(question.correct_answer)
-    ? question.correct_answer
-    : []
 
-  const userAnswers = Array.isArray(question.user_answer)
-    ? question.user_answer
-    : new Array(answerInputs.length).fill('')
+  const correctAnswers = Array.isArray(question.answer) ? question.answer : []
 
-  const correctAnswers = Array.isArray(question.correct_answer)
-    ? question.correct_answer
-    : []
+  const userAnswers = Array.isArray(question.submitted_answer)
+    ? question.submitted_answer
+    : new Array(correctAnswers.length).fill('')
 
   const highlightedPrompt = prompt.split(/(\([A-Z]\)\s*_{2,})/g)
 
@@ -42,20 +37,21 @@ function FillBlankResult({ question }: FillBlankResultProps) {
           const userAnswer =
             typeof userAnswers[index] === 'string' ? userAnswers[index] : ''
 
-          const isCorrect = userAnswer.trim() === correctAnswer.trim()
+          const isAnswered = userAnswer.trim().length > 0
+          const isCorrect =
+            isAnswered && userAnswer.trim() === correctAnswer.trim()
 
           return (
             <div
               key={index}
-              className={
-                'flex h-12 w-77 items-center rounded-[4px] bg-[#F2F3F5] px-4'
-              }
+              className="flex h-12 w-77 items-center rounded-[4px] bg-[#F2F3F5] px-4"
             >
               <span
-                className={cn(
-                  'mr-3 text-xl font-bold',
-                  isCorrect ? 'text-other-green' : 'text-other-red'
-                )}
+                className={cn('mr-3 text-xl font-bold', {
+                  'text-other-green': isCorrect,
+                  'text-other-red': isAnswered && !isCorrect,
+                  'text-ui-gray-disabled': !isAnswered,
+                })}
               >
                 {String.fromCharCode(65 + index)}
               </span>
@@ -63,10 +59,11 @@ function FillBlankResult({ question }: FillBlankResultProps) {
               <input
                 value={userAnswer}
                 readOnly
-                className={cn(
-                  'w-full bg-transparent text-base outline-none',
-                  isCorrect ? 'text-other-green' : 'text-other-red'
-                )}
+                className={cn('w-full bg-transparent text-base outline-none', {
+                  'text-other-green': isCorrect,
+                  'text-other-red': isAnswered && !isCorrect,
+                  'text-ui-gray-disabled': !isAnswered,
+                })}
               />
             </div>
           )

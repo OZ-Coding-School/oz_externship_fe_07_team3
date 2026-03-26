@@ -1,4 +1,3 @@
-import Check from '@/assets/icons/quiz/check-gray.svg?react'
 import { OPTION_META } from '@/constants/exam/quiz'
 import { cn } from '@/lib/utils'
 import type { ResultQuestion } from '@/types/result-type/answer'
@@ -8,11 +7,10 @@ type OXResultProps = {
 }
 
 function OXResult({ question }: OXResultProps) {
-  const selectedValue =
-    typeof question.user_answer === 'string' ? question.user_answer : null
-
   const correctValue =
-    typeof question.correct_answer === 'string' ? question.correct_answer : null
+    Array.isArray(question.answer) && typeof question.answer[0] === 'string'
+      ? question.answer[0]
+      : null
 
   return (
     <fieldset className="mt-4">
@@ -26,52 +24,42 @@ function OXResult({ question }: OXResultProps) {
             return null
           }
 
-          const isSelected = selectedValue === option
-          const isCorrect = correctValue === option
-          const isWrongSelected = isSelected && !isCorrect
+          const isCorrectOption = correctValue === option
+          const isO = option === 'O'
           const Icon = meta.Icon
 
           return (
             <li key={option}>
               <div
                 className={cn(
-                  'flex h-12 w-77 items-center justify-between rounded-[4px] px-7 py-6',
-                  {
-                    'bg-green-50': isCorrect,
-                    'bg-red-50': isWrongSelected,
-                    'bg-[#EEE8FA]': isSelected && isCorrect,
-                    'bg-[#F2F3F5]': !isCorrect && !isWrongSelected,
-                  }
+                  'flex h-12 w-77 items-center rounded-[4px] px-7 py-6',
+                  isCorrectOption
+                    ? isO
+                      ? 'bg-green-50'
+                      : 'bg-red-50'
+                    : 'bg-[#F2F3F5]'
                 )}
               >
                 <div className="flex items-center gap-4">
                   <Icon
-                    className={cn('h-5 w-5 shrink-0', {
-                      'text-green-600': isCorrect,
-                      'text-red-500': isWrongSelected,
-                      'text-ui-gray-disabled': !isCorrect && !isWrongSelected,
-                    })}
+                    className={cn(
+                      'h-5 w-5 shrink-0',
+                      isCorrectOption
+                        ? meta.activeColor
+                        : 'text-ui-gray-disabled'
+                    )}
                   />
                   <span
-                    className={cn('leading-[140%]', {
-                      'font-semibold text-green-600': isCorrect,
-                      'font-semibold text-red-500': isWrongSelected,
-                      'text-ui-gray-800 font-normal':
-                        !isCorrect && !isWrongSelected,
-                    })}
+                    className={cn(
+                      'leading-[140%]',
+                      isCorrectOption
+                        ? `font-semibold ${meta.activeColor}`
+                        : 'text-ui-gray-800 font-normal'
+                    )}
                   >
                     {meta.label}
                   </span>
                 </div>
-
-                <Check
-                  className={cn('h-4 w-4 shrink-0', {
-                    'text-green-600': isCorrect,
-                    'text-red-500': isWrongSelected,
-                    'text-ui-gray-disabled': !isSelected,
-                    'text-ui-gray-800': isSelected && !isCorrect,
-                  })}
-                />
               </div>
             </li>
           )

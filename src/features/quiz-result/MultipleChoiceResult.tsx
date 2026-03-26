@@ -8,13 +8,8 @@ type MultipleChoiceResultProps = {
 }
 
 function MultipleChoiceResult({ question }: MultipleChoiceResultProps) {
-  const selectedOptions = Array.isArray(question.user_answer)
-    ? question.user_answer
-    : []
-
-  const correctOptions = Array.isArray(question.correct_answer)
-    ? question.correct_answer
-    : []
+  const selectedOptions = question.submitted_answer ?? []
+  const correctOptions = question.answer ?? []
 
   return (
     <fieldset className="mt-4">

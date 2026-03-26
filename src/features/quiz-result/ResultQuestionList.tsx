@@ -8,8 +8,12 @@ type ResultQuestionListProps = {
 function ResultQuestionList({ questions }: ResultQuestionListProps) {
   return (
     <section className="flex flex-col gap-6">
-      {questions.map((question) => (
-        <ResultQuestionItem key={question.question_id} question={question} />
+      {questions.map((question, index) => (
+        <ResultQuestionItem
+          key={question.id}
+          question={question}
+          number={index + 1}
+        />
       ))}
     </section>
   )

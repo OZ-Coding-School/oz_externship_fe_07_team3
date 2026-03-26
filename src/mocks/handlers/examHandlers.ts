@@ -3,7 +3,6 @@ import type { ExamStatusResponse } from '@/types/quizpage-type/status'
 import { http, HttpResponse } from 'msw'
 import { mockQuizData } from '../data/examData'
 import { mockExamDeploymentList } from '../data/mockExamDeploymentList'
-import { mockQuizResultData } from '../data/mockQuizResultData'
 
 export const examHandlers = [
   // 시험 목록 조회
@@ -86,16 +85,16 @@ export const examHandlers = [
     }
   ),
 
-  // 시험 결과 조회
-  http.get(`${API_BASE_URL}/exams/submissions/:submissionId`, ({ params }) => {
-    const { submissionId } = params
+  // // 시험 결과 조회
+  // http.get(`${API_BASE_URL}/exams/submissions/:submissionId`, ({ params }) => {
+  //   const { submissionId } = params
 
-    return HttpResponse.json(
-      {
-        ...mockQuizResultData,
-        submission_id: Number(submissionId),
-      },
-      { status: 200 }
-    )
-  }),
+  //   return HttpResponse.json(
+  //     {
+  //       ...mockQuizResultData,
+  //       submission_id: Number(submissionId),
+  //     },
+  //     { status: 200 }
+  //   )
+  // }),
 ]

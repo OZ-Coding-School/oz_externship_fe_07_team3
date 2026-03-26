@@ -1,29 +1,35 @@
 import type { QuizQuestionType } from '../quizpage-type/question'
 
-export type ResultAnswer = string | string[] | null
+export type ResultAnswer = string[] | null
 
 export type ResultQuestion = {
-  question_id: number
-  number: number
+  id: number
   type: QuizQuestionType
   question: string
   point: number
   prompt: string | null
   blank_count: number | null
-  options: string[] | null
-  user_answer: ResultAnswer
-  correct_answer: ResultAnswer
+  options: string[]
+  submitted_answer: ResultAnswer
+  answer: ResultAnswer
   explanation: string | null
   is_correct: boolean
-  earned_point: number
 }
 
 export type ResultData = {
-  exam_id: number
-  exam_name: string
-  duration_time: number
-  elapsed_time: number
+  id: number
+  submitter_id: number
+  deployment_id: number
+  exam: {
+    id: number
+    title: string
+    thumbnail_img_url: string
+  }
+  questions: ResultQuestion[]
   cheating_count: number
   total_score: number
-  questions: ResultQuestion[]
+  correct_answer_count: number
+  elapsed_time: number
+  started_at: string
+  submitted_at: string
 }
