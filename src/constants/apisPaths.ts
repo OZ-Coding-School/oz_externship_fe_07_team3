@@ -20,6 +20,10 @@ export const APIS_PATHS = {
   LOGOUT: '/accounts/logout',
   REFRESH_TOKEN: '/accounts/me/refresh',
 
+  SIGNUP: '/accounts/signup',
+  SEND_EMAIL_VERIFICATION: '/accounts/verification/send-email',
+  VERIFY_EMAIL_VERIFICATION: '/accounts/verification/verify-email',
+
   FIND_EMAIL: '/accounts/find-email',
   GET_EXAM_DEPLOYMENTS: '/exams/deployments',
   GET_EXAM_RESULT: '/exams/submissions',
