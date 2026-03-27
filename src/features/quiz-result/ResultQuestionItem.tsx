@@ -1,5 +1,5 @@
 import OIcon from '@/assets/icons/quiz/icon-o-gray.svg?react'
-import XIcon from '@/assets/icons/quiz/icon-X-gray.svg?react'
+import XIcon from '@/assets/icons/quiz/icon-x-gray.svg?react'
 import { QUESTION_TYPE_LABEL } from '@/constants/exam/quiz'
 import { cn } from '@/lib/utils'
 import type { ResultQuestion } from '@/types/result-type/answer'
