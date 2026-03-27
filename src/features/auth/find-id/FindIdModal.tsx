@@ -22,7 +22,7 @@ const FindIdModal = ({
     step,
     name,
     phone,
-    code,
+    verificationCode,
     isCodeSent,
     isCodeVerified,
     codeErrorMessage,
@@ -90,7 +90,7 @@ const FindIdModal = ({
             targetInputType="text"
             targetInputMode="numeric"
             verificationCodeInputId="find-id-code"
-            verificationCode={code}
+            verificationCode={verificationCode}
             onVerificationCodeChange={handleCodeChange}
             verificationCodePlaceholder="인증번호 6자리를 입력해주세요"
             onSendCode={handleSendCode}

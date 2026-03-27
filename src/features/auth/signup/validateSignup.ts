@@ -6,7 +6,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const BIRTH_REGEX = /^\d{8}$/
 const PHONE_NUMBER_REGEX = /^\d+$/
 const PASSWORD_REGEX =
-  /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=[{\]};:'",.<>/?\\|`~]).{8,15}$/
+  /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=[{\]};:'",.<>/?\\|`~]).{6,15}$/
 
 export const validateName = (name: string) => {
   if (!name.trim()) {
@@ -89,7 +89,7 @@ export const validatePhone = (
 export const validatePassword = (password: string) => {
   if (!password.trim()) return '비밀번호를 입력해주세요.'
   if (!PASSWORD_REGEX.test(password)) {
-    return '비밀번호는 8~15자의 영문, 숫자, 특수문자를 포함해야 합니다.'
+    return '비밀번호는 6~15자의 영문, 숫자, 특수문자를 포함해야 합니다.'
   }
   return ''
 }
