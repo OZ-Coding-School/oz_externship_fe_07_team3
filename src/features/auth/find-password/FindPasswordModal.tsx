@@ -27,7 +27,7 @@ const FindPasswordModal = ({
     email,
     newPassword,
     confirmPassword,
-    code,
+    verificationCode,
     isCodeSent,
     isCodeVerified,
     codeErrorMessage,
@@ -88,7 +88,7 @@ const FindPasswordModal = ({
             targetPlaceholder="가입한 이메일을 입력해 주세요."
             targetInputType="email"
             verificationCodeInputId="find-password-code"
-            verificationCode={code}
+            verificationCode={verificationCode}
             onVerificationCodeChange={handleCodeChange}
             verificationCodePlaceholder="인증번호를 입력해주세요"
             onSendCode={handleSendCode}

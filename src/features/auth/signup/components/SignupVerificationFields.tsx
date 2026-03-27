@@ -93,18 +93,28 @@ const SignupVerificationFields = ({
             size="sm"
             className={cn(
               actionButtonClassName,
+              'w-[112px] shrink-0',
               isEmailSent &&
+                !emailVerification.isCodeVerified &&
                 '!border-btn-fill-default !bg-primary-100 !text-btn-fill-default'
             )}
+            disabled={
+              emailVerification.isCodeVerified ||
+              (isEmailSent && !emailVerification.isExpired)
+            }
             onClick={handleSendEmailCode}
           >
-            인증번호 전송
+            {emailVerification.isCodeVerified
+              ? '인증완료'
+              : isEmailSent
+                ? '재전송'
+                : '인증번호 전송'}
           </Button>
         </div>
 
         {(touched.email || submitted) && errors.email ? (
           <p className={errorTextClassName}>{errors.email}</p>
-        ) : emailAvailableMessage ? (
+        ) : emailAvailableMessage && !emailVerification.isCodeVerified ? (
           <p className={successTextClassName}>{emailAvailableMessage}</p>
         ) : null}
 
@@ -114,44 +124,50 @@ const SignupVerificationFields = ({
               <Input
                 id="signup-email-code"
                 type="text"
-                inputMode="numeric"
-                value={emailVerification.code}
+                value={emailVerification.verificationCode}
                 onChange={(e) =>
                   emailVerification.handleCodeChange(e.target.value)
                 }
                 placeholder="이메일 인증번호를 입력해주세요"
                 className="h-[48px] pr-[80px]"
+                disabled={emailVerification.isCodeVerified}
               />
 
-              {isEmailSent && !emailVerification.isCodeVerified && (
-                <span className="text-other-red absolute top-1/2 right-[16px] -translate-y-1/2 text-[14px]">
-                  {emailVerification.formattedTime}
-                </span>
-              )}
+              {isEmailSent &&
+                !emailVerification.isCodeVerified &&
+                !emailVerification.isExpired && (
+                  <span className="text-other-red absolute top-1/2 right-[16px] -translate-y-1/2 text-[14px]">
+                    {emailVerification.formattedTime}
+                  </span>
+                )}
             </div>
-
             <Button
               type="button"
               variant="ghost"
               size="sm"
               className={actionButtonClassName}
               onClick={handleVerifyEmailCode}
+              disabled={
+                emailVerification.isCodeVerified || emailVerification.isExpired
+              }
             >
               인증번호 확인
             </Button>
           </div>
 
-          {emailVerification.codeErrorMessage && (
+          {emailVerification.codeErrorMessage ? (
             <p className={errorTextClassName}>
               {emailVerification.codeErrorMessage}
             </p>
-          )}
-
-          {emailVerification.isCodeVerified && (
+          ) : emailVerification.isCodeVerified ? (
             <p className={successTextClassName}>
               이메일 인증이 완료되었습니다.
             </p>
-          )}
+          ) : emailVerification.isExpired ? (
+            <p className={errorTextClassName}>
+              인증 시간이 만료되었습니다. 다시 요청해주세요.
+            </p>
+          ) : null}
         </div>
       </div>
 
@@ -164,7 +180,6 @@ const SignupVerificationFields = ({
           <Input
             id="signup-phone-first"
             type="text"
-            inputMode="numeric"
             value={state.phoneFirst}
             onChange={(e) => handlePhoneChange('phoneFirst', e.target.value)}
             onBlur={() => setFieldTouched('phone')}
@@ -175,7 +190,6 @@ const SignupVerificationFields = ({
           <Input
             id="signup-phone-middle"
             type="text"
-            inputMode="numeric"
             value={state.phoneMiddle}
             onChange={(e) => handlePhoneChange('phoneMiddle', e.target.value)}
             onBlur={() => setFieldTouched('phone')}
@@ -186,7 +200,6 @@ const SignupVerificationFields = ({
           <Input
             id="signup-phone-last"
             type="text"
-            inputMode="numeric"
             value={state.phoneLast}
             onChange={(e) => handlePhoneChange('phoneLast', e.target.value)}
             onBlur={() => setFieldTouched('phone')}
@@ -200,18 +213,28 @@ const SignupVerificationFields = ({
             size="sm"
             className={cn(
               actionButtonClassName,
+              'w-[112px] shrink-0',
               isPhoneSent &&
+                !phoneVerification.isCodeVerified &&
                 '!border-btn-fill-default !bg-primary-100 !text-btn-fill-default'
             )}
+            disabled={
+              phoneVerification.isCodeVerified ||
+              (isPhoneSent && !phoneVerification.isExpired)
+            }
             onClick={handleSendPhoneCode}
           >
-            인증번호 전송
+            {phoneVerification.isCodeVerified
+              ? '인증완료'
+              : isPhoneSent
+                ? '재전송'
+                : '인증번호 전송'}
           </Button>
         </div>
 
         {(touched.phone || submitted) && errors.phone ? (
           <p className={errorTextClassName}>{errors.phone}</p>
-        ) : phoneAvailableMessage ? (
+        ) : phoneAvailableMessage && !phoneVerification.isCodeVerified ? (
           <p className={successTextClassName}>{phoneAvailableMessage}</p>
         ) : null}
 
@@ -221,20 +244,22 @@ const SignupVerificationFields = ({
               <Input
                 id="signup-phone-code"
                 type="text"
-                inputMode="numeric"
-                value={phoneVerification.code}
+                value={phoneVerification.verificationCode}
                 onChange={(e) =>
                   phoneVerification.handleCodeChange(e.target.value)
                 }
                 placeholder="휴대폰 인증번호를 입력해주세요"
                 className="h-[48px] pr-[80px]"
+                disabled={phoneVerification.isCodeVerified}
               />
 
-              {isPhoneSent && !phoneVerification.isCodeVerified && (
-                <span className="text-other-red absolute top-1/2 right-[16px] -translate-y-1/2 text-[14px]">
-                  {phoneVerification.formattedTime}
-                </span>
-              )}
+              {isPhoneSent &&
+                !phoneVerification.isCodeVerified &&
+                !phoneVerification.isExpired && (
+                  <span className="text-other-red absolute top-1/2 right-[16px] -translate-y-1/2 text-[14px]">
+                    {phoneVerification.formattedTime}
+                  </span>
+                )}
             </div>
 
             <Button
@@ -243,22 +268,27 @@ const SignupVerificationFields = ({
               size="sm"
               className={actionButtonClassName}
               onClick={handleVerifyPhoneCode}
+              disabled={
+                phoneVerification.isCodeVerified || phoneVerification.isExpired
+              }
             >
               인증번호 확인
             </Button>
           </div>
 
-          {phoneVerification.codeErrorMessage && (
+          {phoneVerification.codeErrorMessage ? (
             <p className={errorTextClassName}>
               {phoneVerification.codeErrorMessage}
             </p>
-          )}
-
-          {phoneVerification.isCodeVerified && (
+          ) : phoneVerification.isCodeVerified ? (
             <p className={successTextClassName}>
               휴대전화 인증이 완료되었습니다.
             </p>
-          )}
+          ) : phoneVerification.isExpired ? (
+            <p className={errorTextClassName}>
+              인증 시간이 만료되었습니다. 다시 요청해주세요.
+            </p>
+          ) : null}
         </div>
       </div>
     </>

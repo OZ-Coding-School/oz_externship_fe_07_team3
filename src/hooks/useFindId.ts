@@ -31,7 +31,7 @@ export const useFindId = ({ isOpen, handlers }: UseFindIdParams) => {
   const [maskedEmail, setMaskedEmail] = useState('')
 
   const {
-    code,
+    verificationCode,
     isCodeSent,
     isCodeVerified,
     codeErrorMessage,
@@ -43,7 +43,7 @@ export const useFindId = ({ isOpen, handlers }: UseFindIdParams) => {
     setVerificationError,
     validateBeforeVerify,
     validateBeforeSubmit,
-  } = useCodeVerification()
+  } = useCodeVerification({ mode: 'phone' })
 
   useEffect(() => {
     if (!isOpen) {
@@ -82,7 +82,7 @@ export const useFindId = ({ isOpen, handlers }: UseFindIdParams) => {
     const onlyNumbers = value.replace(/[^0-9]/g, '').slice(0, 11)
     const isPhoneChanged = onlyNumbers !== phone
     const hasVerificationProgress = Boolean(
-      code || isCodeSent || isCodeVerified || codeErrorMessage
+      verificationCode || isCodeSent || isCodeVerified || codeErrorMessage
     )
 
     setPhone(onlyNumbers)
@@ -123,7 +123,7 @@ export const useFindId = ({ isOpen, handlers }: UseFindIdParams) => {
     }
 
     try {
-      await handlers.onVerifyCode({ phone, code })
+      await handlers.onVerifyCode({ phone, code: verificationCode })
       markCodeVerified()
       setFindErrorMessage('')
     } catch (error) {
@@ -149,7 +149,11 @@ export const useFindId = ({ isOpen, handlers }: UseFindIdParams) => {
     }
 
     try {
-      const result = await handlers.onFindId({ name, phone, code })
+      const result = await handlers.onFindId({
+        name,
+        phone,
+        code: verificationCode,
+      })
       setFindErrorMessage('')
       setMaskedEmail(result.maskedEmail)
       setStep('result')
@@ -167,7 +171,7 @@ export const useFindId = ({ isOpen, handlers }: UseFindIdParams) => {
     step,
     name,
     phone,
-    code,
+    verificationCode,
     isCodeSent,
     isCodeVerified,
     codeErrorMessage,

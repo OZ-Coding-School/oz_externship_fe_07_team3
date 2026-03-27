@@ -45,7 +45,7 @@ const SignupPasswordFields = ({
         </label>
 
         <span className={guideTextClassName}>
-          8~15자의 영문 대소문자, 숫자, 특수문자 포함
+          6~15자의 영문 대소문자, 숫자, 특수문자 포함
         </span>
       </div>
 

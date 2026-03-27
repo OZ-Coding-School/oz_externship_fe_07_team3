@@ -95,8 +95,8 @@ export const useSignup = () => {
   const [emailToken, setEmailToken] = useState<string | null>(null)
   const [smsToken, setSmsToken] = useState<string | null>(null)
 
-  const emailVerification = useCodeVerification()
-  const phoneVerification = useCodeVerification()
+  const emailVerification = useCodeVerification({ mode: 'email' })
+  const phoneVerification = useCodeVerification({ mode: 'phone' })
 
   const checkNicknameMutation = useCheckNickName()
   const sendEmailCodeMutation = useMutation({
@@ -311,7 +311,7 @@ export const useSignup = () => {
     try {
       const result = await verifyEmailCodeMutation.mutateAsync({
         email: state.email.trim(),
-        code: emailVerification.code,
+        code: emailVerification.verificationCode,
       })
 
       setEmailToken(result.email_token)
@@ -320,6 +320,7 @@ export const useSignup = () => {
         ...prev,
         email: '',
       }))
+      setEmailAvailableMessage('이메일 인증이 완료되었습니다.')
     } catch (error) {
       setEmailToken(null)
       emailVerification.setVerificationError(
@@ -388,7 +389,7 @@ export const useSignup = () => {
     try {
       const result = await verifyPhoneCodeMutation.mutateAsync({
         phone_number: getFullPhoneNumber(state),
-        code: phoneVerification.code,
+        code: phoneVerification.verificationCode,
       })
 
       setSmsToken(result.sms_token)
@@ -397,6 +398,7 @@ export const useSignup = () => {
         ...prev,
         phone: '',
       }))
+      setPhoneAvailableMessage('휴대전화 인증이 완료되었습니다.')
     } catch (error) {
       setSmsToken(null)
       phoneVerification.setVerificationError(
@@ -437,7 +439,19 @@ export const useSignup = () => {
       return
     }
 
-    if (!emailToken || !smsToken) {
+    if (!emailToken) {
+      setErrors((prev) => ({
+        ...prev,
+        email: '이메일 인증을 완료해주세요.',
+      }))
+      return
+    }
+
+    if (!smsToken) {
+      setErrors((prev) => ({
+        ...prev,
+        phone: '휴대전화 인증을 완료해주세요.',
+      }))
       return
     }
 

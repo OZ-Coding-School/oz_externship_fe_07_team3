@@ -9,44 +9,54 @@ const formatTime = (seconds: number) => {
   return `${String(minute).padStart(2, '0')}:${String(second).padStart(2, '0')}`
 }
 
-export const useCodeVerification = () => {
-  const [code, setCode] = useState('')
+type VerificationMode = 'email' | 'phone'
+
+type UseCodeVerificationOptions = {
+  mode: VerificationMode
+}
+
+const sanitizeVerificationCode = (value: string, mode: VerificationMode) => {
+  if (mode === 'phone') {
+    return value.replace(/[^0-9]/g, '').slice(0, 6)
+  }
+
+  return value.trim()
+}
+
+export const useCodeVerification = ({ mode }: UseCodeVerificationOptions) => {
+  const [verificationCode, setVerificationCode] = useState('')
   const [isCodeSent, setIsCodeSent] = useState(false)
   const [isCodeVerified, setIsCodeVerified] = useState(false)
   const [codeErrorMessage, setCodeErrorMessage] = useState('')
   const [timeLeft, setTimeLeft] = useState(INITIAL_TIME)
 
   useEffect(() => {
-    if (!isCodeSent || isCodeVerified) {
-      return
-    }
-    if (timeLeft <= 0) {
-      return
-    }
+    if (!isCodeSent || isCodeVerified || timeLeft <= 0) return
 
-    const timer = setInterval(() => {
+    const timer = window.setTimeout(() => {
       setTimeLeft((prev) => prev - 1)
     }, 1000)
 
-    return () => clearInterval(timer)
+    return () => window.clearTimeout(timer)
   }, [isCodeSent, isCodeVerified, timeLeft])
 
   const handleCodeChange = (value: string) => {
-    const onlyNumbers = value.replace(/[^0-9]/g, '').slice(0, 6)
-    setCode(onlyNumbers)
+    const sanitizedValue = sanitizeVerificationCode(value, mode)
+    setVerificationCode(sanitizedValue)
     setCodeErrorMessage('')
   }
 
   const markCodeSent = () => {
     setIsCodeSent(true)
     setIsCodeVerified(false)
-    setCode('')
+    setVerificationCode('')
     setCodeErrorMessage('')
     setTimeLeft(INITIAL_TIME)
   }
 
   const markCodeVerified = () => {
     setIsCodeVerified(true)
+    setVerificationCode('')
     setCodeErrorMessage('')
   }
 
@@ -55,7 +65,7 @@ export const useCodeVerification = () => {
   }
 
   const resetVerification = () => {
-    setCode('')
+    setVerificationCode('')
     setIsCodeSent(false)
     setIsCodeVerified(false)
     setCodeErrorMessage('')
@@ -68,8 +78,13 @@ export const useCodeVerification = () => {
       return false
     }
 
-    if (!code.trim()) {
+    if (!verificationCode.trim()) {
       setCodeErrorMessage('인증번호를 입력해주세요.')
+      return false
+    }
+
+    if (mode === 'phone' && verificationCode.length !== 6) {
+      setCodeErrorMessage('휴대폰 인증번호 6자리를 입력해주세요.')
       return false
     }
 
@@ -90,12 +105,13 @@ export const useCodeVerification = () => {
     return true
   }
 
+  const isExpired = isCodeSent && !isCodeVerified && timeLeft <= 0
+
   return {
-    code,
-    verificationCode: code,
-    setVerificationCode: setCode,
+    verificationCode,
     isCodeSent,
     isCodeVerified,
+    isExpired,
     codeErrorMessage,
     formattedTime: formatTime(timeLeft),
     handleCodeChange,

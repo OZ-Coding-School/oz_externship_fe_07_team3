@@ -36,7 +36,7 @@ export const useFindPassword = ({
   const [isCompletePopupOpen, setIsCompletePopupOpen] = useState(false)
 
   const {
-    code,
+    verificationCode,
     isCodeSent,
     isCodeVerified,
     codeErrorMessage,
@@ -48,7 +48,7 @@ export const useFindPassword = ({
     setVerificationError,
     validateBeforeVerify,
     validateBeforeSubmit,
-  } = useCodeVerification()
+  } = useCodeVerification({ mode: 'email' })
 
   useEffect(() => {
     if (!isOpen) {
@@ -155,7 +155,7 @@ export const useFindPassword = ({
     }
 
     try {
-      await handlers.onVerifyCode({ code })
+      await handlers.onVerifyCode({ code: verificationCode })
       markCodeVerified()
       setInputErrorMessage('')
     } catch (error) {
@@ -209,7 +209,7 @@ export const useFindPassword = ({
     email,
     newPassword,
     confirmPassword,
-    code,
+    verificationCode,
     isCodeSent,
     isCodeVerified,
     codeErrorMessage,
