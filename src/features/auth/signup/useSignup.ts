@@ -5,7 +5,12 @@ import { useNavigate } from 'react-router-dom'
 import { ROUTES_PATHS } from '@/constants/routesPaths'
 import { toast } from 'sonner'
 
-import { publicApi } from '@/api/api'
+import {
+  postSendEmailVerificationCode,
+  postVerifyEmailVerificationCode,
+  postSignup,
+} from '@/api/signup'
+import type { SignupRequest } from '@/types/auth-type/signup'
 import { useCheckNickName } from '@/api/queries/useCheckNickName'
 import {
   useSendPhoneVerificationCode,
@@ -38,77 +43,6 @@ type SubmitBlockedReason =
   | 'emailVerification'
   | 'phoneVerification'
   | null
-
-type SendEmailVerificationCodeRequest = {
-  email: string
-}
-
-type SendEmailVerificationCodeResponse = {
-  detail: string
-}
-
-type VerifyEmailVerificationCodeRequest = {
-  email: string
-  code: string
-}
-
-type VerifyEmailVerificationCodeResponse = {
-  detail: string
-  email_token: string
-}
-
-type SignupRequest = {
-  password: string
-  nickname: string
-  name: string
-  birthday: string
-  gender: 'M' | 'F'
-  email_token: string
-  sms_token: string
-}
-
-type SignupResponse = {
-  detail: string
-  user_info: {
-    email: string
-    nickname: string
-    name: string
-    birthday: string
-    gender: 'M' | 'F'
-    phone_number: string
-  }
-}
-
-const postSendEmailVerificationCode = async (
-  payload: SendEmailVerificationCodeRequest
-) => {
-  const { data } = await publicApi.post<SendEmailVerificationCodeResponse>(
-    '/api/v1/accounts/verification/send-email',
-    payload
-  )
-
-  return data
-}
-
-const postVerifyEmailVerificationCode = async (
-  payload: VerifyEmailVerificationCodeRequest
-) => {
-  const { data } = await publicApi.post<VerifyEmailVerificationCodeResponse>(
-    '/api/v1/accounts/verification/verify-email',
-    payload
-  )
-
-  return data
-}
-
-const postSignup = async (payload: SignupRequest) => {
-  const { data } = await publicApi.post<SignupResponse>(
-    '/api/v1/accounts/signup',
-    payload
-  )
-
-  return data
-}
 
 const formatBirthday = (birth: string) => {
   if (birth.length !== 8) return birth
