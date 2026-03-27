@@ -1,5 +1,5 @@
 import OIcon from '@/assets/icons/quiz/icon-o-gray.svg?react'
-import XIcon from '@/assets/icons/quiz/icon-X-gray.svg?react'
+import XIcon from '@/assets/icons/quiz/icon-x-gray.svg?react'
 import { QUESTION_TYPE_LABEL } from '@/constants/exam/quiz'
 import { cn } from '@/lib/utils'
 import type { ResultQuestion } from '@/types/result-type/answer'
@@ -11,7 +11,7 @@ type ResultQuestionItemProps = {
 
 function ResultQuestionItem({ question, number }: ResultQuestionItemProps) {
   return (
-    <article className="">
+    <article className="whitespace-nowrap">
       <div className="flex items-center">
         <h2 className="text-ui-gray-primary text-xl leading-[140%] font-bold tracking-[-0.03em]">
           <span className="absolute">{number}.</span>
@@ -31,7 +31,7 @@ function ResultQuestionItem({ question, number }: ResultQuestionItemProps) {
 
         <div
           className={cn(
-            'mt-6 flex items-center gap-3 rounded-[8px] px-5 py-6 text-sm',
+            'mt-6 flex min-w-full items-center gap-3 rounded-[8px] px-5 py-6 text-sm',
             question.is_correct ? 'bg-[#A1E9CF4D]' : 'bg-[#FCE5E8]'
           )}
         >
