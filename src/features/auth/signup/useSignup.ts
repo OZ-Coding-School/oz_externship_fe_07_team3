@@ -44,6 +44,19 @@ type SubmitBlockedReason =
   | 'phoneVerification'
   | null
 
+const NICKNAME_CHECK_REQUIRED_MESSAGE = '닉네임 중복확인을 완료해주세요.'
+const EMAIL_VERIFICATION_REQUIRED_MESSAGE = '이메일 인증을 완료해주세요.'
+const PHONE_VERIFICATION_REQUIRED_MESSAGE = '휴대전화 인증을 완료해주세요.'
+
+const NICKNAME_DUPLICATED_MESSAGE = '이미 사용 중인 닉네임입니다.'
+
+const CODE_SENT_MESSAGE = '인증번호를 전송했습니다.'
+const CODE_SEND_FAIL_MESSAGE = '인증번호 전송에 실패했습니다.'
+const INVALID_CODE_MESSAGE = '인증코드가 일치하지 않습니다.'
+
+const SIGNUP_SUCCESS_MESSAGE = '회원가입이 완료되었습니다.'
+const SIGNUP_FAIL_MESSAGE = '회원가입에 실패했습니다.'
+
 const formatBirthday = (birth: string) => {
   if (birth.length !== 8) return birth
 
@@ -158,21 +171,21 @@ export const useSignup = () => {
     if (reason === 'nickname') {
       setErrors((prev) => ({
         ...prev,
-        nickname: '닉네임 중복확인을 완료해주세요.',
+        nickname: NICKNAME_CHECK_REQUIRED_MESSAGE,
       }))
     }
 
     if (reason === 'emailVerification') {
       setErrors((prev) => ({
         ...prev,
-        email: '이메일 인증을 완료해주세요.',
+        email: EMAIL_VERIFICATION_REQUIRED_MESSAGE,
       }))
     }
 
     if (reason === 'phoneVerification') {
       setErrors((prev) => ({
         ...prev,
-        phone: '휴대전화 인증을 완료해주세요.',
+        phone: PHONE_VERIFICATION_REQUIRED_MESSAGE,
       }))
     }
   }
@@ -216,7 +229,7 @@ export const useSignup = () => {
     } catch (error) {
       setState((prev) => ({ ...prev, isNicknameChecked: false }))
 
-      let message = '이미 사용 중인 닉네임입니다.'
+      let message = NICKNAME_DUPLICATED_MESSAGE
 
       if (error && typeof error === 'object' && 'response' in error) {
         const axiosError = error as AxiosError<CheckNicknameErrorResponse>
@@ -279,12 +292,12 @@ export const useSignup = () => {
         ...prev,
         email: '',
       }))
-      setEmailAvailableMessage('인증번호를 전송했습니다.')
+      setEmailAvailableMessage(CODE_SENT_MESSAGE)
       emailVerification.markCodeSent()
     } catch (error) {
       setErrors((prev) => ({
         ...prev,
-        email: getErrorMessage(error, '인증번호 전송에 실패했습니다.'),
+        email: getErrorMessage(error, CODE_SEND_FAIL_MESSAGE),
       }))
       clearEmailVerificationState()
     }
@@ -310,7 +323,7 @@ export const useSignup = () => {
     } catch (error) {
       setEmailToken(null)
       emailVerification.setVerificationError(
-        getErrorMessage(error, '인증코드가 일치하지 않습니다.')
+        getErrorMessage(error, INVALID_CODE_MESSAGE)
       )
     }
   }
@@ -356,12 +369,12 @@ export const useSignup = () => {
         ...prev,
         phone: '',
       }))
-      setPhoneAvailableMessage('인증번호를 전송했습니다.')
+      setPhoneAvailableMessage(CODE_SENT_MESSAGE)
       phoneVerification.markCodeSent()
     } catch (error) {
       setErrors((prev) => ({
         ...prev,
-        phone: getErrorMessage(error, '인증번호 전송에 실패했습니다.'),
+        phone: getErrorMessage(error, CODE_SEND_FAIL_MESSAGE),
       }))
       clearPhoneVerificationState()
     }
@@ -387,7 +400,7 @@ export const useSignup = () => {
     } catch (error) {
       setSmsToken(null)
       phoneVerification.setVerificationError(
-        getErrorMessage(error, '인증코드가 일치하지 않습니다.')
+        getErrorMessage(error, INVALID_CODE_MESSAGE)
       )
     }
   }
@@ -432,10 +445,10 @@ export const useSignup = () => {
 
     try {
       await signupMutation.mutateAsync(payload)
-      toast.success('회원가입이 완료되었습니다.')
+      toast.success(SIGNUP_SUCCESS_MESSAGE)
       navigate(ROUTES_PATHS.LOGIN_PAGE)
     } catch (error) {
-      toast.error(getErrorMessage(error, '회원가입에 실패했습니다.'))
+      toast.error(getErrorMessage(error, SIGNUP_FAIL_MESSAGE))
     }
   }
 
