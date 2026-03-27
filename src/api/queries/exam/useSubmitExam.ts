@@ -9,7 +9,6 @@ type SubmitExamParams = {
 
 export const useSubmitExam = () => {
   return useMutation({
-    mutationFn: ({ deploymentId, payload }: SubmitExamParams) =>
-      submitExam(deploymentId, payload),
+    mutationFn: ({ payload }: SubmitExamParams) => submitExam(payload),
   })
 }
