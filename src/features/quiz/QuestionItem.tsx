@@ -12,7 +12,7 @@ type QuestionItemProps = {
 function QuestionItem({ question, value, onChange }: QuestionItemProps) {
   return (
     <>
-      <div className="flex items-center">
+      <div className="flex items-center whitespace-nowrap">
         <h2 className="text-ui-gray-primary text-xl font-bold">
           <span className="absolute">{question.number}.</span>
           <span className="ml-8">{question.question}</span>
