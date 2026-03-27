@@ -8,11 +8,17 @@ import type {
   SignupResponse,
 } from '@/types/auth-type/signup'
 
+const SIGNUP_ENDPOINTS = {
+  SEND_EMAIL: '/accounts/verification/send-email',
+  VERIFY_EMAIL: '/accounts/verification/verify-email',
+  SIGNUP: '/accounts/signup',
+} as const
+
 export const postSendEmailVerificationCode = async (
   payload: SendEmailVerificationCodeRequest
 ) => {
   const { data } = await publicApi.post<SendEmailVerificationCodeResponse>(
-    '/accounts/verification/send-email',
+    SIGNUP_ENDPOINTS.SEND_EMAIL,
     payload
   )
 
@@ -23,7 +29,7 @@ export const postVerifyEmailVerificationCode = async (
   payload: VerifyEmailVerificationCodeRequest
 ) => {
   const { data } = await publicApi.post<VerifyEmailVerificationCodeResponse>(
-    '/accounts/verification/verify-email',
+    SIGNUP_ENDPOINTS.VERIFY_EMAIL,
     payload
   )
 
@@ -32,7 +38,7 @@ export const postVerifyEmailVerificationCode = async (
 
 export const postSignup = async (payload: SignupRequest) => {
   const { data } = await publicApi.post<SignupResponse>(
-    '/accounts/signup',
+    SIGNUP_ENDPOINTS.SIGNUP,
     payload
   )
 
