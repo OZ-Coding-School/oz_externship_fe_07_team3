@@ -5,9 +5,10 @@ import { checkNickNameHandlers } from './handlers/checkNickNameHandlers'
 import { examHandlers } from './handlers/examHandlers'
 import { mypageHandlers } from './handlers/myPageHandlers'
 import { profileImageHandlers } from './handlers/profileImageHandlers'
+const USE_EXAM_MOCK = false
 
 export const handlers = [
-  ...examHandlers,
+  ...(USE_EXAM_MOCK ? examHandlers : []),
   ...mypageHandlers,
   ...availableCoursesHandlers,
   ...changePasswordHandlers,

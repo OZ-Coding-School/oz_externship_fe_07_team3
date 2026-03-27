@@ -1,4 +1,4 @@
-export type ExamStatus = 'activated' | 'closed'
+export type ExamStatus = 'pending' | 'activated' | 'closed'
 
 export type ExamStatusResponse = {
   exam_status: ExamStatus

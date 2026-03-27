@@ -17,30 +17,30 @@ import { useCheatingDetection } from '@/hooks/exam/useCheatingDetection'
 import { useQuizTimer } from '@/hooks/exam/useQuizTimer'
 import type { AnswerMap, AnswerValue } from '@/types/answer-type/answer'
 import { createSubmitPayload } from '@/utils/createSubmitPayload'
-
 function QuizPage() {
   const navigate = useNavigate()
   const { deploymentId } = useParams()
   const numericDeploymentId = Number(deploymentId)
+
   const [startedAt] = useState(() => new Date().toISOString())
   const [answers, setAnswers] = useState<AnswerMap>({})
   const [isWarningVisible, setIsWarningVisible] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isError, setIsError] = useState(false)
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false)
-  const [isTerminated, setIsTerminated] = useState(false)
+
+  // 부정행위로 종료된 경우만 state로 관리
+  const [isCheatingTerminated, setIsCheatingTerminated] = useState(false)
+
+  const isStatusEnabled = !Number.isNaN(numericDeploymentId)
 
   const {
     data: statusData,
     isLoading: isStatusLoading,
     isError: isStatusError,
-  } = useStatus(numericDeploymentId, !!numericDeploymentId)
+  } = useStatus(numericDeploymentId, isStatusEnabled)
 
   const shouldFetchQuestions =
-    !!numericDeploymentId &&
-    !Number.isNaN(numericDeploymentId) &&
-    !!statusData &&
-    !(statusData.exam_status === 'closed' && statusData.force_submit)
+    isStatusEnabled && statusData?.exam_status === 'activated'
 
   const {
     data: quizData,
@@ -49,6 +49,7 @@ function QuizPage() {
   } = useExamQuestions(numericDeploymentId, shouldFetchQuestions)
 
   const submitExamMutation = useSubmitExam()
+
   const {
     cheatingCount,
     isCheatingModalOpen,
@@ -58,9 +59,12 @@ function QuizPage() {
   } = useCheatingDetection({
     isSubmitting,
     onTerminate: async () => {
-      setIsTerminated(true)
+      setIsCheatingTerminated(true)
     },
   })
+
+  const isServerTerminated = statusData?.exam_status === 'closed'
+  const isTerminated = isServerTerminated || isCheatingTerminated
 
   const isAnswered = useCallback((answer: AnswerValue) => {
     if (answer === null) {
@@ -90,6 +94,7 @@ function QuizPage() {
     if (!quizData) {
       return false
     }
+
     return quizData.questions.every((question) =>
       isAnswered(answers[question.question_id] ?? null)
     )
@@ -100,14 +105,18 @@ function QuizPage() {
       if (isSubmitting) {
         return
       }
+
       if (!quizData) {
         return
       }
+
       if (!force && !isAllQuestionsAnswered) {
         toast.error('모든 문제를 풀어야 제출할 수 있습니다.')
         return
       }
+
       setIsSubmitting(true)
+
       try {
         const payload = createSubmitPayload({
           deploymentId: numericDeploymentId,
@@ -159,24 +168,24 @@ function QuizPage() {
   )
 
   const handleBack = useCallback(() => {
-    if (isTerminated) {
-      return
-    }
     navigate(getMyPageTab('exam'))
-  }, [isTerminated, navigate])
+  }, [navigate])
 
   useEffect(() => {
     const enterFullscreen = async () => {
       if (document.fullscreenElement) {
         return
       }
+
       try {
         await document.documentElement.requestFullscreen()
       } catch (error) {
         console.warn('전체화면 진입이 차단되었습니다.')
       }
     }
+
     enterFullscreen()
+
     return () => {
       if (document.fullscreenElement) {
         document.exitFullscreen().catch(() => {})
@@ -184,35 +193,28 @@ function QuizPage() {
     }
   }, [])
 
-  useEffect(() => {
-    if (Number.isNaN(numericDeploymentId)) {
-      setIsError(true)
-    }
-  }, [numericDeploymentId])
-
-  useEffect(() => {
-    if (!statusData) {
-      return
-    }
-    if (statusData.exam_status === 'closed' && statusData.force_submit) {
-      setIsTerminated(true)
-    }
-  }, [statusData])
-
-  if (isError || isStatusError || isQuizError) {
+  if (isStatusError || isQuizError) {
     return <div>시험 정보를 불러오지 못했습니다.</div>
   }
 
   if (isTerminated) {
     return (
       <ExamTerminatedModal
-        isOpen={isTerminated}
+        isOpen
         onConfirm={() => navigate(getMyPageTab('exam'))}
       />
     )
   }
 
-  if (isStatusLoading || isQuizLoading || !quizData) {
+  if (isStatusLoading) {
+    return <div>로딩중...</div>
+  }
+
+  if (statusData?.exam_status === 'pending') {
+    return <div>시험 대기중입니다.</div>
+  }
+
+  if (isQuizLoading || !quizData) {
     return <div>로딩중...</div>
   }
 
