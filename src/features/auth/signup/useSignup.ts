@@ -1,12 +1,24 @@
 import { useState } from 'react'
 import type { AxiosError } from 'axios'
+import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES_PATHS } from '@/constants/routesPaths'
 import { toast } from 'sonner'
 
+import {
+  postSendEmailVerificationCode,
+  postVerifyEmailVerificationCode,
+  postSignup,
+} from '@/api/signup'
+import type { SignupRequest } from '@/types/auth-type/signup'
 import { useCheckNickName } from '@/api/queries/useCheckNickName'
+import {
+  useSendPhoneVerificationCode,
+  useVerifyPhoneVerificationCode,
+} from '@/api/queries/usePhoneVerification'
 import { useCodeVerification } from '@/features/auth/shared/useCodeVerification'
 import type { CheckNicknameErrorResponse } from '@/types/checkNickName'
+import { getErrorMessage } from '@/utils/getErrorMessage'
 import {
   initialSignupErrors,
   initialSignupState,
@@ -22,7 +34,6 @@ import {
   validatePhone,
   validateSignupForm,
 } from './validateSignup'
-import { SIGNUP_MOCKS } from '@/test/mocks/signupUiMocks'
 
 type PhoneField = 'phoneFirst' | 'phoneMiddle' | 'phoneLast'
 
@@ -33,15 +44,38 @@ type SubmitBlockedReason =
   | 'phoneVerification'
   | null
 
-const mapSignupStateToPayload = (state: SignupState) => {
+const NICKNAME_CHECK_REQUIRED_MESSAGE = '닉네임 중복확인을 완료해주세요.'
+const EMAIL_VERIFICATION_REQUIRED_MESSAGE = '이메일 인증을 완료해주세요.'
+const PHONE_VERIFICATION_REQUIRED_MESSAGE = '휴대전화 인증을 완료해주세요.'
+
+const NICKNAME_DUPLICATED_MESSAGE = '이미 사용 중인 닉네임입니다.'
+
+const CODE_SENT_MESSAGE = '인증번호를 전송했습니다.'
+const CODE_SEND_FAIL_MESSAGE = '인증번호 전송에 실패했습니다.'
+const INVALID_CODE_MESSAGE = '인증코드가 일치하지 않습니다.'
+
+const SIGNUP_SUCCESS_MESSAGE = '회원가입이 완료되었습니다.'
+const SIGNUP_FAIL_MESSAGE = '회원가입에 실패했습니다.'
+
+const formatBirthday = (birth: string) => {
+  if (birth.length !== 8) return birth
+
+  return `${birth.slice(0, 4)}-${birth.slice(4, 6)}-${birth.slice(6, 8)}`
+}
+
+const mapSignupStateToPayload = (
+  state: SignupState,
+  emailToken: string,
+  smsToken: string
+): SignupRequest => {
   return {
-    name: state.name.trim(),
-    nickname: state.nickname.trim(),
-    birth: state.birth,
-    gender: state.gender,
-    email: state.email.trim(),
-    phone: `${state.phoneFirst}${state.phoneMiddle}${state.phoneLast}`,
     password: state.password,
+    nickname: state.nickname.trim(),
+    name: state.name.trim(),
+    birthday: formatBirthday(state.birth),
+    gender: state.gender === 'male' ? 'M' : 'F',
+    email_token: emailToken,
+    sms_token: smsToken,
   }
 }
 
@@ -58,10 +92,24 @@ export const useSignup = () => {
 
   const [emailAvailableMessage, setEmailAvailableMessage] = useState('')
   const [phoneAvailableMessage, setPhoneAvailableMessage] = useState('')
+  const [emailToken, setEmailToken] = useState<string | null>(null)
+  const [smsToken, setSmsToken] = useState<string | null>(null)
 
   const emailVerification = useCodeVerification()
   const phoneVerification = useCodeVerification()
+
   const checkNicknameMutation = useCheckNickName()
+  const sendEmailCodeMutation = useMutation({
+    mutationFn: postSendEmailVerificationCode,
+  })
+  const verifyEmailCodeMutation = useMutation({
+    mutationFn: postVerifyEmailVerificationCode,
+  })
+  const sendPhoneCodeMutation = useSendPhoneVerificationCode()
+  const verifyPhoneCodeMutation = useVerifyPhoneVerificationCode()
+  const signupMutation = useMutation({
+    mutationFn: postSignup,
+  })
 
   const setFieldTouched = (field: keyof SignupTouched) => {
     setTouched((prev) => ({ ...prev, [field]: true }))
@@ -92,11 +140,13 @@ export const useSignup = () => {
   const clearEmailVerificationState = () => {
     emailVerification.resetVerification()
     setEmailAvailableMessage('')
+    setEmailToken(null)
   }
 
   const clearPhoneVerificationState = () => {
     phoneVerification.resetVerification()
     setPhoneAvailableMessage('')
+    setSmsToken(null)
   }
 
   const getSubmitBlockedReason = (
@@ -107,8 +157,10 @@ export const useSignup = () => {
 
     if (hasSignupErrors(signupErrors)) return 'validation'
     if (!nextState.isNicknameChecked) return 'nickname'
-    if (!emailVerification.isCodeVerified) return 'emailVerification'
-    if (!phoneVerification.isCodeVerified) return 'phoneVerification'
+    if (!emailToken || !emailVerification.isCodeVerified)
+      return 'emailVerification'
+    if (!smsToken || !phoneVerification.isCodeVerified)
+      return 'phoneVerification'
 
     return null
   }
@@ -119,21 +171,21 @@ export const useSignup = () => {
     if (reason === 'nickname') {
       setErrors((prev) => ({
         ...prev,
-        nickname: '닉네임 중복확인을 완료해주세요.',
+        nickname: NICKNAME_CHECK_REQUIRED_MESSAGE,
       }))
     }
 
     if (reason === 'emailVerification') {
       setErrors((prev) => ({
         ...prev,
-        email: '이메일 인증을 완료해주세요.',
+        email: EMAIL_VERIFICATION_REQUIRED_MESSAGE,
       }))
     }
 
     if (reason === 'phoneVerification') {
       setErrors((prev) => ({
         ...prev,
-        phone: '휴대전화 인증을 완료해주세요.',
+        phone: PHONE_VERIFICATION_REQUIRED_MESSAGE,
       }))
     }
   }
@@ -177,7 +229,7 @@ export const useSignup = () => {
     } catch (error) {
       setState((prev) => ({ ...prev, isNicknameChecked: false }))
 
-      let message = '이미 사용 중인 닉네임입니다.'
+      let message = NICKNAME_DUPLICATED_MESSAGE
 
       if (error && typeof error === 'object' && 'response' in error) {
         const axiosError = error as AxiosError<CheckNicknameErrorResponse>
@@ -218,7 +270,7 @@ export const useSignup = () => {
     clearEmailVerificationState()
   }
 
-  const handleSendEmailCode = () => {
+  const handleSendEmailCode = async () => {
     setFieldTouched('email')
 
     const emailError = validateEmail(state.email)
@@ -231,39 +283,49 @@ export const useSignup = () => {
       return
     }
 
-    const trimmedEmail = state.email.trim().toLowerCase()
-    const isTaken = SIGNUP_MOCKS.email.taken.some(
-      (email: string) => email.toLowerCase() === trimmedEmail
-    )
+    try {
+      await sendEmailCodeMutation.mutateAsync({
+        email: state.email.trim(),
+      })
 
-    if (isTaken) {
       setErrors((prev) => ({
         ...prev,
-        email: '이미 가입된 이메일입니다.',
+        email: '',
+      }))
+      setEmailAvailableMessage(CODE_SENT_MESSAGE)
+      emailVerification.markCodeSent()
+    } catch (error) {
+      setErrors((prev) => ({
+        ...prev,
+        email: getErrorMessage(error, CODE_SEND_FAIL_MESSAGE),
       }))
       clearEmailVerificationState()
-      return
     }
-
-    setErrors((prev) => ({
-      ...prev,
-      email: '',
-    }))
-    setEmailAvailableMessage('사용 가능한 이메일입니다.')
-    emailVerification.markCodeSent()
   }
 
-  const handleVerifyEmailCode = () => {
+  const handleVerifyEmailCode = async () => {
     setFieldTouched('email')
 
     if (!emailVerification.validateBeforeVerify()) return
 
-    if (emailVerification.code !== SIGNUP_MOCKS.email.code) {
-      emailVerification.setVerificationError('인증코드가 일치하지 않습니다.')
-      return
-    }
+    try {
+      const result = await verifyEmailCodeMutation.mutateAsync({
+        email: state.email.trim(),
+        code: emailVerification.code,
+      })
 
-    emailVerification.markCodeVerified()
+      setEmailToken(result.email_token)
+      emailVerification.markCodeVerified()
+      setErrors((prev) => ({
+        ...prev,
+        email: '',
+      }))
+    } catch (error) {
+      setEmailToken(null)
+      emailVerification.setVerificationError(
+        getErrorMessage(error, INVALID_CODE_MESSAGE)
+      )
+    }
   }
 
   const handlePhoneChange = (key: PhoneField, value: string) => {
@@ -280,7 +342,7 @@ export const useSignup = () => {
     clearPhoneVerificationState()
   }
 
-  const handleSendPhoneCode = () => {
+  const handleSendPhoneCode = async () => {
     setFieldTouched('phone')
 
     const phoneError = validatePhone(
@@ -298,37 +360,49 @@ export const useSignup = () => {
       return
     }
 
-    const fullPhoneNumber = getFullPhoneNumber(state)
-    const isTaken = SIGNUP_MOCKS.phone.taken.includes(fullPhoneNumber)
+    try {
+      await sendPhoneCodeMutation.mutateAsync({
+        phone_number: getFullPhoneNumber(state),
+      })
 
-    if (isTaken) {
       setErrors((prev) => ({
         ...prev,
-        phone: '이미 가입에 사용된 휴대전화 번호입니다.',
+        phone: '',
+      }))
+      setPhoneAvailableMessage(CODE_SENT_MESSAGE)
+      phoneVerification.markCodeSent()
+    } catch (error) {
+      setErrors((prev) => ({
+        ...prev,
+        phone: getErrorMessage(error, CODE_SEND_FAIL_MESSAGE),
       }))
       clearPhoneVerificationState()
-      return
     }
-
-    setErrors((prev) => ({
-      ...prev,
-      phone: '',
-    }))
-    setPhoneAvailableMessage('사용 가능한 휴대전화 번호입니다.')
-    phoneVerification.markCodeSent()
   }
 
-  const handleVerifyPhoneCode = () => {
+  const handleVerifyPhoneCode = async () => {
     setFieldTouched('phone')
 
     if (!phoneVerification.validateBeforeVerify()) return
 
-    if (phoneVerification.code !== SIGNUP_MOCKS.phone.code) {
-      phoneVerification.setVerificationError('인증코드가 일치하지 않습니다.')
-      return
-    }
+    try {
+      const result = await verifyPhoneCodeMutation.mutateAsync({
+        phone_number: getFullPhoneNumber(state),
+        code: phoneVerification.code,
+      })
 
-    phoneVerification.markCodeVerified()
+      setSmsToken(result.sms_token)
+      phoneVerification.markCodeVerified()
+      setErrors((prev) => ({
+        ...prev,
+        phone: '',
+      }))
+    } catch (error) {
+      setSmsToken(null)
+      phoneVerification.setVerificationError(
+        getErrorMessage(error, INVALID_CODE_MESSAGE)
+      )
+    }
   }
 
   const handlePasswordChange = (value: string) => {
@@ -348,7 +422,7 @@ export const useSignup = () => {
   const formBlockedReason = getSubmitBlockedReason(state)
   const isSubmitDisabled = !(filled && formBlockedReason === null)
 
-  const submit = () => {
+  const submit = async () => {
     setSubmitted(true)
     setAllTouched()
 
@@ -363,13 +437,19 @@ export const useSignup = () => {
       return
     }
 
-    const payload = mapSignupStateToPayload(state)
+    if (!emailToken || !smsToken) {
+      return
+    }
 
-    // TODO: 회원가입 API 연동
-    void payload
+    const payload = mapSignupStateToPayload(state, emailToken, smsToken)
 
-    toast.success('회원가입이 완료되었습니다.')
-    navigate(ROUTES_PATHS.LOGIN_PAGE)
+    try {
+      await signupMutation.mutateAsync(payload)
+      toast.success(SIGNUP_SUCCESS_MESSAGE)
+      navigate(ROUTES_PATHS.LOGIN_PAGE)
+    } catch (error) {
+      toast.error(getErrorMessage(error, SIGNUP_FAIL_MESSAGE))
+    }
   }
 
   return {
