@@ -102,25 +102,15 @@ function QuizPage() {
 
   const handleSubmit = useCallback(
     async (force = false) => {
-      console.log('submit click', {
-        isSubmitting,
-        quizData,
-        isAllQuestionsAnswered,
-        force,
-      })
-
       if (isSubmitting) {
-        console.log('return: isSubmitting')
         return
       }
 
       if (!quizData) {
-        console.log('return: no quizData')
         return
       }
 
       if (!force && !isAllQuestionsAnswered) {
-        console.log('return: not all answered')
         toast.error('모든 문제를 풀어야 제출할 수 있습니다.')
         return
       }
@@ -135,20 +125,13 @@ function QuizPage() {
           quizData,
           answers,
         })
-
-        console.log('submit payload', payload)
-
         const result = await submitExamMutation.mutateAsync({
           deploymentId: numericDeploymentId,
           payload,
         })
-
-        console.log('submit result', result)
-
         navigate(getQuizResultPage(result.submission_id))
         setIsSubmitModalOpen(false)
       } catch (error) {
-        console.log('submit error', error)
         toast.error('시험 제출에 실패했습니다.')
       } finally {
         setIsSubmitting(false)
