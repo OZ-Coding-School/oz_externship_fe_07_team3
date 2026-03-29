@@ -1,6 +1,6 @@
 import type { QuizQuestionType } from '../quizpage-type/question'
 
-export type ResultAnswer = string[] | null
+export type ResultAnswer = string | string[] | null
 
 export type ResultQuestion = {
   id: number

@@ -6,9 +6,12 @@ type ShortAnswerResultProps = {
 }
 
 function ShortAnswerResult({ question }: ShortAnswerResultProps) {
-  const answer =
-    question.submitted_answer && question.submitted_answer.length > 0
+  const answer = Array.isArray(question.submitted_answer)
+    ? question.submitted_answer.length > 0
       ? question.submitted_answer.join(', ')
+      : '미응답'
+    : question.submitted_answer && question.submitted_answer.trim() !== ''
+      ? question.submitted_answer
       : '미응답'
 
   return (

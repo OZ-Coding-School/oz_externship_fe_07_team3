@@ -28,7 +28,6 @@ export const APIS_PATHS = {
   GET_EXAM_DEPLOYMENTS: '/exams/deployments',
   GET_EXAM_RESULT: '/exams/submissions',
 }
-
 export const EXAM_API_PATHS = {
   DEPLOYMENTS: '/exams/deployments',
   deploymentDetail: (deploymentId: number) =>
@@ -36,6 +35,6 @@ export const EXAM_API_PATHS = {
   checkCode: (deploymentId: number) =>
     `/exams/deployments/${deploymentId}/check-code`,
   status: (deploymentId: number) => `/exams/deployments/${deploymentId}/status`,
-  submit: (deploymentId: number) => `/exams/deployments/${deploymentId}/submit`,
+  submit: '/exams/submissions',
   result: (submissionId: number) => `/exams/submissions/${submissionId}`,
 }

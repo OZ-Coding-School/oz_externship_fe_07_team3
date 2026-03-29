@@ -41,16 +41,14 @@ export const getExamStatus = async (
 }
 
 export const submitExam = async (
-  deploymentId: number,
   payload: SubmitExamRequest
 ): Promise<SubmitExamResponse> => {
   const { data } = await api.post<SubmitExamResponse>(
-    EXAM_API_PATHS.submit(deploymentId),
+    EXAM_API_PATHS.submit,
     payload
   )
   return data
 }
-
 export const getExamResult = async (
   submissionId: number
 ): Promise<ResultData> => {

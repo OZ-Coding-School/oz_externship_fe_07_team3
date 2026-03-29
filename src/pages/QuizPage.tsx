@@ -17,10 +17,12 @@ import { useCheatingDetection } from '@/hooks/exam/useCheatingDetection'
 import { useQuizTimer } from '@/hooks/exam/useQuizTimer'
 import type { AnswerMap, AnswerValue } from '@/types/answer-type/answer'
 import { createSubmitPayload } from '@/utils/createSubmitPayload'
+
 function QuizPage() {
   const navigate = useNavigate()
   const { deploymentId } = useParams()
   const numericDeploymentId = Number(deploymentId)
+  const submitExamMutation = useSubmitExam()
 
   const [startedAt] = useState(() => new Date().toISOString())
   const [answers, setAnswers] = useState<AnswerMap>({})
@@ -47,8 +49,6 @@ function QuizPage() {
     isLoading: isQuizLoading,
     isError: isQuizError,
   } = useExamQuestions(numericDeploymentId, shouldFetchQuestions)
-
-  const submitExamMutation = useSubmitExam()
 
   const {
     cheatingCount,
