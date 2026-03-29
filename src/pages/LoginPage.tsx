@@ -113,7 +113,7 @@ const LoginPage = () => {
           code,
         })
 
-        return result // 🔥 중요
+        return result
       } catch (error) {
         throw new Error(getErrorMessage(error, '인증번호 확인 실패'))
       }
