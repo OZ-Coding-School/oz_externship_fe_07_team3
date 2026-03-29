@@ -1,4 +1,3 @@
-import { api } from './api'
 import { APIS_PATHS } from '@/constants/apisPaths'
 import type {
   FindEmailRequest,
@@ -8,6 +7,11 @@ import type {
   loginRequest,
   loginSuccessResponse,
 } from '@/types/auth-type/login'
+import type {
+  ResetPasswordRequest,
+  ResetPasswordResponse,
+} from '@/types/auth-type/resetPassword'
+import { api } from './api'
 
 export const postLogin = async (
   payload: loginRequest
@@ -26,5 +30,13 @@ export const postFindEmail = async (payload: FindEmailRequest) => {
     payload
   )
 
+  return data
+}
+
+export const postResetPassword = async (payload: ResetPasswordRequest) => {
+  const { data } = await api.post<ResetPasswordResponse>(
+    APIS_PATHS.RESET_PASSWORD,
+    payload
+  )
   return data
 }
