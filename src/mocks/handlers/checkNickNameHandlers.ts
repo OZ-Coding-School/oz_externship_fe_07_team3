@@ -7,7 +7,7 @@ type CheckNicknameBody = {
 const duplicatedNicknames = ['관리자', 'admin', '오조오조']
 
 export const checkNickNameHandlers = [
-  http.post('*/api/v1/accounts/check-nickname', async ({ request }) => {
+  http.post('/api/v1/accounts/check-nickname', async ({ request }) => {
     const body = (await request.json()) as CheckNicknameBody
     const nickname = body.nickname?.trim()
 
