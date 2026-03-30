@@ -14,4 +14,7 @@ export type loginErrorResponse = {
     detail?: string
     expireAt?: string //Todo: Date 객체인지 String인지 확인하기
   }
+  error_detail?: string
+  detail?: string
+  code?: string
 }

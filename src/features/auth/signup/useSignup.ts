@@ -5,16 +5,16 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
-import { useCheckNickName } from '@/api/queries/useCheckNickName'
 import {
-  postSignup,
   useSendEmailVerificationCode,
-  useSendPhoneVerificationCode,
   useVerifyEmailVerificationCode,
+  postSignup,
+  useSendPhoneVerificationCode,
   useVerifyPhoneVerificationCode,
 } from '@/api/signup'
-import { useCodeVerification } from '@/features/auth/shared/useCodeVerification'
 import type { SignupRequest } from '@/types/auth-type/signup'
+import { useCheckNickName } from '@/api/queries/useCheckNickName'
+import { useCodeVerification } from '@/features/auth/shared/useCodeVerification'
 import type { CheckNicknameErrorResponse } from '@/types/checkNickName'
 import { getErrorMessage } from '@/utils/getErrorMessage'
 import {

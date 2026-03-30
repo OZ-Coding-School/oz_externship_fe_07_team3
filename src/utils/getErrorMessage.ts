@@ -19,6 +19,21 @@ export const getErrorMessage = (
       return responseData.error_detail
     }
 
+    if (Array.isArray(responseData.error_detail)) {
+      return responseData.error_detail[0] ?? fallbackMessage
+    }
+
+    if (
+      responseData.error_detail &&
+      typeof responseData.error_detail === 'object'
+    ) {
+      for (const value of Object.values(responseData.error_detail)) {
+        if (typeof value === 'string') return value
+        if (Array.isArray(value) && typeof value[0] === 'string')
+          return value[0]
+      }
+    }
+
     if (
       'error_detail' in responseData &&
       responseData.error_detail &&

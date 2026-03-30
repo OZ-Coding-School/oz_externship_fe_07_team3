@@ -22,8 +22,13 @@ import RecoverAccountModal from '@/features/auth/recover-account/RecoverAccountM
 import type { FindIdHandlers } from '@/hooks/useFindId'
 import type { FindPasswordHandlers } from '@/hooks/useFindPassword'
 import { useAuthStore } from '@/store/authStore'
-import type { loginSuccessResponse } from '@/types/auth-type/login'
 import { getErrorMessage } from '@/utils/getErrorMessage'
+import type {
+  loginErrorResponse,
+  loginSuccessResponse,
+} from '@/types/auth-type/login'
+import type { AxiosError } from 'axios'
+import { toast } from 'sonner'
 
 type SubmitLoginParams = {
   email: string
@@ -147,7 +152,7 @@ const LoginPage = () => {
           const result = await refetch()
 
           if (result.data) {
-            const user = result.data as any
+            const user = result.data
 
             setUser({
               id: user.id,
@@ -155,7 +160,24 @@ const LoginPage = () => {
             })
           }
 
-          navigate('/')
+          navigate(ROUTES_PATHS.HOME_PAGE)
+        },
+        onError: (error) => {
+          const axiosError = error as AxiosError<loginErrorResponse>
+          const status = axiosError.response?.status
+
+          if (status === 403) {
+            setOpenModal('recover')
+            return
+          }
+
+          const message =
+            axiosError.response?.data?.detail ??
+            axiosError.response?.data?.error_detail ??
+            axiosError.response?.data?.errorDetail?.detail ??
+            '로그인에 실패했습니다.'
+
+          toast.error(message)
         },
       }
     )

@@ -40,14 +40,15 @@ export const useVerifyEmailVerificationCode = () => {
     },
   })
 }
-// 비밀번호 인증 전송
+
+//휴대폰 번호 인증 전송
 export const useSendPhoneVerificationCode = () => {
   return useMutation({
     mutationFn: sendPhoneVerificationCode,
   })
 }
 
-// 비밀번호 확인
+//휴대폰 번호 인증 확인
 export const useVerifyPhoneVerificationCode = () => {
   return useMutation({
     mutationFn: verifyPhoneVerificationCode,

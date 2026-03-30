@@ -1,3 +1,4 @@
+import { api, publicApi } from './api'
 import { APIS_PATHS } from '@/constants/apisPaths'
 import type {
   FindEmailRequest,
@@ -11,12 +12,15 @@ import type {
   ResetPasswordRequest,
   ResetPasswordResponse,
 } from '@/types/auth-type/resetPassword'
-import { api } from './api'
+import type {
+  RestoreAccountRequest,
+  RestoreAccountResponse,
+} from '@/types/auth-type/restoreAccount'
 
 export const postLogin = async (
   payload: loginRequest
 ): Promise<loginSuccessResponse> => {
-  const { data } = await api.post<loginSuccessResponse>(
+  const { data } = await publicApi.post<loginSuccessResponse>(
     APIS_PATHS.POST_LOGIN,
     payload
   )
@@ -38,5 +42,15 @@ export const postResetPassword = async (payload: ResetPasswordRequest) => {
     APIS_PATHS.RESET_PASSWORD,
     payload
   )
+
+  return data
+}
+
+export const postRestoreAccount = async (payload: RestoreAccountRequest) => {
+  const { data } = await publicApi.post<RestoreAccountResponse>(
+    APIS_PATHS.ACCOUNTS_RESTORE,
+    payload
+  )
+
   return data
 }
