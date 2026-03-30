@@ -1,10 +1,10 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { logout as logoutApi } from '@/api/mypage'
 import Logo from '@/assets/images/logo.png'
-import UserMenu from '@/features/mypage/UserMenu'
 import { ROUTES_PATHS } from '@/constants/routesPaths'
+import UserMenu from '@/features/mypage/UserMenu'
 import { useAuthStore } from '@/store/authStore'
 import { useQueryClient } from '@tanstack/react-query'
-import { logout as logoutApi } from '@/api/mypage'
+import { Link, useNavigate } from 'react-router-dom'
 
 function Header() {
   const navigate = useNavigate()
@@ -48,7 +48,7 @@ function Header() {
           <nav aria-label="주요 메뉴">
             <ul className="flex gap-15">
               <li className="py-4">
-                <Link to="/community">커뮤니티</Link>
+                <Link to="/posts">커뮤니티</Link>
               </li>
               <li className="py-4">
                 <Link to="/qna">질의응답</Link>
