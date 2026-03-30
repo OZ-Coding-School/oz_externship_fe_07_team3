@@ -17,6 +17,10 @@ import type {
   RestoreAccountResponse,
 } from '@/types/auth-type/restoreAccount'
 
+type RefreshResponse = {
+  access_token: string
+}
+
 export const postLogin = async (
   payload: loginRequest
 ): Promise<loginSuccessResponse> => {
@@ -28,7 +32,9 @@ export const postLogin = async (
   return data
 }
 
-export const postFindEmail = async (payload: FindEmailRequest) => {
+export const postFindEmail = async (
+  payload: FindEmailRequest
+): Promise<FindEmailResponse> => {
   const { data } = await api.post<FindEmailResponse>(
     APIS_PATHS.FIND_EMAIL,
     payload
@@ -52,5 +58,10 @@ export const postRestoreAccount = async (payload: RestoreAccountRequest) => {
     payload
   )
 
+  return data
+}
+
+export const postRefreshToken = async (): Promise<RefreshResponse> => {
+  const { data } = await api.post<RefreshResponse>(APIS_PATHS.REFRESH_TOKEN)
   return data
 }
