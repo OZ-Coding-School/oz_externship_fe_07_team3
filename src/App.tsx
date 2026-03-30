@@ -4,6 +4,7 @@ import './App.css'
 import QuizLayout from './components/layout/QuizLayout'
 import Rootlayout from './components/layout/RootLayout'
 import { ROUTES_PATHS } from './constants/routesPaths'
+import { useAuthBootstrap } from './features/auth/useAuthBootstrap'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import MyPage from './pages/MyPage'
@@ -14,6 +15,8 @@ import SignupPage from './pages/SignupPage'
 import TestPage from './pages/TestPage'
 
 function App() {
+  useAuthBootstrap()
+
   return (
     <Routes>
       <Route element={<Rootlayout />}>
