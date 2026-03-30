@@ -11,7 +11,6 @@ const SIDE_TABS: { label: string; value: MyPageSideTabType }[] = [
   { label: '내 정보', value: 'info' },
   { label: '비밀번호 변경', value: 'password' },
 ]
-
 export default function MyPageSideTab({
   activeTab,
   onChangeTab,

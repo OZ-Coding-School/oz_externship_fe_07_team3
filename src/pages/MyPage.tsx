@@ -10,7 +10,6 @@ import { useSearchParams } from 'react-router-dom'
 export default function MyPage() {
   const [searchParams] = useSearchParams()
   const tab = searchParams.get('tab')
-
   const initialTab: MyPageSideTabType =
     tab === 'exam' || tab === 'password' || tab === 'info' ? tab : 'info'
 

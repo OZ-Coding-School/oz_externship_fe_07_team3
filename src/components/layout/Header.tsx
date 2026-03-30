@@ -48,10 +48,12 @@ function Header() {
           <nav aria-label="주요 메뉴">
             <ul className="flex gap-15">
               <li className="py-4">
-                <Link to="/posts">커뮤니티</Link>
+                <a href="https://community.ozcodingschool.site/posts">
+                  커뮤니티
+                </a>
               </li>
               <li className="py-4">
-                <Link to="/qna">질의응답</Link>
+                <a href="https://qna.ozcodingschool.site/qna">질의응답</a>
               </li>
             </ul>
           </nav>
