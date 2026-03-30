@@ -42,6 +42,7 @@ function ResultPage() {
         cheatingCount={resultData.cheating_count}
         elapsedTime={resultData.elapsed_time}
         totalScore={resultData.total_score}
+        correctAnswerCount={resultData.correct_answer_count}
         onBack={handleBack}
       />
       <section>
