@@ -1,4 +1,5 @@
 import { useExamDeployments } from '@/api/queries/exam/useExamDeployments'
+import Loading from '@/components/common/loading/Loading'
 import ExamEmptyState from '@/components/exam/ExamEmptyState'
 import ExamEntryCodeModal from '@/components/exam/ExamEntryCodeModal'
 import { EXAM_SUBJECT_ICON_MAP } from '@/constants/exam/examSubjectIconMap'
@@ -77,11 +78,14 @@ export default function MyExamTab() {
   const modalImageSrc = getExamImageSrc(selectedExam)
 
   if (isPending) {
-    return <div>로딩 중...</div>
+    return (
+      <div>
+        <Loading />
+      </div>
+    )
   }
-
   if (isError) {
-    return <div>시험 목록을 불러오지 못했습니다.</div>
+    return <ExamEmptyState title="응시 권한이 없습니다." />
   }
 
   return (

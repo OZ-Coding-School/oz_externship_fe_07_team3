@@ -12,6 +12,7 @@ export const getExamDeployments =
     const { data } = await api.get<ExamDeploymentListResponse>(
       EXAM_API_PATHS.DEPLOYMENTS
     )
+
     return data
   }
 

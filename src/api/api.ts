@@ -1,6 +1,6 @@
-import axios from 'axios'
 import { API_BASE_URL, APIS_PATHS } from '@/constants/apisPaths'
 import { useAuthStore } from '@/store/authStore'
+import axios from 'axios'
 
 export const publicApi = axios.create({
   baseURL: API_BASE_URL,

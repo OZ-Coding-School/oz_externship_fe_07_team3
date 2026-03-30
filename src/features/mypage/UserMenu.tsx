@@ -1,14 +1,14 @@
-import { useState } from 'react'
-import profileViewIcon from '../../assets/icons/profileViewIcon.svg'
+import { useGetMyInfo } from '@/api/queries/myInfo/useGetMyInfo'
+import { useLogout } from '@/api/queries/myInfo/useLogout'
 import Button from '@/components/ui/button'
-import { Link, useNavigate } from 'react-router-dom'
+import { INITIAL_REGISTER_VALUE } from '@/constants/initialRegisterValue'
 import { ROUTES_PATHS } from '@/constants/routesPaths'
 import type { SelectedCourseRegisterValue } from '@/types/api-response/course'
-import CourseRegisterModal from './student-register/CourseRegisterModal'
-import { useLogout } from '@/api/queries/myInfo/useLogout'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
-import { useGetMyInfo } from '@/api/queries/myInfo/useGetMyInfo'
-import { INITIAL_REGISTER_VALUE } from '@/constants/initialRegisterValue'
+import profileViewIcon from '../../assets/icons/profileViewIcon.svg'
+import CourseRegisterModal from './student-register/CourseRegisterModal'
 
 export default function UserMenu() {
   const [showUserMenu, setShowUserMenu] = useState(false)
@@ -38,16 +38,6 @@ export default function UserMenu() {
 
       setShowUserMenu(false)
       toast.success(result.detail ?? '로그아웃 되었습니다.')
-
-      /**
-       * TODO: 로그인 기능 완료 후 추가
-       *
-       * 1. 필요 시 인증 상태 제거
-       * 2. 필요 시 유저 관련 캐시 제거
-       * queryClient.removeQueries({ queryKey: MY_INFO_QUERY_KEY })
-       * 3. store 정리 필요
-       * store.removeToken
-       */
 
       navigate(ROUTES_PATHS.LOGIN_PAGE)
     } catch {
