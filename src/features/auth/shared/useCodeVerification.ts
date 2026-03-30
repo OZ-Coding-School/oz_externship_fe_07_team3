@@ -56,7 +56,6 @@ export const useCodeVerification = ({ mode }: UseCodeVerificationOptions) => {
 
   const markCodeVerified = () => {
     setIsCodeVerified(true)
-    setVerificationCode('')
     setCodeErrorMessage('')
   }
 

@@ -27,6 +27,8 @@ export const APIS_PATHS = {
   FIND_EMAIL: '/accounts/find-email',
   GET_EXAM_DEPLOYMENTS: '/exams/deployments',
   GET_EXAM_RESULT: '/exams/submissions',
+
+  RESET_PASSWORD: 'accounts/find-password',
 }
 export const EXAM_API_PATHS = {
   DEPLOYMENTS: '/exams/deployments',

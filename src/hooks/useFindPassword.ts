@@ -11,9 +11,12 @@ const PASSWORD_REGEX =
 
 export type FindPasswordHandlers = {
   onSendCode: (params: { email: string }) => Promise<void> | void
-  onVerifyCode: (params: { code: string }) => Promise<void> | void
-  onResetPassword: (params: {
+  onVerifyCode: (params: {
     email: string
+    code: string
+  }) => Promise<{ email_token: string }>
+  onResetPassword: (params: {
+    emailToken: string
     newPassword: string
   }) => Promise<void> | void
 }
@@ -34,7 +37,7 @@ export const useFindPassword = ({
   const [inputErrorMessage, setInputErrorMessage] = useState('')
   const [resetErrorMessage, setResetErrorMessage] = useState('')
   const [isCompletePopupOpen, setIsCompletePopupOpen] = useState(false)
-
+  const [emailToken, setEmailToken] = useState<string | null>(null)
   const {
     verificationCode,
     isCodeSent,
@@ -150,12 +153,13 @@ export const useFindPassword = ({
   }
 
   const handleVerifyCode = async () => {
-    if (!validateBeforeVerify()) {
-      return
-    }
-
+    if (!validateBeforeVerify()) return
     try {
-      await handlers.onVerifyCode({ code: verificationCode })
+      const result = await handlers.onVerifyCode({
+        email,
+        code: verificationCode,
+      })
+      setEmailToken(result.email_token) // 🔥 핵심
       markCodeVerified()
       setInputErrorMessage('')
     } catch (error) {
@@ -163,7 +167,6 @@ export const useFindPassword = ({
         setVerificationError(error.message)
         return
       }
-
       setVerificationError('인증번호 확인에 실패했습니다.')
     }
   }
@@ -180,14 +183,17 @@ export const useFindPassword = ({
     setInputErrorMessage('')
     setStep('reset')
   }
-
   const handleResetPassword = async () => {
-    if (!validatePassword()) {
+    if (!validatePassword()) return
+    if (!emailToken) {
+      setResetErrorMessage('이메일 인증을 먼저 완료해주세요.')
       return
     }
-
     try {
-      await handlers.onResetPassword({ email, newPassword })
+      await handlers.onResetPassword({
+        emailToken,
+        newPassword,
+      })
       setResetErrorMessage('')
       setIsCompletePopupOpen(true)
     } catch (error) {
@@ -195,7 +201,6 @@ export const useFindPassword = ({
         setResetErrorMessage(error.message)
         return
       }
-
       setResetErrorMessage('비밀번호 변경에 실패했습니다.')
     }
   }

@@ -11,6 +11,10 @@ export const findPasswordMockHandlers: FindPasswordHandlers = {
     if (code.trim() !== '123456') {
       throw new Error('인증번호가 일치하지 않습니다.')
     }
+
+    return {
+      email_token: 'email@email',
+    }
   },
 
   onResetPassword: async ({ newPassword }) => {

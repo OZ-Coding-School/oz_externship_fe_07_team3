@@ -4,7 +4,7 @@ import { toast } from 'sonner'
 import {
   useSendPhoneVerificationCode,
   useVerifyPhoneVerificationCode,
-} from '@/api/queries/usePhoneVerification'
+} from '@/api/signup'
 import { usePhoneVerification } from '@/hooks/usePhoneVerification'
 import { formatPhoneNumber } from '@/utils/formatPhoneNumber'
 import getPhoneButtonText, { type PhoneEditStep } from '@/utils/phoneButtonText'
