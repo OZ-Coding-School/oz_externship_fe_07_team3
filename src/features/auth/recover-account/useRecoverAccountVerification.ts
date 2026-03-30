@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import { useTimer } from '@/hooks/useTimer'
+import { useRestoreAccount } from '@/api/queries/auth/useRestoreAccount'
+import { getErrorMessage } from '@/utils/getErrorMessage'
+import { useEmailVerificationActions } from '../shared/useEmailVerificationActions'
 
 const INITIAL_TIME = 300
-
-// TODO: API 연동 시 제거
-const MOCK_VERIFY_CODE = '123456'
 
 type UseRecoverAccountVerificationParams = {
   isOpen: boolean
@@ -21,9 +21,16 @@ export const useRecoverAccountVerification = ({
   const [errorMessage, setErrorMessage] = useState('')
   const [isSendToastVisible, setIsSendToastVisible] = useState(false)
   const [isCompletePopupVisible, setIsCompletePopupVisible] = useState(false)
+  const [emailToken, setEmailToken] = useState<string | null>(null)
+
+  const { mutateAsync: restoreAccountMutateAsync, isPending } =
+    useRestoreAccount()
 
   const { formattedTime, isExpired, startTimer, stopTimer, resetTimer } =
     useTimer(INITIAL_TIME)
+
+  const { handleSendEmailCode, handleVerifyEmailCode } =
+    useEmailVerificationActions()
 
   const resetVerificationState = useCallback(() => {
     setEmail('')
@@ -43,7 +50,9 @@ export const useRecoverAccountVerification = ({
   }, [isOpen, resetVerificationState])
 
   useEffect(() => {
-    if (!isSendToastVisible) return
+    if (!isSendToastVisible) {
+      return
+    }
 
     const timer = window.setTimeout(() => {
       setIsSendToastVisible(false)
@@ -67,6 +76,7 @@ export const useRecoverAccountVerification = ({
       setErrorMessage('')
     }
 
+    setEmailToken(null)
     setCode('')
     resetTimer()
   }
@@ -80,18 +90,34 @@ export const useRecoverAccountVerification = ({
 
     if (isCodeVerified) {
       setIsCodeVerified(false)
+      setEmailToken(null)
     }
   }
 
-  const handleSendCode = () => {
-    if (!email.trim()) return
+  const handleSendCode = async () => {
+    if (!email.trim()) {
+      setErrorMessage('이메일을 입력해주세요.')
+      return
+    }
 
-    setIsCodeSent(true)
-    setIsCodeVerified(false)
-    setErrorMessage('')
-    setCode('')
-    startTimer()
-    setIsSendToastVisible(true)
+    try {
+      await handleSendEmailCode({ email })
+
+      setIsCodeSent(true)
+      setIsCodeVerified(false)
+      setErrorMessage('')
+      setCode('')
+      setEmailToken(null)
+      startTimer()
+      setIsSendToastVisible(true)
+    } catch (error) {
+      setIsCodeSent(false)
+      setIsCodeVerified(false)
+      setCode('')
+      setEmailToken(null)
+      setErrorMessage(getErrorMessage(error, '인증번호 전송에 실패했습니다.'))
+      resetTimer()
+    }
   }
 
   const validateCode = () => {
@@ -113,34 +139,56 @@ export const useRecoverAccountVerification = ({
     return true
   }
 
-  const handleVerifyCode = () => {
+  const handleVerifyCode = async () => {
     if (!validateCode()) {
       setIsCodeVerified(false)
       return
     }
 
-    // TODO: API 연동 시 아래 mock 로직 제거
-    if (code.trim() !== MOCK_VERIFY_CODE) {
-      setErrorMessage('인증코드가 일치하지 않습니다.')
-      setIsCodeVerified(false)
-      return
-    }
+    try {
+      const result = await handleVerifyEmailCode({
+        email,
+        code,
+      })
 
-    setErrorMessage('')
-    setIsCodeVerified(true)
-    stopTimer()
+      setEmailToken(result.email_token)
+      setErrorMessage('')
+      setIsCodeVerified(true)
+      stopTimer()
+    } catch (error) {
+      setEmailToken(null)
+      setIsCodeVerified(false)
+      setErrorMessage(getErrorMessage(error, '인증코드가 일치하지 않습니다.'))
+    }
   }
 
-  const handleCompleteButtonClick = () => {
-    if (!validateCode()) return
+  const handleCompleteButtonClick = async () => {
+    if (!validateCode()) {
+      return
+    }
 
     if (!isCodeVerified) {
       setErrorMessage('인증코드 확인을 완료해주세요.')
       return
     }
 
-    setErrorMessage('')
-    setIsCompletePopupVisible(true)
+    if (!emailToken) {
+      setErrorMessage('이메일 인증 토큰이 없습니다. 다시 인증해주세요.')
+      return
+    }
+
+    try {
+      await restoreAccountMutateAsync({
+        email_token: emailToken,
+      })
+
+      setErrorMessage('')
+      setIsCompletePopupVisible(true)
+    } catch (error) {
+      setErrorMessage(
+        getErrorMessage(error, '계정 복구에 실패했습니다. 다시 시도해주세요.')
+      )
+    }
   }
 
   const closeCompletePopup = () => {
@@ -156,6 +204,7 @@ export const useRecoverAccountVerification = ({
     isSendToastVisible,
     isCompletePopupVisible,
     formattedTime,
+    isPending,
     handleEmailChange,
     handleCodeChange,
     handleSendCode,
