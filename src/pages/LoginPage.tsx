@@ -7,8 +7,8 @@ import { useGetMyInfo } from '@/api/queries/myInfo/useGetMyInfo'
 
 import { useResetPassword } from '@/api/queries/auth/useFindPassword'
 import {
-  useSendEmailVerificationCode,
   useSendPhoneVerificationCode,
+  useSendRecoveryEmailVerificationCode,
   useVerifyEmailVerificationCode,
   useVerifyPhoneVerificationCode,
 } from '@/api/signup'
@@ -22,12 +22,13 @@ import RecoverAccountModal from '@/features/auth/recover-account/RecoverAccountM
 import type { FindIdHandlers } from '@/hooks/useFindId'
 import type { FindPasswordHandlers } from '@/hooks/useFindPassword'
 import { useAuthStore } from '@/store/authStore'
-import { getErrorMessage } from '@/utils/getErrorMessage'
 import type {
   loginErrorResponse,
   loginSuccessResponse,
 } from '@/types/auth-type/login'
+import { getErrorMessage } from '@/utils/getErrorMessage'
 import type { AxiosError } from 'axios'
+import axios from 'axios'
 import { toast } from 'sonner'
 
 type SubmitLoginParams = {
@@ -52,7 +53,7 @@ const LoginPage = () => {
   const findEmailMutation = useFindEmail()
   const sendPhoneCodeMutation = useSendPhoneVerificationCode()
   const verifyPhoneCodeMutation = useVerifyPhoneVerificationCode()
-  const sendEmailCodeMutation = useSendEmailVerificationCode()
+  const sendEmailCodeMutation = useSendRecoveryEmailVerificationCode()
   const verifyEmailCodeMutation = useVerifyEmailVerificationCode()
   const resetPasswordMutation = useResetPassword()
 
@@ -106,8 +107,20 @@ const LoginPage = () => {
         await sendEmailCodeMutation.mutateAsync({
           email,
         })
-      } catch (error) {
-        throw new Error(getErrorMessage(error, '인증번호 전송 실패'))
+      } catch (error: unknown) {
+        let message = '알 수 없는 에러가 발생했습니다.'
+
+        if (axios.isAxiosError(error)) {
+          const status = error.response?.status
+
+          if (status === 429) {
+            message = '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.'
+          } else if (status === 400) {
+            message = '사용자를 찾을 수 없습니다.'
+          }
+        }
+
+        throw new Error(getErrorMessage(error, message))
       }
     },
 

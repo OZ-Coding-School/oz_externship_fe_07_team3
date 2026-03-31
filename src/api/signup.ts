@@ -27,6 +27,18 @@ export const useSendEmailVerificationCode = () => {
   })
 }
 
+// 복구 이메일 인증 전송
+export const useSendRecoveryEmailVerificationCode = () => {
+  return useMutation({
+    mutationFn: async (payload: SendEmailVerificationCodeRequest) => {
+      const { data } = await publicApi.post<SendEmailVerificationCodeResponse>(
+        APIS_PATHS.SEND_RECOVERY_EMAIL_VERIFICATION,
+        payload
+      )
+      return data
+    },
+  })
+}
 // 이메일 인증 확인
 export const useVerifyEmailVerificationCode = () => {
   return useMutation({
