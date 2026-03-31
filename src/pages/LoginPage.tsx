@@ -38,8 +38,6 @@ type SubmitLoginParams = {
   password: string
 }
 
-type Provider = 'kakao' | 'naver'
-
 type OpenModal = 'none' | 'recover' | 'findId' | 'findPassword'
 
 const LoginPage = () => {
@@ -151,10 +149,6 @@ const LoginPage = () => {
     },
   }
 
-  const handleSocialLoginBtnClick = ({ provider }: { provider: Provider }) => {
-    void provider
-  }
-
   const handleLoginBtnClick = ({ email, password }: SubmitLoginParams) => {
     login(
       { email, password },
@@ -231,7 +225,7 @@ const LoginPage = () => {
               />
               <SocialLoginButton
                 provider="naver"
-                onClick={() => handleSocialLoginBtnClick({ provider: 'naver' })}
+                onClick={() => redirectToSocialLogin('naver')}
               />
             </div>
 
