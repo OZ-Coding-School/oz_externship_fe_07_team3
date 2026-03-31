@@ -68,7 +68,7 @@ const SignupForm = () => {
             type="button"
             variant="fill"
             size="full"
-            disabled={signup.isSubmitDisabled}
+            // disabled={signup.isSubmitDisabled}
             onClick={signup.submit}
           >
             가입하기
