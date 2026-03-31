@@ -13,6 +13,7 @@ import { useDeleteMyAccount } from '@/api/queries/myInfo/useDeleteMyAccount'
 import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES_PATHS } from '@/constants/routesPaths'
+import { useAuthStore } from '@/store/authStore'
 
 type MyInfoViewProps = {
   myInfo: MyInfoResponse
@@ -35,20 +36,15 @@ export default function MyInfoView({
   const { mutate: deleteMyAccountMutate, isPending } = useDeleteMyAccount()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const logout = useAuthStore((state) => state.logout)
 
   const handleWithdrawSubmit = (payload: DeleteMyAccountRequest) => {
     deleteMyAccountMutate(payload, {
       onSuccess: () => {
         setIsWithdrawModalOpen(false)
-
+        logout()
         queryClient.clear()
-
         toast.success('회원 탈퇴가 완료되었습니다.')
-
-        /**
-         * TODO: 토큰 제거
-         */
-
         navigate(ROUTES_PATHS.LOGIN_PAGE)
       },
       onError: () => {

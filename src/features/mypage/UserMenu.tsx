@@ -9,6 +9,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import profileViewIcon from '../../assets/icons/profileViewIcon.svg'
 import CourseRegisterModal from './student-register/CourseRegisterModal'
+import { useQueryClient } from '@tanstack/react-query'
+import { useAuthStore } from '@/store/authStore'
 
 export default function UserMenu() {
   const [showUserMenu, setShowUserMenu] = useState(false)
@@ -20,6 +22,8 @@ export default function UserMenu() {
   const navigate = useNavigate()
   const logoutMutation = useLogout()
   const { data: userData } = useGetMyInfo()
+  const queryClient = useQueryClient()
+  const logout = useAuthStore((state) => state.logout)
 
   const handleOpenRegisterModal = () => {
     setShowUserMenu(false)
@@ -34,11 +38,10 @@ export default function UserMenu() {
 
   const handleLogout = async () => {
     try {
-      const result = await logoutMutation.mutateAsync()
-
+      logout()
       setShowUserMenu(false)
-      toast.success(result.detail ?? '로그아웃 되었습니다.')
-
+      toast.success('로그아웃 되었습니다.')
+      queryClient.clear()
       navigate(ROUTES_PATHS.LOGIN_PAGE)
     } catch {
       toast.error('로그아웃에 실패했습니다.')

@@ -55,21 +55,6 @@ export const mypageHandlers = [
    * 회원 탈퇴
    */
   http.delete('/api/v1/accounts/me', async ({ request }) => {
-    /**
-     * TODO: authHeader 수정 예정
-     * // const authHeader = request.headers.get('Authorization')
-     * 
-     * 
-    // if (!authHeader) {
-    //   return HttpResponse.json(
-    //     {
-    //       error_detail: '자격 인증 데이터가 제공되지 않았습니다.',
-    //     },
-    //     { status: 401 }
-    //   )
-    // }
-     */
-
     const body = (await request.json()) as {
       reason?: string
       reason_detail?: string
