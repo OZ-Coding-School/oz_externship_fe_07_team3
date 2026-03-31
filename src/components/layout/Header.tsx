@@ -53,7 +53,7 @@ function Header() {
                 </a>
               </li>
               <li className="py-4">
-                <a href="https://qna.ozcodingschool.site/qna">질의응답</a>
+                <a href="https://qna.ozcodingschool.site/questions">질의응답</a>
               </li>
             </ul>
           </nav>
