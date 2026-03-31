@@ -28,6 +28,7 @@ export type ResultData = {
   questions: ResultQuestion[]
   cheating_count: number
   total_score: number
+  score: number
   correct_answer_count: number
   elapsed_time: number
   started_at: string

@@ -5,7 +5,7 @@ type ResultHeaderProps = {
   questionCount: number
   cheatingCount: number
   elapsedTime: number
-  correctAnswerCount: number
+  score: number
   totalScore: number
   onBack: () => void
 }
@@ -16,14 +16,14 @@ function ResultHeader({
   cheatingCount,
   elapsedTime,
   totalScore,
-  correctAnswerCount,
+  score,
   onBack,
 }: ResultHeaderProps) {
   const metaItems = [
     `총 문항 수: ${questionCount}`,
     `부정행위: ${cheatingCount}회`,
     `응시시간: ${elapsedTime}분`,
-    `응시 결과 점수: ${totalScore}점/${correctAnswerCount}점`,
+    `응시 결과 점수: ${score}점/${totalScore}점`,
   ]
 
   return (
