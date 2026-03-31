@@ -10,6 +10,7 @@ export const ROUTES_PATHS = {
   LOGIN_PAGE: '/login',
   SIGNUP_PAGE: '/signup',
   MY_PAGE: '/mypage',
+  AUTH_CALLBACK_PAGE: '/auth/callback',
 }
 
 // 상수대로 사용하면서 동적경로 분리방법

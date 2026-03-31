@@ -31,6 +31,8 @@ import type { AxiosError } from 'axios'
 import axios from 'axios'
 import { toast } from 'sonner'
 
+import { redirectToSocialLogin } from '@/features/auth/login/socialLogin'
+
 type SubmitLoginParams = {
   email: string
   password: string
@@ -225,7 +227,7 @@ const LoginPage = () => {
             <div className="flex flex-col gap-3">
               <SocialLoginButton
                 provider="kakao"
-                onClick={() => handleSocialLoginBtnClick({ provider: 'kakao' })}
+                onClick={() => redirectToSocialLogin('kakao')}
               />
               <SocialLoginButton
                 provider="naver"
