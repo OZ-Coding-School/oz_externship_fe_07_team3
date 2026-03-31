@@ -13,6 +13,7 @@ import QuizPage from './pages/QuizPage'
 import QuizResultPage from './pages/ResultPage'
 import SignupPage from './pages/SignupPage'
 import TestPage from './pages/TestPage'
+import SocialCallbackPage from './pages/auth/SocialCallbackPage'
 
 function App() {
   useAuthBootstrap()
@@ -26,6 +27,8 @@ function App() {
         <Route path={ROUTES_PATHS.SIGNUP_PAGE} element={<SignupPage />} />
         <Route path={ROUTES_PATHS.MY_PAGE} element={<MyPage />} />
       </Route>
+
+      <Route path="/auth/callback" element={<SocialCallbackPage />} />
 
       <Route element={<QuizLayout />}>
         <Route

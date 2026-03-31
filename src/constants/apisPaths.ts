@@ -32,6 +32,9 @@ export const APIS_PATHS = {
   GET_EXAM_RESULT: '/exams/submissions',
 
   RESET_PASSWORD: 'accounts/find-password',
+
+  SOCIAL_LOGIN_KAKAO: '/accounts/social-login/kakao',
+  SOCIAL_LOGIN_NAVER: '/accounts/social-login/naver',
 }
 export const EXAM_API_PATHS = {
   DEPLOYMENTS: '/exams/deployments',

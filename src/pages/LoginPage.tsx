@@ -31,12 +31,12 @@ import type { AxiosError } from 'axios'
 import axios from 'axios'
 import { toast } from 'sonner'
 
+import { redirectToSocialLogin } from '@/features/auth/login/socialLogin'
+
 type SubmitLoginParams = {
   email: string
   password: string
 }
-
-type Provider = 'kakao' | 'naver'
 
 type OpenModal = 'none' | 'recover' | 'findId' | 'findPassword'
 
@@ -149,10 +149,6 @@ const LoginPage = () => {
     },
   }
 
-  const handleSocialLoginBtnClick = ({ provider }: { provider: Provider }) => {
-    void provider
-  }
-
   const handleLoginBtnClick = ({ email, password }: SubmitLoginParams) => {
     login(
       { email, password },
@@ -225,11 +221,11 @@ const LoginPage = () => {
             <div className="flex flex-col gap-3">
               <SocialLoginButton
                 provider="kakao"
-                onClick={() => handleSocialLoginBtnClick({ provider: 'kakao' })}
+                onClick={() => redirectToSocialLogin('kakao')}
               />
               <SocialLoginButton
                 provider="naver"
-                onClick={() => handleSocialLoginBtnClick({ provider: 'naver' })}
+                onClick={() => redirectToSocialLogin('naver')}
               />
             </div>
 
