@@ -21,7 +21,10 @@ export const APIS_PATHS = {
   REFRESH_TOKEN: '/accounts/me/refresh',
 
   SIGNUP: '/accounts/signup',
-  SEND_EMAIL_VERIFICATION: '/accounts/verification/send-email',
+  /**
+   * 이메일 전송 API 변경
+   */
+  SEND_EMAIL_VERIFICATION: '/accounts/verify/email/signup/',
   VERIFY_EMAIL_VERIFICATION: '/accounts/verification/verify-email',
 
   ACCOUNTS_RESTORE: '/accounts/restore',
