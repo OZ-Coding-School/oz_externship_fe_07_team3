@@ -1,4 +1,5 @@
 # OZ Externship Frontend Template
+<img width="1820" height="989" alt="FE_skill_stack" src="https://github.com/user-attachments/assets/1f41396b-7b04-4797-a760-ad96b8fe9c97" />
 
 React + TypeScript + Vite 기반의 프론트엔드 프로젝트
 
